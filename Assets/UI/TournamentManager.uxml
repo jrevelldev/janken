@@ -1,0 +1,54 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:Style src="project://database/Assets/UI/TournamentManager.uss" />
+
+    <ui:VisualElement name="Root" class="main-container">
+        <!-- Sidebar Setup Panel -->
+        <ui:VisualElement name="SidebarPanel" class="sidebar">
+            <ui:Label text="CONFIGURACIÓ DEL TORNEIG" class="sidebar-title" />
+
+            <ui:Label text="Preset Ràpid de Jugadors:" style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;" />
+            <ui:VisualElement class="preset-container">
+                <ui:Button name="BtnPreset4" text="4 Jug." class="btn-preset" />
+                <ui:Button name="BtnPreset8" text="8 Jug." class="btn-preset" />
+                <ui:Button name="BtnPreset16" text="16 Jug." class="btn-preset" />
+            </ui:VisualElement>
+
+            <ui:Label text="Afegir Jugador:" style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;" />
+            <ui:VisualElement class="input-add-container">
+                <ui:TextField name="PlayerNameInput" value="" placeholder-text="Nom del jugador..." class="player-input" />
+                <ui:Button name="BtnAddPlayer" text="+" class="btn-secondary" style="font-size: 16px; width: 36px;" />
+            </ui:VisualElement>
+
+            <ui:VisualElement style="flex-direction: row; justify-content: space-between; margin-bottom: 8px;">
+                <ui:Label text="Llista de Participants:" style="font-size: 12px; color: #94a3b8;" />
+                <ui:Button name="BtnShuffle" text="🔀 Barrejar" class="btn-secondary" style="font-size: 11px; padding: 2px 6px;" />
+            </ui:VisualElement>
+
+            <ui:ScrollView name="PlayerScrollView" class="player-scroll-list">
+                <!-- Dynamic player rows inserted here -->
+            </ui:ScrollView>
+
+            <ui:Button name="BtnResetDefaults" text="🔄 Restablir Exemples" class="btn-secondary" style="margin-top: 6px; font-size: 12px;" />
+            <ui:Button name="BtnGenerateBracket" text="⚡ GENERAR QUADRE" class="btn-primary" style="height: 44px; font-size: 14px; margin-top: 8px;" />
+        </ui:VisualElement>
+
+        <!-- Main Tournament Area -->
+        <ui:VisualElement style="flex-grow: 1; flex-direction: column;">
+            <!-- Header Bar -->
+            <ui:VisualElement class="top-header">
+                <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN - QUADRE FINAL" class="header-title" />
+                <ui:VisualElement class="header-controls">
+                    <ui:Button name="BtnToggleSidebar" text="⚙️ Configuració" class="btn-secondary" />
+                    <ui:Button name="BtnResetTournament" text="🔄 Reiniciar" class="btn-secondary" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Bracket Container Scroll View -->
+            <ui:ScrollView name="BracketScrollView" mode="Horizontal" class="bracket-scroll-view">
+                <ui:VisualElement name="BracketContainer" class="bracket-container">
+                    <!-- Dynamic Round Columns & Champion card inserted here via C# -->
+                </ui:VisualElement>
+            </ui:ScrollView>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
