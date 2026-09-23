@@ -36,10 +36,25 @@
         <ui:VisualElement style="flex-grow: 1; flex-direction: column;">
             <!-- Header Bar -->
             <ui:VisualElement class="top-header">
-                <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN - QUADRE FINAL" class="header-title" />
+                <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN" class="header-title" />
+                
+                <!-- CONTROL DISPLAY 2 BAR -->
+                <ui:VisualElement class="display2-control-bar">
+                    <ui:Label text="CONTROL DISPLAY 2:" class="display2-bar-label" />
+                    <ui:Button name="BtnViewBracket" text="📊 Quadre" class="btn-display-view btn-display-view-active" />
+                    <ui:Button name="BtnViewCombat" text="⚔️ Combat" class="btn-display-view" />
+                    <ui:Button name="BtnViewChampion" text="🏆 Podi" class="btn-display-view" />
+                </ui:VisualElement>
+
                 <ui:VisualElement class="header-controls">
+                    <ui:Button name="BtnToggleMusic" text="🎵 Música: OFF" class="btn-secondary btn-music" />
                     <ui:Button name="BtnToggleSidebar" text="⚙️ Configuració" class="btn-secondary" />
                 </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- SUB-HEADER DISPLAY STATUS -->
+            <ui:VisualElement class="display2-status-banner">
+                <ui:Label name="Display2StatusText" text="📺 DISPLAY 2: Mostrant Quadre / Classificació" class="display2-status-text" />
             </ui:VisualElement>
 
             <!-- Bracket Container Scroll View -->

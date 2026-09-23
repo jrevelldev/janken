@@ -1,0 +1,60 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:Style src="project://database/Assets/UI/TournamentManager.uss" />
+    <ui:Style src="project://database/Assets/UI/Display2Manager.uss" />
+
+    <ui:VisualElement name="Display2Root" class="display2-root">
+
+        <!-- VIEW 1: BRACKET / ROSTER VIEW -->
+        <ui:VisualElement name="BracketViewContainer" class="display2-view-container">
+            <ui:ScrollView name="Display2BracketScrollView" mode="Horizontal" class="bracket-scroll-view display2-bracket-scroll">
+                <ui:VisualElement name="Display2BracketContainer" class="bracket-container display2-bracket-centered">
+                    <!-- Clean bracket dynamically rendered here without buttons -->
+                </ui:VisualElement>
+            </ui:ScrollView>
+        </ui:VisualElement>
+
+        <!-- VIEW 2: COMBAT VS VIEW (Goku vs Vegeta Style) -->
+        <ui:VisualElement name="CombatViewContainer" class="display2-view-container display2-hidden">
+            <ui:Label name="CombatRoundTitle" text="SEMIFINALS - COMBAT #1" class="combat-round-title" />
+            
+            <ui:VisualElement class="combat-stage">
+                <!-- PLAYER 1 CARD -->
+                <ui:VisualElement name="Player1Card" class="combat-player-card p1-card">
+                    <ui:VisualElement class="player-avatar-circle p1-avatar">
+                        <ui:Label name="Player1Initials" text="G" class="player-avatar-initials" />
+                    </ui:VisualElement>
+                    <ui:Label name="Player1Seed" text="#1 SEED" class="combat-player-seed" />
+                    <ui:Label name="Player1Name" text="Goku" class="combat-player-name" />
+                    <ui:Label name="Player1Status" text="COMBATENT" class="combat-player-status" />
+                </ui:VisualElement>
+
+                <!-- VS LOGO EMBLEM -->
+                <ui:VisualElement class="vs-emblem-container">
+                    <ui:Label text="VS" class="vs-emblem-text" />
+                    <ui:VisualElement class="vs-pulse-ring" />
+                </ui:VisualElement>
+
+                <!-- PLAYER 2 CARD -->
+                <ui:VisualElement name="Player2Card" class="combat-player-card p2-card">
+                    <ui:VisualElement class="player-avatar-circle p2-avatar">
+                        <ui:Label name="Player2Initials" text="V" class="player-avatar-initials" />
+                    </ui:VisualElement>
+                    <ui:Label name="Player2Seed" text="#2 SEED" class="combat-player-seed" />
+                    <ui:Label name="Player2Name" text="Vegeta" class="combat-player-name" />
+                    <ui:Label name="Player2Status" text="COMBATENT" class="combat-player-status" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 3: CHAMPION CELEBRATION VIEW -->
+        <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display2-hidden">
+            <ui:VisualElement class="champion-stage">
+                <ui:Label text="🏆" class="champion-huge-trophy" />
+                <ui:Label text="CAMPIÓ DEL TORNEIG" class="champion-stage-subtitle" />
+                <ui:Label name="ChampionStageName" text="GOKU" class="champion-stage-name" />
+                <ui:Label text="¡ENHORABONA AL NOU CAMPIÓ!" class="champion-stage-footer" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

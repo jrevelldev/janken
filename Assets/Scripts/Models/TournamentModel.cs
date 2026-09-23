@@ -5,6 +5,13 @@ using UnityEngine;
 
 namespace Janken.Tournament
 {
+    public enum DisplayViewType
+    {
+        Bracket,        // Vista neta del quadre / classificació
+        Combat,         // Vista del combat actual (Goku vs Vegeta)
+        ChampionPodium  // Vista de celebració del campió
+    }
+
     [Serializable]
     public class MatchSaveData
     {
@@ -41,6 +48,14 @@ namespace Janken.Tournament
         public List<List<Match>> Rounds { get; private set; } = new List<List<Match>>();
         public Player Champion { get; private set; }
         public bool IsActive { get; private set; } = false;
+
+        // MultiDisplay State & Events
+        public DisplayViewType CurrentDisplayView { get; private set; } = DisplayViewType.Bracket;
+        public Match SelectedCombatMatch { get; private set; }
+
+        public event Action OnTournamentUpdated;
+        public event Action<DisplayViewType> OnDisplayViewChanged;
+        public event Action<Match> OnSelectedMatchChanged;
 
         public TournamentModel()
         {
@@ -333,6 +348,51 @@ namespace Janken.Tournament
             return $"RONDA {roundIndex + 1}";
         }
 
+        #region MultiDisplay Management Methods
+
+        public void SetDisplayView(DisplayViewType view)
+        {
+            CurrentDisplayView = view;
+            if (view == DisplayViewType.Combat && SelectedCombatMatch == null)
+            {
+                SelectedCombatMatch = GetNextPlayableMatch();
+            }
+            OnDisplayViewChanged?.Invoke(CurrentDisplayView);
+        }
+
+        public void SetSelectedCombatMatch(Match match)
+        {
+            SelectedCombatMatch = match;
+            OnSelectedMatchChanged?.Invoke(SelectedCombatMatch);
+        }
+
+        public Match GetNextPlayableMatch()
+        {
+            if (!IsActive || Rounds.Count == 0) return null;
+
+            // Search for first non-completed match with 2 players assigned
+            foreach (var round in Rounds)
+            {
+                foreach (var match in round)
+                {
+                    if (!match.isCompleted && !match.isBye && match.player1 != null && match.player2 != null)
+                    {
+                        return match;
+                    }
+                }
+            }
+
+            // Fallback to last match or first match
+            if (Rounds.Count > 0 && Rounds[Rounds.Count - 1].Count > 0)
+            {
+                return Rounds[Rounds.Count - 1][0];
+            }
+
+            return Rounds[0][0];
+        }
+
+        #endregion
+
         #region Persistence Save & Load
 
         public void SaveState()
@@ -370,6 +430,8 @@ namespace Janken.Tournament
             string json = JsonUtility.ToJson(saveData, false);
             PlayerPrefs.SetString(SAVE_KEY, json);
             PlayerPrefs.Save();
+
+            OnTournamentUpdated?.Invoke();
         }
 
         public bool LoadState()

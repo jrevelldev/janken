@@ -1,0 +1,238 @@
+/* Display2Manager.uss - Stage & Audience View Stylesheet */
+
+.display2-root {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #090d16;
+    color: #f8fafc;
+    flex-direction: column;
+}
+
+.display2-hidden {
+    display: none;
+}
+
+/* VIEW CONTAINER */
+.display2-view-container {
+    flex-grow: 1;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.display2-bracket-scroll {
+    width: 100%;
+    height: 100%;
+}
+
+.display2-bracket-scroll .unity-scroll-view__content-container {
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.display2-bracket-centered {
+    justify-content: center;
+    align-items: flex-start;
+    align-self: center;
+}
+
+/* COMBAT VS VIEW STYLING */
+.combat-round-title {
+    font-size: 28px;
+    -unity-font-style: bold;
+    color: #f59e0b;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.combat-stage {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    width: 90%;
+    margin-bottom: 40px;
+}
+
+/* NEUTRAL CLEAN CARD STYLING WHEN IDLE */
+.combat-player-card {
+    width: 380px;
+    height: 440px;
+    background-color: #1e293b;
+    border-radius: 20px;
+    border-width: 2px;
+    border-color: #334155;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    scale: 1 1;
+    transition-property: scale, border-color, background-color, opacity;
+    transition-duration: 0.35s;
+}
+
+.p1-card {
+    border-color: #334155;
+    background-color: #1e293b;
+}
+
+.p2-card {
+    border-color: #334155;
+    background-color: #1e293b;
+}
+
+/* WINNER POP-OUT & LOSER DIM ANIMATIONS */
+.combat-card-winner {
+    scale: 1.12 1.12;
+    border-width: 4px !important;
+    border-color: #f59e0b !important;
+    background-color: rgba(245, 158, 11, 0.15) !important;
+    z-index: 10;
+}
+
+.combat-card-winner .player-avatar-circle {
+    border-color: #f59e0b !important;
+    background-color: #d97706 !important;
+}
+
+.combat-card-winner .combat-player-status {
+    background-color: #f59e0b !important;
+    color: #0f172a !important;
+    -unity-font-style: bold;
+}
+
+.combat-card-loser {
+    scale: 0.88 0.88;
+    opacity: 0.35 !important;
+    border-color: #334155 !important;
+}
+
+.combat-card-loser .combat-player-status {
+    background-color: #334155 !important;
+    color: #94a3b8 !important;
+}
+
+/* AVATAR CIRCLE */
+.player-avatar-circle {
+    width: 130px;
+    height: 130px;
+    border-radius: 65px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    border-width: 3px;
+    transition-duration: 0.35s;
+}
+
+.p1-avatar {
+    background-color: #334155;
+    border-color: #475569;
+}
+
+.p2-avatar {
+    background-color: #334155;
+    border-color: #475569;
+}
+
+.player-avatar-initials {
+    font-size: 54px;
+    -unity-font-style: bold;
+    color: #ffffff;
+    -unity-text-align: middle-center;
+}
+
+.combat-player-seed {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: #94a3b8;
+    margin-bottom: 6px;
+}
+
+.combat-player-name {
+    font-size: 34px;
+    -unity-font-style: bold;
+    color: #f8fafc;
+    margin-bottom: 14px;
+    text-align: center;
+}
+
+.combat-player-status {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: #94a3b8;
+    background-color: rgba(15, 23, 42, 0.8);
+    padding: 6px 18px;
+    border-radius: 12px;
+    transition-duration: 0.35s;
+}
+
+/* VS EMBLEM */
+.vs-emblem-container {
+    width: 140px;
+    height: 140px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+.vs-emblem-text {
+    font-size: 72px;
+    -unity-font-style: bold;
+    color: #f59e0b;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: #78350f;
+    letter-spacing: -4px;
+}
+
+.vs-pulse-ring {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    border-width: 3px;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+/* CHAMPION STAGE */
+.champion-stage {
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: rgba(30, 41, 59, 0.95);
+    border-width: 4px;
+    border-color: #f59e0b;
+    border-radius: 24px;
+    width: 600px;
+}
+
+.champion-huge-trophy {
+    font-size: 90px;
+    margin-bottom: 10px;
+}
+
+.champion-stage-subtitle {
+    font-size: 20px;
+    -unity-font-style: bold;
+    color: #f59e0b;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.champion-stage-name {
+    font-size: 48px;
+    -unity-font-style: bold;
+    color: #ffffff;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.champion-stage-footer {
+    font-size: 16px;
+    color: #94a3b8;
+}

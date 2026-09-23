@@ -1,7 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Video;
 using Janken.Tournament;
 
 namespace Janken.Controllers
@@ -9,6 +11,16 @@ namespace Janken.Controllers
     [RequireComponent(typeof(UIDocument))]
     public class TournamentUIController : MonoBehaviour
     {
+        [Header("MultiDisplay References")]
+        [SerializeField] private Display2Controller display2Controller;
+
+        [Header("Audio Settings")]
+        [SerializeField] private AudioSource audioSource;
+        [SerializeField] private AudioClip backgroundMusicClip;
+        [SerializeField] private VideoPlayer videoPlayer;
+        [SerializeField] private VideoClip backgroundVideoClip;
+        [SerializeField] private float fadeDuration = 1.5f;
+
         private UIDocument uiDocument;
         private VisualElement rootVisualElement;
 
@@ -27,11 +39,95 @@ namespace Janken.Controllers
         private Button btnGenerateBracket;
         private Button btnToggleSidebar;
 
+        // Display 2 Controls
+        private Button btnViewBracket;
+        private Button btnViewCombat;
+        private Button btnViewChampion;
+        private Label display2StatusText;
+
+        // Music Control
+        private Button btnToggleMusic;
+        private Coroutine audioFadeCoroutine;
+        private bool isMusicPlaying = false;
+
         private TournamentModel tournamentModel;
 
         private void Start()
         {
+            InitializeAudio();
             InitializeUI();
+        }
+
+        private void InitializeAudio()
+        {
+#if UNITY_EDITOR
+            if (backgroundVideoClip == null && backgroundMusicClip == null)
+            {
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Audio" });
+                foreach (string guid in guids)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                    var aClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+                    if (aClip != null)
+                    {
+                        backgroundMusicClip = aClip;
+                        break;
+                    }
+                    var vClip = UnityEditor.AssetDatabase.LoadAssetAtPath<VideoClip>(path);
+                    if (vClip != null)
+                    {
+                        backgroundVideoClip = vClip;
+                        break;
+                    }
+                }
+            }
+#endif
+
+            // Setup VideoPlayer for .mp4 audio clips
+            if (backgroundVideoClip != null || videoPlayer != null)
+            {
+                if (videoPlayer == null)
+                {
+                    videoPlayer = GetComponent<VideoPlayer>();
+                    if (videoPlayer == null)
+                    {
+                        videoPlayer = gameObject.AddComponent<VideoPlayer>();
+                    }
+                }
+
+                if (backgroundVideoClip != null)
+                {
+                    videoPlayer.clip = backgroundVideoClip;
+                }
+
+                videoPlayer.playOnAwake = false;
+                videoPlayer.isLooping = true;
+                videoPlayer.renderMode = VideoRenderMode.APIOnly;
+                videoPlayer.audioOutputMode = VideoAudioOutputMode.Direct;
+                videoPlayer.SetDirectAudioVolume(0, 0f);
+            }
+
+            // Setup AudioSource for standard audio clips
+            if (backgroundMusicClip != null || audioSource != null)
+            {
+                if (audioSource == null)
+                {
+                    audioSource = GetComponent<AudioSource>();
+                    if (audioSource == null)
+                    {
+                        audioSource = gameObject.AddComponent<AudioSource>();
+                    }
+                }
+
+                audioSource.loop = true;
+                audioSource.playOnAwake = false;
+                audioSource.volume = 0f;
+
+                if (backgroundMusicClip != null)
+                {
+                    audioSource.clip = backgroundMusicClip;
+                }
+            }
         }
 
         public void InitializeUI()
@@ -44,11 +140,39 @@ namespace Janken.Controllers
 
             tournamentModel = new TournamentModel();
 
+            // Link Display 2 Controller
+            if (display2Controller == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                display2Controller = FindFirstObjectByType<Display2Controller>();
+#else
+                display2Controller = FindObjectOfType<Display2Controller>();
+#endif
+            }
+
+            if (display2Controller != null)
+            {
+                display2Controller.BindModel(tournamentModel);
+            }
+
             BindUIElements();
             RegisterEvents();
 
+            tournamentModel.OnDisplayViewChanged += OnDisplayViewChanged;
+            tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
+
             RenderPlayerList();
             RenderBracket();
+            UpdateDisplay2StatusUI();
+        }
+
+        private void OnDestroy()
+        {
+            if (tournamentModel != null)
+            {
+                tournamentModel.OnDisplayViewChanged -= OnDisplayViewChanged;
+                tournamentModel.OnSelectedMatchChanged -= OnSelectedMatchChanged;
+            }
         }
 
         private void BindUIElements()
@@ -67,6 +191,15 @@ namespace Janken.Controllers
             btnResetDefaults = rootVisualElement.Q<Button>("BtnResetDefaults");
             btnGenerateBracket = rootVisualElement.Q<Button>("BtnGenerateBracket");
             btnToggleSidebar = rootVisualElement.Q<Button>("BtnToggleSidebar");
+
+            // Display 2 Controls
+            btnViewBracket = rootVisualElement.Q<Button>("BtnViewBracket");
+            btnViewCombat = rootVisualElement.Q<Button>("BtnViewCombat");
+            btnViewChampion = rootVisualElement.Q<Button>("BtnViewChampion");
+            display2StatusText = rootVisualElement.Q<Label>("Display2StatusText");
+
+            // Music Control
+            btnToggleMusic = rootVisualElement.Q<Button>("BtnToggleMusic");
         }
 
         private void RegisterEvents()
@@ -91,6 +224,172 @@ namespace Janken.Controllers
             if (btnResetDefaults != null) btnResetDefaults.clicked += OnResetDefaultsClicked;
             if (btnGenerateBracket != null) btnGenerateBracket.clicked += OnGenerateBracketClicked;
             if (btnToggleSidebar != null) btnToggleSidebar.clicked += OnToggleSidebarClicked;
+
+            // Display 2 View Controls
+            if (btnViewBracket != null) btnViewBracket.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.Bracket);
+            if (btnViewCombat != null) btnViewCombat.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.Combat);
+            if (btnViewChampion != null) btnViewChampion.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChampionPodium);
+
+            // Music Toggle Control
+            if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
+        }
+
+        #region Audio Control Logic
+
+        private void OnToggleMusicClicked()
+        {
+            isMusicPlaying = !isMusicPlaying;
+
+            if (audioFadeCoroutine != null) StopCoroutine(audioFadeCoroutine);
+
+            if (isMusicPlaying)
+            {
+                audioFadeCoroutine = StartCoroutine(FadeInMusic());
+                if (btnToggleMusic != null)
+                {
+                    btnToggleMusic.text = "🔊 Música: ON";
+                    btnToggleMusic.AddToClassList("btn-music-active");
+                }
+            }
+            else
+            {
+                audioFadeCoroutine = StartCoroutine(FadeOutMusic());
+                if (btnToggleMusic != null)
+                {
+                    btnToggleMusic.text = "🎵 Música: OFF";
+                    btnToggleMusic.RemoveFromClassList("btn-music-active");
+                }
+            }
+        }
+
+        private IEnumerator FadeInMusic()
+        {
+            // VideoPlayer (.mp4)
+            if (videoPlayer != null && videoPlayer.clip != null)
+            {
+                if (!videoPlayer.isPlaying) videoPlayer.Play();
+
+                float startVol = videoPlayer.GetDirectAudioVolume(0);
+                float timer = 0f;
+
+                while (timer < fadeDuration)
+                {
+                    timer += Time.deltaTime;
+                    float vol = Mathf.Lerp(startVol, 1f, timer / fadeDuration);
+                    videoPlayer.SetDirectAudioVolume(0, vol);
+                    yield return null;
+                }
+
+                videoPlayer.SetDirectAudioVolume(0, 1f);
+            }
+
+            // AudioSource (.wav / .mp3)
+            if (audioSource != null && audioSource.clip != null)
+            {
+                if (!audioSource.isPlaying) audioSource.Play();
+
+                float startVol = audioSource.volume;
+                float timer = 0f;
+
+                while (timer < fadeDuration)
+                {
+                    timer += Time.deltaTime;
+                    audioSource.volume = Mathf.Lerp(startVol, 1f, timer / fadeDuration);
+                    yield return null;
+                }
+
+                audioSource.volume = 1f;
+            }
+        }
+
+        private IEnumerator FadeOutMusic()
+        {
+            // VideoPlayer (.mp4)
+            if (videoPlayer != null && videoPlayer.isPlaying)
+            {
+                float startVol = videoPlayer.GetDirectAudioVolume(0);
+                float timer = 0f;
+
+                while (timer < fadeDuration)
+                {
+                    timer += Time.deltaTime;
+                    float vol = Mathf.Lerp(startVol, 0f, timer / fadeDuration);
+                    videoPlayer.SetDirectAudioVolume(0, vol);
+                    yield return null;
+                }
+
+                videoPlayer.SetDirectAudioVolume(0, 0f);
+                videoPlayer.Stop();
+                videoPlayer.time = 0f; // Reset / Rewind
+            }
+
+            // AudioSource (.wav / .mp3)
+            if (audioSource != null && audioSource.isPlaying)
+            {
+                float startVol = audioSource.volume;
+                float timer = 0f;
+
+                while (timer < fadeDuration)
+                {
+                    timer += Time.deltaTime;
+                    audioSource.volume = Mathf.Lerp(startVol, 0f, timer / fadeDuration);
+                    yield return null;
+                }
+
+                audioSource.volume = 0f;
+                audioSource.Stop();
+                audioSource.time = 0f; // Reset / Rewind
+            }
+        }
+
+        #endregion
+
+        private void OnDisplayViewChanged(DisplayViewType newView)
+        {
+            UpdateDisplay2StatusUI();
+        }
+
+        private void OnSelectedMatchChanged(Match match)
+        {
+            UpdateDisplay2StatusUI();
+        }
+
+        private void UpdateDisplay2StatusUI()
+        {
+            if (tournamentModel == null) return;
+
+            // Highlight Active View Button
+            SetButtonActive(btnViewBracket, tournamentModel.CurrentDisplayView == DisplayViewType.Bracket);
+            SetButtonActive(btnViewCombat, tournamentModel.CurrentDisplayView == DisplayViewType.Combat);
+            SetButtonActive(btnViewChampion, tournamentModel.CurrentDisplayView == DisplayViewType.ChampionPodium);
+
+            // Update Status Text
+            if (display2StatusText != null)
+            {
+                switch (tournamentModel.CurrentDisplayView)
+                {
+                    case DisplayViewType.Bracket:
+                        display2StatusText.text = "📺 DISPLAY 2: Mostrant QUADRE GENERAL / CLASSIFICACIÓ";
+                        break;
+                    case DisplayViewType.Combat:
+                        Match activeMatch = tournamentModel.SelectedCombatMatch ?? tournamentModel.GetNextPlayableMatch();
+                        string p1 = activeMatch?.player1 != null ? activeMatch.player1.name : "?";
+                        string p2 = activeMatch?.player2 != null ? activeMatch.player2.name : "?";
+                        display2StatusText.text = $"📺 DISPLAY 2: Mostrant COMBAT ( {p1} VS {p2} )";
+                        break;
+                    case DisplayViewType.ChampionPodium:
+                        string champ = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
+                        display2StatusText.text = $"📺 DISPLAY 2: Mostrant CAMPIÓ DEL TORNEIG ( {champ} )";
+                        break;
+                }
+            }
+        }
+
+        private void SetButtonActive(Button btn, bool active)
+        {
+            if (btn == null) return;
+            if (active) btn.AddToClassList("btn-display-view-active");
+            else btn.RemoveFromClassList("btn-display-view-active");
         }
 
         private void LoadPreset(int count)
@@ -245,7 +544,7 @@ namespace Janken.Controllers
 
                 bracketContainer.Add(roundColumn);
 
-                // Create Connecting Lines between Round r and Round r+1
+                // Connecting Lines
                 if (r < totalRounds - 1)
                 {
                     var connectorColumn = new VisualElement();
@@ -264,7 +563,6 @@ namespace Janken.Controllers
                         bool match1Active = match1 != null && match1.isCompleted;
                         bool match2Active = match2 != null && match2.isCompleted;
 
-                        // Upper horizontal arm
                         var upperArm = new VisualElement();
                         upperArm.AddToClassList("connector-arm");
                         if (match1Active) upperArm.AddToClassList("connector-arm-active");
@@ -273,7 +571,6 @@ namespace Janken.Controllers
                         upperArm.style.width = 16f;
                         upperArm.style.height = 2f;
 
-                        // Lower horizontal arm
                         var lowerArm = new VisualElement();
                         lowerArm.AddToClassList("connector-arm");
                         if (match2Active) lowerArm.AddToClassList("connector-arm-active");
@@ -282,7 +579,6 @@ namespace Janken.Controllers
                         lowerArm.style.width = 16f;
                         lowerArm.style.height = 2f;
 
-                        // Vertical connecting bar
                         var verticalBar = new VisualElement();
                         verticalBar.AddToClassList("connector-arm");
                         if (match1Active || match2Active) verticalBar.AddToClassList("connector-arm-active");
@@ -291,7 +587,6 @@ namespace Janken.Controllers
                         verticalBar.style.width = 2f;
                         verticalBar.style.height = yLower - yUpper + 2f;
 
-                        // Output arm to next round
                         var outArm = new VisualElement();
                         outArm.AddToClassList("connector-arm");
                         if (match1Active || match2Active) outArm.AddToClassList("connector-arm-active");
@@ -310,7 +605,7 @@ namespace Janken.Controllers
                 }
                 else
                 {
-                    // Final Round Connector to Champion Card
+                    // Champion Card in final round
                     if (tournamentModel.Champion != null)
                     {
                         var championConnectorCol = new VisualElement();
@@ -330,7 +625,6 @@ namespace Janken.Controllers
                         championConnectorCol.Add(champArm);
                         bracketContainer.Add(championConnectorCol);
 
-                        // Champion Podium Container
                         var championCol = new VisualElement();
                         championCol.AddToClassList("champion-container");
                         championCol.style.marginTop = finalTopOffset + HEADER_TOTAL - 50f;
@@ -341,7 +635,7 @@ namespace Janken.Controllers
                         var iconLabel = new Label("🏆");
                         iconLabel.AddToClassList("champion-icon");
 
-                        var titleLabel = new Label("PRIMERA POSICIÓ");
+                        var titleLabel = new Label("CAMPIÓ DEL TORNEIG");
                         titleLabel.AddToClassList("champion-title");
 
                         var nameLabel = new Label(tournamentModel.Champion.name);
@@ -362,17 +656,42 @@ namespace Janken.Controllers
         {
             var card = new VisualElement();
             card.AddToClassList("match-card");
+            card.style.flexDirection = FlexDirection.Row;
+            card.style.alignItems = Align.Center;
 
             if (match.isCompleted)
             {
                 card.AddToClassList("match-card-completed");
             }
 
+            // Single combat send button for the entire match
+            var sendCombatBtn = new Button(() =>
+            {
+                tournamentModel.SetSelectedCombatMatch(match);
+                tournamentModel.SetDisplayView(DisplayViewType.Combat);
+            });
+            sendCombatBtn.text = "⚔️";
+            sendCombatBtn.tooltip = "Enviar aquest combat a Display 2";
+            sendCombatBtn.focusable = false;
+            sendCombatBtn.AddToClassList("btn-match-send-combat");
+
+            if (tournamentModel.SelectedCombatMatch == match && tournamentModel.CurrentDisplayView == DisplayViewType.Combat)
+            {
+                sendCombatBtn.AddToClassList("btn-match-send-combat-active");
+            }
+
+            card.Add(sendCombatBtn);
+
+            var slotsContainer = new VisualElement();
+            slotsContainer.style.flexGrow = 1;
+            slotsContainer.style.flexDirection = FlexDirection.Column;
+
             VisualElement slot1 = CreatePlayerSlot(match, match.player1, match.winner == match.player1 && match.player1 != null, 1);
             VisualElement slot2 = CreatePlayerSlot(match, match.player2, match.winner == match.player2 && match.player2 != null, 2);
 
-            card.Add(slot1);
-            card.Add(slot2);
+            slotsContainer.Add(slot1);
+            slotsContainer.Add(slot2);
+            card.Add(slotsContainer);
 
             return card;
         }
@@ -398,6 +717,14 @@ namespace Janken.Controllers
                 else
                     slot.AddToClassList("match-slot-loser");
             }
+
+            // Allow clicking anywhere on the slot / player name to declare/toggle winner!
+            slot.RegisterCallback<ClickEvent>(evt =>
+            {
+                tournamentModel.ToggleOrDeclareWinner(match, player);
+                RenderBracket();
+                evt.StopPropagation();
+            });
 
             var nameLabel = new Label(player.name);
             nameLabel.AddToClassList("slot-player-name");
