@@ -453,6 +453,43 @@ namespace Janken.Tournament
             }
         }
 
+        public void ResetMatchProgress()
+        {
+            Champion = null;
+            foreach (var round in Rounds)
+            {
+                foreach (var m in round)
+                {
+                    m.SetWinner(null);
+                    m.score1 = 0;
+                    m.score2 = 0;
+                    if (m.roundIndex > 0)
+                    {
+                        m.player1 = null;
+                        m.player2 = null;
+                    }
+                }
+            }
+
+            if (Rounds.Count > 0)
+            {
+                foreach (var m in Rounds[0])
+                {
+                    if (m.player1 != null && m.player2 == null)
+                    {
+                        m.isBye = true;
+                        DeclareMatchWinner(m, m.player1, save: false);
+                    }
+                    else if (m.player1 == null && m.player2 != null)
+                    {
+                        m.isBye = true;
+                        DeclareMatchWinner(m, m.player2, save: false);
+                    }
+                }
+            }
+            SaveState();
+        }
+
         public void ResetAllData()
         {
             PlayerPrefs.DeleteKey(SAVE_KEY);

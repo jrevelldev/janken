@@ -25,7 +25,6 @@ namespace Janken.Controllers
         private Button btnShuffle;
         private Button btnResetDefaults;
         private Button btnGenerateBracket;
-        private Button btnResetTournament;
         private Button btnToggleSidebar;
 
         private TournamentModel tournamentModel;
@@ -67,7 +66,6 @@ namespace Janken.Controllers
             btnShuffle = rootVisualElement.Q<Button>("BtnShuffle");
             btnResetDefaults = rootVisualElement.Q<Button>("BtnResetDefaults");
             btnGenerateBracket = rootVisualElement.Q<Button>("BtnGenerateBracket");
-            btnResetTournament = rootVisualElement.Q<Button>("BtnResetTournament");
             btnToggleSidebar = rootVisualElement.Q<Button>("BtnToggleSidebar");
         }
 
@@ -92,7 +90,6 @@ namespace Janken.Controllers
             if (btnShuffle != null) btnShuffle.clicked += OnShuffleClicked;
             if (btnResetDefaults != null) btnResetDefaults.clicked += OnResetDefaultsClicked;
             if (btnGenerateBracket != null) btnGenerateBracket.clicked += OnGenerateBracketClicked;
-            if (btnResetTournament != null) btnResetTournament.clicked += OnResetTournamentClicked;
             if (btnToggleSidebar != null) btnToggleSidebar.clicked += OnToggleSidebarClicked;
         }
 
@@ -142,13 +139,6 @@ namespace Janken.Controllers
         private void OnGenerateBracketClicked()
         {
             tournamentModel.GenerateBracket();
-            RenderBracket();
-        }
-
-        private void OnResetTournamentClicked()
-        {
-            tournamentModel.ResetAllData();
-            RenderPlayerList();
             RenderBracket();
         }
 

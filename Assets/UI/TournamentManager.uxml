@@ -28,8 +28,8 @@
                 <!-- Dynamic player rows inserted here -->
             </ui:ScrollView>
 
-            <ui:Button name="BtnResetDefaults" text="🔄 Restablir Exemples" class="btn-secondary" style="margin-top: 6px; font-size: 12px;" />
-            <ui:Button name="BtnGenerateBracket" text="⚡ GENERAR QUADRE" class="btn-primary" style="height: 44px; font-size: 14px; margin-top: 8px;" />
+            <ui:Button name="BtnResetDefaults" text="🔄 Restablir Exemples" class="btn-secondary" style="margin-top: 6px; font-size: 11px;" />
+            <ui:Button name="BtnGenerateBracket" text="⚡ Generar / Reiniciar Quadre" class="btn-secondary" style="margin-top: 6px; font-size: 12px; padding: 6px 10px;" />
         </ui:VisualElement>
 
         <!-- Main Tournament Area -->
@@ -39,7 +39,6 @@
                 <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN - QUADRE FINAL" class="header-title" />
                 <ui:VisualElement class="header-controls">
                     <ui:Button name="BtnToggleSidebar" text="⚙️ Configuració" class="btn-secondary" />
-                    <ui:Button name="BtnResetTournament" text="🔄 Reiniciar" class="btn-secondary" />
                 </ui:VisualElement>
             </ui:VisualElement>
 
