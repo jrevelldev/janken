@@ -11,6 +11,7 @@ namespace Janken.Controllers
     {
         private UIDocument uiDocument;
         private VisualElement rootVisualElement;
+        private VisualElement display2Root;
 
         private Label headerTitleLabel;
         private Label headerSubtitleLabel;
@@ -18,6 +19,10 @@ namespace Janken.Controllers
         private VisualElement bracketViewContainer;
         private ScrollView bracketScrollView;
         private VisualElement bracketContainer;
+
+        private VisualElement singleRoundViewContainer;
+        private Label singleRoundHeaderTitle;
+        private VisualElement singleRoundContainer;
 
         private VisualElement combatViewContainer;
         private Label combatRoundTitle;
@@ -34,6 +39,21 @@ namespace Janken.Controllers
         private Label player2Status;
 
         private Label combatStatusBanner;
+
+        // Street Fighter Top Bar HUD (Chroma Overlay)
+        private VisualElement combatSFViewContainer;
+        private Label sfRoundTitle;
+        private VisualElement sfP1Card;
+        private Label sfP1Name;
+        private Label sfP1Seed;
+        private Label sfP1Initials;
+        private Label sfP1Status;
+
+        private VisualElement sfP2Card;
+        private Label sfP2Name;
+        private Label sfP2Seed;
+        private Label sfP2Initials;
+        private Label sfP2Status;
 
         private VisualElement championViewContainer;
         private Label championStageName;
@@ -66,6 +86,7 @@ namespace Janken.Controllers
                 tournamentModel.OnTournamentUpdated -= RefreshCurrentView;
                 tournamentModel.OnDisplayViewChanged -= OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged -= OnSelectedMatchChanged;
+                tournamentModel.OnSelectedRoundChanged -= OnSelectedRoundChanged;
             }
 
             tournamentModel = model;
@@ -75,6 +96,7 @@ namespace Janken.Controllers
                 tournamentModel.OnTournamentUpdated += RefreshCurrentView;
                 tournamentModel.OnDisplayViewChanged += OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
+                tournamentModel.OnSelectedRoundChanged += OnSelectedRoundChanged;
 
                 RefreshCurrentView();
             }
@@ -87,6 +109,7 @@ namespace Janken.Controllers
                 tournamentModel.OnTournamentUpdated -= RefreshCurrentView;
                 tournamentModel.OnDisplayViewChanged -= OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged -= OnSelectedMatchChanged;
+                tournamentModel.OnSelectedRoundChanged -= OnSelectedRoundChanged;
             }
         }
 
@@ -103,12 +126,17 @@ namespace Janken.Controllers
 
         private void BindUIElements()
         {
+            display2Root = rootVisualElement.Q<VisualElement>("Display2Root");
             headerTitleLabel = rootVisualElement.Q<Label>("Display2HeaderTitle");
             headerSubtitleLabel = rootVisualElement.Q<Label>("Display2HeaderSubtitle");
 
             bracketViewContainer = rootVisualElement.Q<VisualElement>("BracketViewContainer");
             bracketScrollView = rootVisualElement.Q<ScrollView>("Display2BracketScrollView");
             bracketContainer = rootVisualElement.Q<VisualElement>("Display2BracketContainer");
+
+            singleRoundViewContainer = rootVisualElement.Q<VisualElement>("SingleRoundViewContainer");
+            singleRoundHeaderTitle = rootVisualElement.Q<Label>("SingleRoundHeaderTitle");
+            singleRoundContainer = rootVisualElement.Q<VisualElement>("Display2SingleRoundContainer");
 
             combatViewContainer = rootVisualElement.Q<VisualElement>("CombatViewContainer");
             combatRoundTitle = rootVisualElement.Q<Label>("CombatRoundTitle");
@@ -127,6 +155,21 @@ namespace Janken.Controllers
 
             combatStatusBanner = rootVisualElement.Q<Label>("CombatStatusBanner");
 
+            // Street Fighter HUD Top Bar
+            combatSFViewContainer = rootVisualElement.Q<VisualElement>("CombatSFViewContainer");
+            sfRoundTitle = rootVisualElement.Q<Label>("SFRoundTitle");
+            sfP1Card = rootVisualElement.Q<VisualElement>("SFP1Card");
+            sfP1Name = rootVisualElement.Q<Label>("SFP1Name");
+            sfP1Seed = rootVisualElement.Q<Label>("SFP1Seed");
+            sfP1Initials = rootVisualElement.Q<Label>("SFP1Initials");
+            sfP1Status = rootVisualElement.Q<Label>("SFP1Status");
+
+            sfP2Card = rootVisualElement.Q<VisualElement>("SFP2Card");
+            sfP2Name = rootVisualElement.Q<Label>("SFP2Name");
+            sfP2Seed = rootVisualElement.Q<Label>("SFP2Seed");
+            sfP2Initials = rootVisualElement.Q<Label>("SFP2Initials");
+            sfP2Status = rootVisualElement.Q<Label>("SFP2Status");
+
             championViewContainer = rootVisualElement.Q<VisualElement>("ChampionViewContainer");
             championStageName = rootVisualElement.Q<Label>("ChampionStageName");
         }
@@ -136,11 +179,26 @@ namespace Janken.Controllers
             RefreshCurrentView();
         }
 
+        private void OnSelectedRoundChanged(int roundIndex)
+        {
+            if (tournamentModel != null && (tournamentModel.CurrentDisplayView == DisplayViewType.SingleRound || tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound))
+            {
+                RenderSingleRoundView(roundIndex);
+            }
+        }
+
         private void OnSelectedMatchChanged(Match match)
         {
-            if (tournamentModel != null && tournamentModel.CurrentDisplayView == DisplayViewType.Combat)
+            if (tournamentModel != null)
             {
-                RenderCombatView(match);
+                if (tournamentModel.CurrentDisplayView == DisplayViewType.Combat)
+                {
+                    RenderCombatView(match);
+                }
+                else if (tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF)
+                {
+                    RenderCombatSFView(match);
+                }
             }
         }
 
@@ -150,15 +208,28 @@ namespace Janken.Controllers
 
             // Hide all views first
             SetContainerVisible(bracketViewContainer, false);
+            SetContainerVisible(singleRoundViewContainer, false);
             SetContainerVisible(combatViewContainer, false);
+            SetContainerVisible(combatSFViewContainer, false);
             SetContainerVisible(championViewContainer, false);
+
+            bool isChroma = IsChromaView(tournamentModel.CurrentDisplayView);
+            UpdateBackgroundChromaMode(isChroma);
 
             switch (tournamentModel.CurrentDisplayView)
             {
                 case DisplayViewType.Bracket:
+                case DisplayViewType.ChromaBracket:
                     SetContainerVisible(bracketViewContainer, true);
-                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = "VISTA DEL QUADRE";
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "VISTA QUADRE (CROMA KEY)" : "VISTA DEL QUADRE";
                     RenderCleanBracket();
+                    break;
+
+                case DisplayViewType.SingleRound:
+                case DisplayViewType.ChromaSingleRound:
+                    SetContainerVisible(singleRoundViewContainer, true);
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "VISTA RONDA FOCUS (CROMA KEY)" : "VISTA RONDA FOCUS";
+                    RenderSingleRoundView(tournamentModel.SelectedRoundIndex);
                     break;
 
                 case DisplayViewType.Combat:
@@ -168,12 +239,44 @@ namespace Janken.Controllers
                     RenderCombatView(activeMatch);
                     break;
 
+                case DisplayViewType.ChromaCombatSF:
+                    SetContainerVisible(combatSFViewContainer, true);
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = "STREET FIGHTER OVERLAY (CROMA)";
+                    Match sfMatch = tournamentModel.SelectedCombatMatch ?? tournamentModel.GetNextPlayableMatch();
+                    RenderCombatSFView(sfMatch);
+                    break;
+
                 case DisplayViewType.ChampionPodium:
+                case DisplayViewType.ChromaChampion:
                     SetContainerVisible(championViewContainer, true);
-                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = "PODI DE CAMPIÓ";
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "PODI CAMPIÓ (CROMA KEY)" : "PODI DE CAMPIÓ";
                     RenderChampionView();
                     break;
             }
+        }
+
+        private void UpdateBackgroundChromaMode(bool isChroma)
+        {
+            if (display2Root == null) return;
+
+            if (isChroma)
+            {
+                display2Root.AddToClassList("display2-chroma-bg");
+                display2Root.style.backgroundColor = new StyleColor(new Color(0f, 1f, 0f, 1f)); // Pure Chroma Key Green #00FF00
+            }
+            else
+            {
+                display2Root.RemoveFromClassList("display2-chroma-bg");
+                display2Root.style.backgroundColor = new StyleColor(new Color(0.035f, 0.051f, 0.086f, 1f)); // Dark background #090d16
+            }
+        }
+
+        private bool IsChromaView(DisplayViewType view)
+        {
+            return view == DisplayViewType.ChromaBracket ||
+                   view == DisplayViewType.ChromaSingleRound ||
+                   view == DisplayViewType.ChromaCombatSF ||
+                   view == DisplayViewType.ChromaChampion;
         }
 
         private void SetContainerVisible(VisualElement element, bool visible)
@@ -553,6 +656,187 @@ namespace Janken.Controllers
             }
 
             return slot;
+        }
+
+        #endregion
+
+        #region Render Single Round View
+
+        private void RenderSingleRoundView(int roundIndex)
+        {
+            if (singleRoundContainer == null) return;
+            singleRoundContainer.Clear();
+
+            if (!tournamentModel.IsActive || tournamentModel.Rounds.Count == 0)
+            {
+                var emptyLabel = new Label("No hi ha cap torneig actiu.");
+                emptyLabel.style.color = new StyleColor(new Color(0.6f, 0.6f, 0.6f));
+                emptyLabel.style.fontSize = 24;
+                emptyLabel.style.marginTop = 40;
+                singleRoundContainer.Add(emptyLabel);
+                return;
+            }
+
+            roundIndex = Mathf.Clamp(roundIndex, 0, tournamentModel.Rounds.Count - 1);
+            string title = tournamentModel.GetRoundTitle(roundIndex);
+
+            if (singleRoundHeaderTitle != null)
+            {
+                singleRoundHeaderTitle.text = title;
+            }
+
+            var roundMatches = tournamentModel.Rounds[roundIndex];
+
+            // Dynamic Sizing so ALL matches fit without vertical scrolling!
+            float CARD_HEIGHT = 100f;
+            float BASE_GAP = 16f;
+            float SLOT_FONT_SIZE = 18f;
+            float CARD_WIDTH = 380f;
+
+            int matchCount = roundMatches.Count;
+
+            if (matchCount >= 8)
+            {
+                // 8 Matches (e.g. Vuitens for 16 players) -> 2 columns of 4 matches!
+                singleRoundContainer.style.flexDirection = FlexDirection.Row;
+                singleRoundContainer.style.justifyContent = Justify.Center;
+
+                CARD_HEIGHT = 70f;
+                BASE_GAP = 10f;
+                SLOT_FONT_SIZE = 14f;
+                CARD_WIDTH = 340f;
+
+                var col1 = new VisualElement();
+                col1.style.marginRight = 20f;
+                var col2 = new VisualElement();
+
+                for (int m = 0; m < matchCount; m++)
+                {
+                    Match match = roundMatches[m];
+                    VisualElement matchCard = CreateCleanMatchCard(match, CARD_HEIGHT, SLOT_FONT_SIZE);
+                    matchCard.style.marginBottom = BASE_GAP;
+                    matchCard.style.width = CARD_WIDTH;
+
+                    if (m < 4) col1.Add(matchCard);
+                    else col2.Add(matchCard);
+                }
+
+                singleRoundContainer.Add(col1);
+                singleRoundContainer.Add(col2);
+            }
+            else
+            {
+                // 1 column (4, 2, or 1 matches)
+                singleRoundContainer.style.flexDirection = FlexDirection.Column;
+                singleRoundContainer.style.alignItems = Align.Center;
+
+                if (matchCount == 4)
+                {
+                    CARD_HEIGHT = 85f;
+                    BASE_GAP = 14f;
+                    SLOT_FONT_SIZE = 16f;
+                    CARD_WIDTH = 420f;
+                }
+                else if (matchCount == 2)
+                {
+                    CARD_HEIGHT = 120f;
+                    BASE_GAP = 24f;
+                    SLOT_FONT_SIZE = 22f;
+                    CARD_WIDTH = 480f;
+                }
+                else // 1 Match (Final)
+                {
+                    CARD_HEIGHT = 180f;
+                    BASE_GAP = 0f;
+                    SLOT_FONT_SIZE = 28f;
+                    CARD_WIDTH = 550f;
+                }
+
+                var roundColumn = new VisualElement();
+                roundColumn.style.alignItems = Align.Center;
+
+                for (int m = 0; m < matchCount; m++)
+                {
+                    Match match = roundMatches[m];
+                    VisualElement matchCard = CreateCleanMatchCard(match, CARD_HEIGHT, SLOT_FONT_SIZE);
+                    matchCard.style.marginBottom = BASE_GAP;
+                    matchCard.style.width = CARD_WIDTH;
+                    roundColumn.Add(matchCard);
+                }
+
+                singleRoundContainer.Add(roundColumn);
+            }
+        }
+
+        #endregion
+
+        #region Render Street Fighter Top Bar HUD View (Chroma Overlay)
+
+        private void RenderCombatSFView(Match match)
+        {
+            if (match == null)
+            {
+                if (sfRoundTitle != null) sfRoundTitle.text = "SENSE COMBAT";
+                if (sfP1Name != null) sfP1Name.text = "---";
+                if (sfP2Name != null) sfP2Name.text = "---";
+                return;
+            }
+
+            if (sfRoundTitle != null)
+            {
+                string roundName = tournamentModel.GetRoundTitle(match.roundIndex);
+                sfRoundTitle.text = $"{roundName} • COMBAT #{match.matchIndex + 1}";
+            }
+
+            // Player 1
+            if (match.player1 != null)
+            {
+                if (sfP1Name != null) sfP1Name.text = match.player1.name;
+                if (sfP1Initials != null) sfP1Initials.text = GetInitials(match.player1.name);
+            }
+            else
+            {
+                if (sfP1Name != null) sfP1Name.text = "PER DETERMINAR";
+                if (sfP1Initials != null) sfP1Initials.text = "?";
+            }
+
+            // Player 2
+            if (match.player2 != null)
+            {
+                if (sfP2Name != null) sfP2Name.text = match.player2.name;
+                if (sfP2Initials != null) sfP2Initials.text = GetInitials(match.player2.name);
+            }
+            else
+            {
+                if (sfP2Name != null) sfP2Name.text = "PER DETERMINAR";
+                if (sfP2Initials != null) sfP2Initials.text = "?";
+            }
+
+            // Reset HUD status classes
+            if (sfP1Card != null)
+            {
+                sfP1Card.RemoveFromClassList("sf-card-winner");
+                sfP1Card.RemoveFromClassList("sf-card-loser");
+            }
+            if (sfP2Card != null)
+            {
+                sfP2Card.RemoveFromClassList("sf-card-winner");
+                sfP2Card.RemoveFromClassList("sf-card-loser");
+            }
+
+            if (match.isCompleted && match.winner != null)
+            {
+                if (match.winner == match.player1)
+                {
+                    if (sfP1Card != null) sfP1Card.AddToClassList("sf-card-winner");
+                    if (sfP2Card != null) sfP2Card.AddToClassList("sf-card-loser");
+                }
+                else
+                {
+                    if (sfP2Card != null) sfP2Card.AddToClassList("sf-card-winner");
+                    if (sfP1Card != null) sfP1Card.AddToClassList("sf-card-loser");
+                }
+            }
         }
 
         #endregion

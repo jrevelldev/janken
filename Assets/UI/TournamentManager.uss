@@ -11,7 +11,7 @@
     --accent-gold: #f59e0b;
     --text-primary: #f8fafc;
     --text-muted: #94a3b8;
-    --success-green: #10b981;
+    --accent-success: #06b6d4;
     --danger-red: #ef4444;
 }
 
@@ -27,7 +27,7 @@
 
 /* Header Bar */
 .top-header {
-    height: 60px;
+    height: 74px;
     background-color: rgba(15, 23, 42, 0.95);
     border-bottom-width: 1px;
     border-bottom-color: var(--border-color);
@@ -252,6 +252,12 @@
     margin-bottom: 20px;
     border-bottom-width: 2px;
     border-bottom-color: var(--accent-purple);
+    transition-duration: 0.15s;
+}
+
+.round-header:hover {
+    background-color: var(--accent-purple);
+    color: #ffffff;
 }
 
 /* Match Card */
@@ -280,7 +286,7 @@
 }
 
 .match-card-completed {
-    border-color: var(--success-green);
+    border-color: var(--accent-cyan);
 }
 
 .match-slot {
@@ -303,9 +309,9 @@
 }
 
 .match-slot-winner {
-    background-color: rgba(16, 185, 129, 0.2);
+    background-color: rgba(6, 182, 212, 0.2);
     border-left-width: 4px;
-    border-left-color: var(--success-green);
+    border-left-color: var(--accent-cyan);
 }
 
 .match-slot-loser {
@@ -421,34 +427,50 @@
     text-align: center;
 }
 
-/* Control Display 2 Bar in Header */
+/* Control Display 2 Bar Group in Header */
+.display2-control-bar-group {
+    flex-direction: column;
+    justify-content: center;
+}
+
 .display2-control-bar {
     flex-direction: row;
     align-items: center;
     background-color: rgba(30, 41, 59, 0.8);
-    border-radius: 8px;
-    padding: 4px 10px;
+    border-radius: 6px;
+    padding: 3px 8px;
     border-width: 1px;
     border-color: var(--border-color);
+    margin-bottom: 3px;
+}
+
+.chroma-bar {
+    background-color: rgba(15, 23, 42, 0.9);
+    border-color: rgba(6, 182, 212, 0.4);
+    margin-bottom: 0px;
+}
+
+.chroma-label {
+    color: #f59e0b !important;
 }
 
 .display2-bar-label {
-    font-size: 11px;
+    font-size: 10px;
     -unity-font-style: bold;
     color: var(--accent-cyan);
-    margin-right: 8px;
+    margin-right: 6px;
 }
 
 .btn-display-view {
     background-color: #334155;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
     -unity-font-style: bold;
-    border-radius: 6px;
+    border-radius: 5px;
     border-width: 0;
-    padding: 6px 12px;
-    margin-left: 4px;
-    margin-right: 4px;
+    padding: 4px 10px;
+    margin-left: 3px;
+    margin-right: 3px;
     transition-duration: 0.15s;
 }
 
@@ -464,19 +486,63 @@
     border-color: #a855f7;
 }
 
+.btn-chroma-view {
+    background-color: #1e293b;
+    color: #cbd5e1;
+    font-size: 11px;
+    border-width: 1px;
+    border-color: rgba(6, 182, 212, 0.3);
+}
+
+.btn-chroma-view:hover {
+    background-color: #0284c7;
+    color: #ffffff;
+}
+
 .display2-status-banner {
-    height: 32px;
+    height: 36px;
     background-color: rgba(6, 182, 212, 0.12);
     border-bottom-width: 1px;
     border-bottom-color: rgba(6, 182, 212, 0.3);
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .display2-status-text {
     font-size: 12px;
     -unity-font-style: bold;
     color: var(--accent-cyan);
+}
+
+.round-selector-container {
+    flex-direction: row;
+    align-items: center;
+}
+
+.btn-round-pill {
+    background-color: #334155;
+    color: #cbd5e1;
+    font-size: 11px;
+    -unity-font-style: bold;
+    border-radius: 12px;
+    border-width: 0;
+    padding: 3px 10px;
+    margin-left: 4px;
+    transition-duration: 0.15s;
+}
+
+.btn-round-pill:hover {
+    background-color: #475569;
+    color: #ffffff;
+}
+
+.btn-round-pill-active {
+    background-color: var(--accent-gold);
+    color: #0f172a;
+    -unity-font-style: bold;
 }
 
 .btn-match-send-combat {
@@ -497,7 +563,7 @@
 }
 
 .btn-match-send-combat:hover {
-    background-color: var(--accent-cyan);
+    background-color: #ffffff;
     color: #0f172a;
 }
 
@@ -506,11 +572,14 @@
     color: var(--text-muted);
 }
 
-.btn-match-send-combat-active,
-.btn-match-send-combat-active:hover,
-.btn-match-send-combat-active:focus {
-    background-color: var(--accent-purple) !important;
+.btn-match-send-combat-active {
+    background-color: #0284c7 !important;
     color: #ffffff !important;
+}
+
+.btn-match-send-combat-active:hover {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
 }
 
 .btn-music {
@@ -527,10 +596,10 @@
 }
 
 .btn-music-active {
-    background-color: #10b981 !important;
+    background-color: var(--accent-purple) !important;
     color: #ffffff !important;
     border-width: 1px;
-    border-color: #34d399;
+    border-color: #a855f7;
 }
 
 

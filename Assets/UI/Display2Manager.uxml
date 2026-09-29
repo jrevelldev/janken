@@ -13,7 +13,15 @@
             </ui:ScrollView>
         </ui:VisualElement>
 
-        <!-- VIEW 2: COMBAT VS VIEW (Goku vs Vegeta Style) -->
+        <!-- VIEW 2: SINGLE ROUND FOCUS VIEW (NO SCROLL, FIT TO SCREEN) -->
+        <ui:VisualElement name="SingleRoundViewContainer" class="display2-view-container display2-hidden">
+            <ui:Label name="SingleRoundHeaderTitle" text="QUARTS DE FINAL" class="round-focus-title" />
+            <ui:VisualElement name="Display2SingleRoundContainer" class="single-round-container">
+                <!-- Clean single round dynamically rendered here -->
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 3: COMBAT VS VIEW (Goku vs Vegeta Style) -->
         <ui:VisualElement name="CombatViewContainer" class="display2-view-container display2-hidden">
             <ui:Label name="CombatRoundTitle" text="SEMIFINALS - COMBAT #1" class="combat-round-title" />
             
@@ -46,7 +54,34 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
-        <!-- VIEW 3: CHAMPION CELEBRATION VIEW -->
+        <!-- VIEW 4: COMBAT STREET FIGHTER TOP BAR / HUD (CHROMA OVERLAY) -->
+        <ui:VisualElement name="CombatSFViewContainer" class="display2-view-container display2-hidden sf-overlay-view">
+            <ui:VisualElement class="sf-hud-bar">
+                <!-- P1 HUD LEFT CARD (Ultra Minimal: Circle Initials + Big Name) -->
+                <ui:VisualElement name="SFP1Card" class="sf-player-card sf-p1-card">
+                    <ui:VisualElement class="sf-avatar-box">
+                        <ui:Label name="SFP1Initials" text="GO" class="sf-avatar-initials" />
+                    </ui:VisualElement>
+                    <ui:Label name="SFP1Name" text="Goku" class="sf-player-name" />
+                </ui:VisualElement>
+
+                <!-- VS HUD CENTER EMBLEM -->
+                <ui:VisualElement class="sf-vs-center">
+                    <ui:Label name="SFRoundTitle" text="SEMIFINALS - COMBAT #1" class="sf-round-title" />
+                    <ui:Label text="VS" class="sf-vs-text" />
+                </ui:VisualElement>
+
+                <!-- P2 HUD RIGHT CARD (Ultra Minimal: Circle Initials + Big Name) -->
+                <ui:VisualElement name="SFP2Card" class="sf-player-card sf-p2-card">
+                    <ui:Label name="SFP2Name" text="Vegeta" class="sf-player-name" />
+                    <ui:VisualElement class="sf-avatar-box">
+                        <ui:Label name="SFP2Initials" text="VE" class="sf-avatar-initials" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 5: CHAMPION CELEBRATION VIEW -->
         <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display2-hidden">
             <ui:VisualElement class="champion-stage">
                 <ui:Label text="🏆" class="champion-huge-trophy" />

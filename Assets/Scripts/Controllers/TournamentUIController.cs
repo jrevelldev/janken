@@ -39,10 +39,16 @@ namespace Janken.Controllers
         private Button btnGenerateBracket;
         private Button btnToggleSidebar;
 
-        // Display 2 Controls
+        // Display 2 Controls (Standard & Chroma)
         private Button btnViewBracket;
+        private Button btnViewRound;
         private Button btnViewCombat;
         private Button btnViewChampion;
+        private Button btnChromaBracket;
+        private Button btnChromaRound;
+        private Button btnChromaCombatSF;
+        private Button btnChromaChampion;
+        private VisualElement roundSelectorContainer;
         private Label display2StatusText;
 
         // Music Control
@@ -160,6 +166,7 @@ namespace Janken.Controllers
 
             tournamentModel.OnDisplayViewChanged += OnDisplayViewChanged;
             tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
+            tournamentModel.OnSelectedRoundChanged += (round) => UpdateDisplay2StatusUI();
 
             RenderPlayerList();
             RenderBracket();
@@ -192,10 +199,19 @@ namespace Janken.Controllers
             btnGenerateBracket = rootVisualElement.Q<Button>("BtnGenerateBracket");
             btnToggleSidebar = rootVisualElement.Q<Button>("BtnToggleSidebar");
 
-            // Display 2 Controls
+            // Display 2 Controls (Standard)
             btnViewBracket = rootVisualElement.Q<Button>("BtnViewBracket");
+            btnViewRound = rootVisualElement.Q<Button>("BtnViewRound");
             btnViewCombat = rootVisualElement.Q<Button>("BtnViewCombat");
             btnViewChampion = rootVisualElement.Q<Button>("BtnViewChampion");
+
+            // Display 2 Controls (Chroma Key OBS)
+            btnChromaBracket = rootVisualElement.Q<Button>("BtnChromaBracket");
+            btnChromaRound = rootVisualElement.Q<Button>("BtnChromaRound");
+            btnChromaCombatSF = rootVisualElement.Q<Button>("BtnChromaCombatSF");
+            btnChromaChampion = rootVisualElement.Q<Button>("BtnChromaChampion");
+
+            roundSelectorContainer = rootVisualElement.Q<VisualElement>("RoundSelectorContainer");
             display2StatusText = rootVisualElement.Q<Label>("Display2StatusText");
 
             // Music Control
@@ -225,10 +241,17 @@ namespace Janken.Controllers
             if (btnGenerateBracket != null) btnGenerateBracket.clicked += OnGenerateBracketClicked;
             if (btnToggleSidebar != null) btnToggleSidebar.clicked += OnToggleSidebarClicked;
 
-            // Display 2 View Controls
+            // Display 2 View Controls (Standard)
             if (btnViewBracket != null) btnViewBracket.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.Bracket);
+            if (btnViewRound != null) btnViewRound.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.SingleRound);
             if (btnViewCombat != null) btnViewCombat.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.Combat);
             if (btnViewChampion != null) btnViewChampion.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChampionPodium);
+
+            // Display 2 View Controls (Chroma Key OBS)
+            if (btnChromaBracket != null) btnChromaBracket.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaBracket);
+            if (btnChromaRound != null) btnChromaRound.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaSingleRound);
+            if (btnChromaCombatSF != null) btnChromaCombatSF.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaCombatSF);
+            if (btnChromaChampion != null) btnChromaChampion.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaChampion);
 
             // Music Toggle Control
             if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
@@ -358,10 +381,19 @@ namespace Janken.Controllers
         {
             if (tournamentModel == null) return;
 
-            // Highlight Active View Button
+            // Highlight Active View Button (Standard)
             SetButtonActive(btnViewBracket, tournamentModel.CurrentDisplayView == DisplayViewType.Bracket);
+            SetButtonActive(btnViewRound, tournamentModel.CurrentDisplayView == DisplayViewType.SingleRound);
             SetButtonActive(btnViewCombat, tournamentModel.CurrentDisplayView == DisplayViewType.Combat);
             SetButtonActive(btnViewChampion, tournamentModel.CurrentDisplayView == DisplayViewType.ChampionPodium);
+
+            // Highlight Active View Button (Chroma)
+            SetButtonActive(btnChromaBracket, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket);
+            SetButtonActive(btnChromaRound, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound);
+            SetButtonActive(btnChromaCombatSF, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF);
+            SetButtonActive(btnChromaChampion, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion);
+
+            RenderRoundSelector();
 
             // Update Status Text
             if (display2StatusText != null)
@@ -369,7 +401,11 @@ namespace Janken.Controllers
                 switch (tournamentModel.CurrentDisplayView)
                 {
                     case DisplayViewType.Bracket:
-                        display2StatusText.text = "📺 DISPLAY 2: Mostrant QUADRE GENERAL / CLASSIFICACIÓ";
+                        display2StatusText.text = "📺 DISPLAY 2: Mostrant QUADRE GENERAL (Estàndard)";
+                        break;
+                    case DisplayViewType.SingleRound:
+                        string roundTitle = tournamentModel.GetRoundTitle(tournamentModel.SelectedRoundIndex);
+                        display2StatusText.text = $"📺 DISPLAY 2: Mostrant RONDA FOCUS ( {roundTitle} )";
                         break;
                     case DisplayViewType.Combat:
                         Match activeMatch = tournamentModel.SelectedCombatMatch ?? tournamentModel.GetNextPlayableMatch();
@@ -381,7 +417,55 @@ namespace Janken.Controllers
                         string champ = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
                         display2StatusText.text = $"📺 DISPLAY 2: Mostrant CAMPIÓ DEL TORNEIG ( {champ} )";
                         break;
+                    case DisplayViewType.ChromaBracket:
+                        display2StatusText.text = "🟢 DISPLAY 2 (CROMA): Mostrant QUADRE GENERAL (Fons Verd OBS)";
+                        break;
+                    case DisplayViewType.ChromaSingleRound:
+                        string cRoundTitle = tournamentModel.GetRoundTitle(tournamentModel.SelectedRoundIndex);
+                        display2StatusText.text = $"🟢 DISPLAY 2 (CROMA): Mostrant RONDA FOCUS ( {cRoundTitle} )";
+                        break;
+                    case DisplayViewType.ChromaCombatSF:
+                        Match sfMatch = tournamentModel.SelectedCombatMatch ?? tournamentModel.GetNextPlayableMatch();
+                        string sfp1 = sfMatch?.player1 != null ? sfMatch.player1.name : "?";
+                        string sfp2 = sfMatch?.player2 != null ? sfMatch.player2.name : "?";
+                        display2StatusText.text = $"🟢 DISPLAY 2 (CROMA): Mostrant HUD STREET FIGHTER ( {sfp1} VS {sfp2} )";
+                        break;
+                    case DisplayViewType.ChromaChampion:
+                        string cChamp = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
+                        display2StatusText.text = $"🟢 DISPLAY 2 (CROMA): Mostrant CAMPIÓ ( {cChamp} )";
+                        break;
                 }
+            }
+        }
+
+        private void RenderRoundSelector()
+        {
+            if (roundSelectorContainer == null) return;
+            roundSelectorContainer.Clear();
+
+            if (!tournamentModel.IsActive || tournamentModel.Rounds.Count == 0) return;
+
+            for (int r = 0; r < tournamentModel.Rounds.Count; r++)
+            {
+                int roundIdx = r;
+                string rName = tournamentModel.GetRoundTitle(r);
+                var btnRoundPill = new Button(() =>
+                {
+                    tournamentModel.SetSelectedRound(roundIdx);
+                    bool isChroma = tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion;
+                    tournamentModel.SetDisplayView(isChroma ? DisplayViewType.ChromaSingleRound : DisplayViewType.SingleRound);
+                    if (display2Controller != null) display2Controller.RefreshCurrentView();
+                });
+                btnRoundPill.text = rName;
+                btnRoundPill.AddToClassList("btn-round-pill");
+                if (r == tournamentModel.SelectedRoundIndex && (tournamentModel.CurrentDisplayView == DisplayViewType.SingleRound || tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound))
+                {
+                    btnRoundPill.AddToClassList("btn-round-pill-active");
+                }
+                roundSelectorContainer.Add(btnRoundPill);
             }
         }
 
@@ -519,12 +603,26 @@ namespace Janken.Controllers
 
             for (int r = 0; r < totalRounds; r++)
             {
+                int currentRoundIndex = r;
                 var roundMatches = tournamentModel.Rounds[r];
                 var roundColumn = new VisualElement();
                 roundColumn.AddToClassList("round-column");
 
                 var roundHeader = new Label(tournamentModel.GetRoundTitle(r));
                 roundHeader.AddToClassList("round-header");
+                roundHeader.pickingMode = PickingMode.Position;
+                roundHeader.tooltip = "Fes clic per enviar només aquesta ronda a Display 2!";
+                roundHeader.RegisterCallback<ClickEvent>(evt =>
+                {
+                    tournamentModel.SetSelectedRound(currentRoundIndex);
+                    bool isChroma = tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion;
+                    tournamentModel.SetDisplayView(isChroma ? DisplayViewType.ChromaSingleRound : DisplayViewType.SingleRound);
+                    if (display2Controller != null) display2Controller.RefreshCurrentView();
+                    evt.StopPropagation();
+                });
                 roundColumn.Add(roundHeader);
 
                 float multiplier = (float)Math.Pow(2, r);
@@ -664,18 +762,19 @@ namespace Janken.Controllers
                 card.AddToClassList("match-card-completed");
             }
 
-            // Single combat send button for the entire match
+            // Single combat select / mark button for the entire match
             var sendCombatBtn = new Button(() =>
             {
                 tournamentModel.SetSelectedCombatMatch(match);
-                tournamentModel.SetDisplayView(DisplayViewType.Combat);
+                RenderBracket();
+                UpdateDisplay2StatusUI();
             });
             sendCombatBtn.text = "⚔️";
-            sendCombatBtn.tooltip = "Enviar aquest combat a Display 2";
+            sendCombatBtn.tooltip = "Marcar aquest combat com a actiu (prem '⚔️ Combat' o '🥊 SF Top Bar' per mostrar-lo)";
             sendCombatBtn.focusable = false;
             sendCombatBtn.AddToClassList("btn-match-send-combat");
 
-            if (tournamentModel.SelectedCombatMatch == match && tournamentModel.CurrentDisplayView == DisplayViewType.Combat)
+            if (tournamentModel.SelectedCombatMatch == match)
             {
                 sendCombatBtn.AddToClassList("btn-match-send-combat-active");
             }

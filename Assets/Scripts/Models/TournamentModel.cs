@@ -7,9 +7,14 @@ namespace Janken.Tournament
 {
     public enum DisplayViewType
     {
-        Bracket,        // Vista neta del quadre / classificació
-        Combat,         // Vista del combat actual (Goku vs Vegeta)
-        ChampionPodium  // Vista de celebració del campió
+        Bracket,            // Vista neta del quadre complet (Standard)
+        SingleRound,        // Vista neta d'una sola ronda seleccionada (Standard)
+        Combat,             // Vista del combat actual (Goku vs Vegeta Standard)
+        ChampionPodium,     // Vista de celebració del campió (Standard)
+        ChromaBracket,      // Vista quadre (Fons Verd Croma OBS)
+        ChromaSingleRound,  // Vista ronda seleccionada (Fons Verd Croma OBS)
+        ChromaCombatSF,     // Vista combat HUD Top Bar Street Fighter (Fons Verd Croma OBS)
+        ChromaChampion      // Vista campió (Fons Verd Croma OBS)
     }
 
     [Serializable]
@@ -52,10 +57,12 @@ namespace Janken.Tournament
         // MultiDisplay State & Events
         public DisplayViewType CurrentDisplayView { get; private set; } = DisplayViewType.Bracket;
         public Match SelectedCombatMatch { get; private set; }
+        public int SelectedRoundIndex { get; private set; } = 0;
 
         public event Action OnTournamentUpdated;
         public event Action<DisplayViewType> OnDisplayViewChanged;
         public event Action<Match> OnSelectedMatchChanged;
+        public event Action<int> OnSelectedRoundChanged;
 
         public TournamentModel()
         {
@@ -353,11 +360,25 @@ namespace Janken.Tournament
         public void SetDisplayView(DisplayViewType view)
         {
             CurrentDisplayView = view;
-            if (view == DisplayViewType.Combat && SelectedCombatMatch == null)
+            if ((view == DisplayViewType.Combat || view == DisplayViewType.ChromaCombatSF) && SelectedCombatMatch == null)
             {
                 SelectedCombatMatch = GetNextPlayableMatch();
             }
             OnDisplayViewChanged?.Invoke(CurrentDisplayView);
+        }
+
+        public void SetSelectedRound(int roundIndex)
+        {
+            if (Rounds.Count > 0)
+            {
+                SelectedRoundIndex = Mathf.Clamp(roundIndex, 0, Rounds.Count - 1);
+            }
+            else
+            {
+                SelectedRoundIndex = 0;
+            }
+            OnSelectedRoundChanged?.Invoke(SelectedRoundIndex);
+            OnTournamentUpdated?.Invoke();
         }
 
         public void SetSelectedCombatMatch(Match match)
