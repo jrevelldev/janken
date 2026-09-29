@@ -60,6 +60,7 @@
                 </ui:VisualElement>
 
                 <ui:VisualElement class="header-controls">
+                    <ui:Toggle name="ToggleStinger" label="🎬 Stinger: ON" value="true" class="toggle-stinger" />
                     <ui:Button name="BtnToggleMusic" text="🎵 Música: OFF" class="btn-secondary btn-music" />
                     <ui:Button name="BtnToggleSidebar" text="⚙️ Configuració" class="btn-secondary" />
                 </ui:VisualElement>

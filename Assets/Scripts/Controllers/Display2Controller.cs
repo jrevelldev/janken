@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Janken.Tournament;
+using Janken.VFX;
 
 namespace Janken.Controllers
 {
@@ -12,6 +14,35 @@ namespace Janken.Controllers
         private UIDocument uiDocument;
         private VisualElement rootVisualElement;
         private VisualElement display2Root;
+
+        [Header("Stinger Transition Settings")]
+        [SerializeField] private bool useStingerTransitions = true;
+        [SerializeField] private bool randomizeStingerFlip = true;
+        [SerializeField] private bool useRandomStingerFromLibrary = true;
+        [SerializeField] private StingerAnimationData activeStinger;
+        [SerializeField] private List<StingerAnimationData> stingerLibrary = new List<StingerAnimationData>();
+        private VisualElement stingerOverlay;
+        private Coroutine activeStingerCoroutine;
+        private bool isStingerPlaying = false;
+
+        public void SetStingerEnabled(bool enabled)
+        {
+            useStingerTransitions = enabled;
+        }
+
+        public StingerAnimationData GetStingerToPlay()
+        {
+            if (useRandomStingerFromLibrary && stingerLibrary != null && stingerLibrary.Count > 0)
+            {
+                var validStingers = stingerLibrary.FindAll(s => s != null && s.FrameCount > 0);
+                if (validStingers.Count > 0)
+                {
+                    int randomIndex = UnityEngine.Random.Range(0, validStingers.Count);
+                    return validStingers[randomIndex];
+                }
+            }
+            return activeStinger;
+        }
 
         private Label headerTitleLabel;
         private Label headerSubtitleLabel;
@@ -172,11 +203,104 @@ namespace Janken.Controllers
 
             championViewContainer = rootVisualElement.Q<VisualElement>("ChampionViewContainer");
             championStageName = rootVisualElement.Q<Label>("ChampionStageName");
+
+            stingerOverlay = rootVisualElement.Q<VisualElement>("StingerOverlay");
         }
 
         private void OnDisplayViewChanged(DisplayViewType newView)
         {
-            RefreshCurrentView();
+            // If a stinger transition is ALREADY playing (e.g. initiated by UI button), do not launch a duplicate stinger!
+            if (isStingerPlaying)
+            {
+                RefreshCurrentView();
+                return;
+            }
+
+            StingerAnimationData targetStinger = GetStingerToPlay();
+            if (useStingerTransitions && targetStinger != null && targetStinger.FrameCount > 0)
+            {
+                PlayStingerTransition(() => RefreshCurrentView(), targetStinger);
+            }
+            else
+            {
+                RefreshCurrentView();
+            }
+        }
+
+        /// <summary>
+        /// Plays a Stinger transition animation, calling the callback at the cut point.
+        /// </summary>
+        public void PlayStingerTransition(Action onCutPoint, StingerAnimationData stinger = null)
+        {
+            if (stinger == null) stinger = GetStingerToPlay();
+            if (stinger == null || stinger.FrameCount == 0 || stingerOverlay == null)
+            {
+                onCutPoint?.Invoke();
+                return;
+            }
+
+            if (activeStingerCoroutine != null)
+            {
+                StopCoroutine(activeStingerCoroutine);
+            }
+
+            activeStingerCoroutine = StartCoroutine(StingerRoutine(stinger, onCutPoint));
+        }
+
+        private IEnumerator StingerRoutine(StingerAnimationData stinger, Action onCutPoint)
+        {
+            isStingerPlaying = true;
+
+            // Randomize horizontal and vertical flip for animation variety
+            if (randomizeStingerFlip)
+            {
+                float scaleX = UnityEngine.Random.value > 0.5f ? -1f : 1f;
+                float scaleY = UnityEngine.Random.value > 0.5f ? -1f : 1f;
+                stingerOverlay.style.scale = new StyleScale(new Scale(new Vector2(scaleX, scaleY)));
+            }
+            else
+            {
+                stingerOverlay.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
+            }
+
+            stingerOverlay.RemoveFromClassList("display2-hidden");
+
+            if (stinger.stingerSound != null)
+            {
+                AudioSource audioSource = GetComponent<AudioSource>();
+                if (audioSource != null)
+                {
+                    audioSource.PlayOneShot(stinger.stingerSound);
+                }
+            }
+
+            float frameDuration = stinger.fps > 0 ? 1f / stinger.fps : 1f / 30f;
+            int totalFrames = stinger.FrameCount;
+            int cutFrame = Mathf.Clamp(stinger.cutFrameIndex, 0, totalFrames - 1);
+
+            // Phase 1: Play frames up to the cut frame (screen covered)
+            for (int i = 0; i <= cutFrame; i++)
+            {
+                stingerOverlay.style.backgroundImage = Background.FromSprite(stinger.GetFrame(i));
+                yield return new WaitForSeconds(frameDuration);
+            }
+
+            // Phase 2: Perform the view refresh behind the opaque stinger frame
+            onCutPoint?.Invoke();
+
+            // Phase 3: Play remaining frames (screen reveals)
+            for (int i = cutFrame + 1; i < totalFrames; i++)
+            {
+                stingerOverlay.style.backgroundImage = Background.FromSprite(stinger.GetFrame(i));
+                yield return new WaitForSeconds(frameDuration);
+            }
+
+            // Phase 4: Clean up
+            stingerOverlay.AddToClassList("display2-hidden");
+            stingerOverlay.style.backgroundImage = null;
+            stingerOverlay.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
+            activeStingerCoroutine = null;
+            isStingerPlaying = false;
         }
 
         private void OnSelectedRoundChanged(int roundIndex)

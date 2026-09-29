@@ -51,10 +51,12 @@ namespace Janken.Controllers
         private VisualElement roundSelectorContainer;
         private Label display2StatusText;
 
-        // Music Control
+        // Music & Stinger Control
         private Button btnToggleMusic;
+        private Toggle toggleStinger;
         private Coroutine audioFadeCoroutine;
         private bool isMusicPlaying = false;
+        private bool useStingerTransitions = true;
 
         private TournamentModel tournamentModel;
 
@@ -214,8 +216,9 @@ namespace Janken.Controllers
             roundSelectorContainer = rootVisualElement.Q<VisualElement>("RoundSelectorContainer");
             display2StatusText = rootVisualElement.Q<Label>("Display2StatusText");
 
-            // Music Control
+            // Music & Stinger Control
             btnToggleMusic = rootVisualElement.Q<Button>("BtnToggleMusic");
+            toggleStinger = rootVisualElement.Q<Toggle>("ToggleStinger");
         }
 
         private void RegisterEvents()
@@ -242,19 +245,52 @@ namespace Janken.Controllers
             if (btnToggleSidebar != null) btnToggleSidebar.clicked += OnToggleSidebarClicked;
 
             // Display 2 View Controls (Standard)
-            if (btnViewBracket != null) btnViewBracket.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.Bracket);
-            if (btnViewRound != null) btnViewRound.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.SingleRound);
-            if (btnViewCombat != null) btnViewCombat.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.Combat);
-            if (btnViewChampion != null) btnViewChampion.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChampionPodium);
+            if (btnViewBracket != null) btnViewBracket.clicked += () => RequestDisplayViewChange(DisplayViewType.Bracket);
+            if (btnViewRound != null) btnViewRound.clicked += () => RequestDisplayViewChange(DisplayViewType.SingleRound);
+            if (btnViewCombat != null) btnViewCombat.clicked += () => RequestDisplayViewChange(DisplayViewType.Combat);
+            if (btnViewChampion != null) btnViewChampion.clicked += () => RequestDisplayViewChange(DisplayViewType.ChampionPodium);
 
             // Display 2 View Controls (Chroma Key OBS)
-            if (btnChromaBracket != null) btnChromaBracket.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaBracket);
-            if (btnChromaRound != null) btnChromaRound.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaSingleRound);
-            if (btnChromaCombatSF != null) btnChromaCombatSF.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaCombatSF);
-            if (btnChromaChampion != null) btnChromaChampion.clicked += () => tournamentModel.SetDisplayView(DisplayViewType.ChromaChampion);
+            if (btnChromaBracket != null) btnChromaBracket.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaBracket);
+            if (btnChromaRound != null) btnChromaRound.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaSingleRound);
+            if (btnChromaCombatSF != null) btnChromaCombatSF.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaCombatSF);
+            if (btnChromaChampion != null) btnChromaChampion.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaChampion);
+
+            // Stinger Toggle Control
+            if (toggleStinger != null)
+            {
+                toggleStinger.value = useStingerTransitions;
+                toggleStinger.RegisterValueChangedCallback(evt =>
+                {
+                    useStingerTransitions = evt.newValue;
+                    toggleStinger.label = useStingerTransitions ? "🎬 Stinger: ON" : "🎬 Stinger: OFF";
+                    if (display2Controller != null)
+                    {
+                        display2Controller.SetStingerEnabled(useStingerTransitions);
+                    }
+                });
+            }
 
             // Music Toggle Control
             if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
+        }
+
+        private void RequestDisplayViewChange(DisplayViewType targetView)
+        {
+            if (tournamentModel == null) return;
+            if (tournamentModel.CurrentDisplayView == targetView) return;
+
+            if (useStingerTransitions && display2Controller != null)
+            {
+                display2Controller.PlayStingerTransition(() =>
+                {
+                    tournamentModel.SetDisplayView(targetView);
+                });
+            }
+            else
+            {
+                tournamentModel.SetDisplayView(targetView);
+            }
         }
 
         #region Audio Control Logic

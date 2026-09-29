@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.UIElements;
 using Janken.Controllers;
+using Janken.VFX;
 
 namespace Janken.Editor
 {
@@ -127,6 +129,50 @@ namespace Janken.Editor
 
             Display2Controller controller2 = goD2.GetComponent<Display2Controller>();
             if (controller2 == null) controller2 = Undo.AddComponent<Display2Controller>(goD2);
+
+            // Auto-process & Assign Stingers in Assets/Sprites/VFX
+            string vfxPath = "Assets/Sprites/VFX";
+            if (System.IO.Directory.Exists(vfxPath))
+            {
+                List<StingerAnimationData> stingerList = new List<StingerAnimationData>();
+                string[] subDirs = System.IO.Directory.GetDirectories(vfxPath);
+                foreach (string dir in subDirs)
+                {
+                    string folderName = System.IO.Path.GetFileName(dir);
+                    if (folderName.StartsWith(".")) continue;
+
+                    StingerAnimationData sData = StingerImporterTool.ProcessStingerFolder(dir, folderName);
+                    if (sData != null)
+                    {
+                        stingerList.Add(sData);
+                    }
+                }
+
+                if (stingerList.Count > 0)
+                {
+                    SerializedObject serController2 = new SerializedObject(controller2);
+                    SerializedProperty activeStingerProp = serController2.FindProperty("activeStinger");
+                    SerializedProperty stingerLibProp = serController2.FindProperty("stingerLibrary");
+
+                    if (activeStingerProp != null)
+                    {
+                        activeStingerProp.objectReferenceValue = stingerList[0];
+                    }
+
+                    if (stingerLibProp != null)
+                    {
+                        stingerLibProp.ClearArray();
+                        for (int i = 0; i < stingerList.Count; i++)
+                        {
+                            stingerLibProp.InsertArrayElementAtIndex(i);
+                            stingerLibProp.GetArrayElementAtIndex(i).objectReferenceValue = stingerList[i];
+                        }
+                    }
+
+                    serController2.ApplyModifiedProperties();
+                    EditorUtility.SetDirty(controller2);
+                }
+            }
 
             // 5. Setup Camera for Display 2 (Eliminates "Display 2 No cameras rendering" overlay text)
             GameObject camObj2 = GameObject.Find("Display2_Camera");

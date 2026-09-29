@@ -625,6 +625,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8e242794b11b4bee8da7a0770a7ce0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Janken.Controllers.Display2Controller
+  useStingerTransitions: 1
+  randomizeStingerFlip: 1
+  useRandomStingerFromLibrary: 1
+  activeStinger: {fileID: 11400000, guid: 24896bd4380ac4632b768362a9758995, type: 2}
+  stingerLibrary:
+  - {fileID: 11400000, guid: 24896bd4380ac4632b768362a9758995, type: 2}
+  - {fileID: 11400000, guid: b243dd517331e47d183f41f8fddec3e6, type: 2}
+  - {fileID: 11400000, guid: bb7181fd44e144ffbbe99080d08c5948, type: 2}
 --- !u!114 &1278015258
 MonoBehaviour:
   m_ObjectHideFlags: 0

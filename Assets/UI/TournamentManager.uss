@@ -50,6 +50,18 @@
     align-items: center;
 }
 
+.toggle-stinger {
+    margin-right: 12px;
+    font-size: 12px;
+    -unity-font-style: bold;
+    color: var(--text-primary);
+}
+
+.toggle-stinger .unity-toggle__label {
+    color: #38bdf8;
+    margin-right: 6px;
+}
+
 /* Sidebar / Setup Panel */
 .sidebar {
     width: 320px;

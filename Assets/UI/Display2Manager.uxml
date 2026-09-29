@@ -91,5 +91,8 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
+        <!-- STINGER TRANSITION OVERLAY -->
+        <ui:VisualElement name="StingerOverlay" class="stinger-overlay display2-hidden" />
+
     </ui:VisualElement>
 </ui:UXML>

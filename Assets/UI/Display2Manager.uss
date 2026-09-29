@@ -393,3 +393,19 @@
 .sf-card-loser {
     opacity: 0.45 !important;
 }
+
+/* STINGER ANIMATION OVERLAY */
+.stinger-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+    transform-origin: center center;
+    picking-mode: Ignore;
+    z-index: 999;
+}
+

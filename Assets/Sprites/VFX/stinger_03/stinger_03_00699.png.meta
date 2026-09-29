@@ -1,0 +1,1248 @@
+fileFormatVersion: 2
+guid: 6f1b02d379dd241f9b78c11c4fd0066a
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -8047580894747802805
+    second: stinger_03_00699_0
+  - first:
+      213: -8937952022865910053
+    second: stinger_03_00699_1
+  - first:
+      213: -2120063506105853520
+    second: stinger_03_00699_2
+  - first:
+      213: -6260715375603435682
+    second: stinger_03_00699_3
+  - first:
+      213: 8956941071948940847
+    second: stinger_03_00699_4
+  - first:
+      213: -5492818360584901772
+    second: stinger_03_00699_5
+  - first:
+      213: 6653343048582627602
+    second: stinger_03_00699_6
+  - first:
+      213: -4965949493159840770
+    second: stinger_03_00699_7
+  - first:
+      213: -9065421863329516207
+    second: stinger_03_00699_8
+  - first:
+      213: -3346900585794267819
+    second: stinger_03_00699_9
+  - first:
+      213: 189180126432152558
+    second: stinger_03_00699_10
+  - first:
+      213: -8502368708890129360
+    second: stinger_03_00699_11
+  - first:
+      213: -4811066479422804736
+    second: stinger_03_00699_12
+  - first:
+      213: -3360553306383441360
+    second: stinger_03_00699_13
+  - first:
+      213: 1273454088991616869
+    second: stinger_03_00699_14
+  - first:
+      213: -7926765555608645209
+    second: stinger_03_00699_15
+  - first:
+      213: -1144075921167997130
+    second: stinger_03_00699_16
+  - first:
+      213: 6375669658092273880
+    second: stinger_03_00699_17
+  - first:
+      213: -523055269873938981
+    second: stinger_03_00699_18
+  - first:
+      213: -2860377514462712539
+    second: stinger_03_00699_19
+  - first:
+      213: 2013498760841719267
+    second: stinger_03_00699_20
+  - first:
+      213: -3303926633928658085
+    second: stinger_03_00699_21
+  - first:
+      213: 3909091871690218652
+    second: stinger_03_00699_22
+  - first:
+      213: 2701774525999604158
+    second: stinger_03_00699_23
+  - first:
+      213: 1876072641192408169
+    second: stinger_03_00699_24
+  - first:
+      213: 6192076153231455662
+    second: stinger_03_00699_25
+  - first:
+      213: 2877500154164420632
+    second: stinger_03_00699_26
+  - first:
+      213: -7837839700875775110
+    second: stinger_03_00699_27
+  - first:
+      213: 5562712435243760023
+    second: stinger_03_00699_28
+  - first:
+      213: -8247380345435139032
+    second: stinger_03_00699_29
+  - first:
+      213: -2017286536489273697
+    second: stinger_03_00699_30
+  - first:
+      213: 9012754858107436918
+    second: stinger_03_00699_31
+  - first:
+      213: 759615055217415683
+    second: stinger_03_00699_32
+  - first:
+      213: 6698305894924849742
+    second: stinger_03_00699_33
+  - first:
+      213: -5392907828365523145
+    second: stinger_03_00699_34
+  - first:
+      213: 3067152868512092104
+    second: stinger_03_00699_35
+  - first:
+      213: 7889738593053436124
+    second: stinger_03_00699_36
+  - first:
+      213: -2127978276134762065
+    second: stinger_03_00699_37
+  - first:
+      213: 4594766700412604255
+    second: stinger_03_00699_38
+  - first:
+      213: 638201467130527689
+    second: stinger_03_00699_39
+  - first:
+      213: -313940984591185012
+    second: stinger_03_00699_40
+  - first:
+      213: 1917164506733496550
+    second: stinger_03_00699_41
+  - first:
+      213: -2534494474763331645
+    second: stinger_03_00699_42
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: stinger_03_00699_0
+      rect:
+        serializedVersion: 2
+        x: 414
+        y: 1055
+        width: 183
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b43465b60df315090800000000000000
+      internalID: -8047580894747802805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_1
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 1062
+        width: 26
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bd6e7919df306f380800000000000000
+      internalID: -8937952022865910053
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_2
+      rect:
+        serializedVersion: 2
+        x: 1519
+        y: 955
+        width: 215
+        height: 125
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b99a4949750492e0800000000000000
+      internalID: -2120063506105853520
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_3
+      rect:
+        serializedVersion: 2
+        x: 1807
+        y: 1047
+        width: 113
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e57b45d59887d19a0800000000000000
+      internalID: -6260715375603435682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_4
+      rect:
+        serializedVersion: 2
+        x: 209
+        y: 1015
+        width: 42
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f268f93f2727d4c70800000000000000
+      internalID: 8956941071948940847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_5
+      rect:
+        serializedVersion: 2
+        x: 347
+        y: 1029
+        width: 37
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 47be791adc695c3b0800000000000000
+      internalID: -5492818360584901772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_6
+      rect:
+        serializedVersion: 2
+        x: 355
+        y: 834
+        width: 354
+        height: 187
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2110593704c655c50800000000000000
+      internalID: 6653343048582627602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_7
+      rect:
+        serializedVersion: 2
+        x: 484
+        y: 997
+        width: 8
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ef33da72f37651bb0800000000000000
+      internalID: -4965949493159840770
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_8
+      rect:
+        serializedVersion: 2
+        x: 494
+        y: 1014
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1553f2198d6213280800000000000000
+      internalID: -9065421863329516207
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_9
+      rect:
+        serializedVersion: 2
+        x: 774
+        y: 882
+        width: 384
+        height: 138
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5559f2d56ab6d81d0800000000000000
+      internalID: -3346900585794267819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_10
+      rect:
+        serializedVersion: 2
+        x: 152
+        y: 974
+        width: 12
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eeb4d8a925a10a200800000000000000
+      internalID: 189180126432152558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_11
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 966
+        width: 46
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 03c053de4b4810a80800000000000000
+      internalID: -8502368708890129360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_12
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 500
+        width: 383
+        height: 471
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00de63fe688ab3db0800000000000000
+      internalID: -4811066479422804736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_13
+      rect:
+        serializedVersion: 2
+        x: 294
+        y: 966
+        width: 13
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0322044a29aec51d0800000000000000
+      internalID: -3360553306383441360
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_14
+      rect:
+        serializedVersion: 2
+        x: 735
+        y: 962
+        width: 37
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 56f2d143fb73ca110800000000000000
+      internalID: 1273454088991616869
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_15
+      rect:
+        serializedVersion: 2
+        x: 318
+        y: 150
+        width: 568
+        height: 758
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a1152899b87ef190800000000000000
+      internalID: -7926765555608645209
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_16
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 908
+        width: 33
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63724b2e20d6f10f0800000000000000
+      internalID: -1144075921167997130
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_17
+      rect:
+        serializedVersion: 2
+        x: 1583
+        y: 418
+        width: 185
+        height: 541
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d083d736cdea7850800000000000000
+      internalID: 6375669658092273880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_18
+      rect:
+        serializedVersion: 2
+        x: 1742
+        y: 812
+        width: 57
+        height: 144
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdd8449d00cbdb8f0800000000000000
+      internalID: -523055269873938981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_19
+      rect:
+        serializedVersion: 2
+        x: 1190
+        y: 646
+        width: 66
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52d6fe63ec5ed48d0800000000000000
+      internalID: -2860377514462712539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_20
+      rect:
+        serializedVersion: 2
+        x: 1281
+        y: 503
+        width: 68
+        height: 180
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ede8ab747261fb10800000000000000
+      internalID: 2013498760841719267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_21
+      rect:
+        serializedVersion: 2
+        x: 1311
+        y: 655
+        width: 156
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53fabc3b381622d0800000000000000
+      internalID: -3303926633928658085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_22
+      rect:
+        serializedVersion: 2
+        x: 1741
+        y: 436
+        width: 89
+        height: 408
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9c56769852ef3630800000000000000
+      internalID: 3909091871690218652
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_23
+      rect:
+        serializedVersion: 2
+        x: 1872
+        y: 408
+        width: 48
+        height: 284
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb1e765ed91ae7520800000000000000
+      internalID: 2701774525999604158
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_24
+      rect:
+        serializedVersion: 2
+        x: 831
+        y: 150
+        width: 679
+        height: 446
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9643a179026290a10800000000000000
+      internalID: 1876072641192408169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_25
+      rect:
+        serializedVersion: 2
+        x: 1222
+        y: 502
+        width: 64
+        height: 116
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea5378f447caee550800000000000000
+      internalID: 6192076153231455662
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_26
+      rect:
+        serializedVersion: 2
+        x: 1390
+        y: 503
+        width: 50
+        height: 117
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8102a12052feee720800000000000000
+      internalID: 2877500154164420632
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_27
+      rect:
+        serializedVersion: 2
+        x: 230
+        y: 486
+        width: 14
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a7378d691566a3390800000000000000
+      internalID: -7837839700875775110
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_28
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 410
+        width: 6
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7993a52cc79b23d40800000000000000
+      internalID: 5562712435243760023
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_29
+      rect:
+        serializedVersion: 2
+        x: 208
+        y: 198
+        width: 123
+        height: 230
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 824dcc6b54b6b8d80800000000000000
+      internalID: -8247380345435139032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_30
+      rect:
+        serializedVersion: 2
+        x: 190
+        y: 386
+        width: 6
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f96f06645982104e0800000000000000
+      internalID: -2017286536489273697
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_31
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 311
+        width: 23
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67f7b25baccb31d70800000000000000
+      internalID: 9012754858107436918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_32
+      rect:
+        serializedVersion: 2
+        x: 139
+        y: 119
+        width: 16
+        height: 242
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 306d54c3ed1ba8a00800000000000000
+      internalID: 759615055217415683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_33
+      rect:
+        serializedVersion: 2
+        x: 766
+        y: 326
+        width: 138
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4296e7e8b925fc50800000000000000
+      internalID: 6698305894924849742
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_34
+      rect:
+        serializedVersion: 2
+        x: 1358
+        y: 180
+        width: 214
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 73789d727ea8825b0800000000000000
+      internalID: -5392907828365523145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_35
+      rect:
+        serializedVersion: 2
+        x: 1416
+        y: 134
+        width: 286
+        height: 238
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cfcb7f8847b09a20800000000000000
+      internalID: 3067152868512092104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_36
+      rect:
+        serializedVersion: 2
+        x: 126
+        y: 242
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd8e3a1e27bfd7d60800000000000000
+      internalID: 7889738593053436124
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_37
+      rect:
+        serializedVersion: 2
+        x: 151
+        y: 166
+        width: 63
+        height: 108
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fa94d394807e772e0800000000000000
+      internalID: -2127978276134762065
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_38
+      rect:
+        serializedVersion: 2
+        x: 1032
+        y: 0
+        width: 888
+        height: 299
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5f03eb48f3e3cf30800000000000000
+      internalID: 4594766700412604255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_39
+      rect:
+        serializedVersion: 2
+        x: 10
+        y: 0
+        width: 929
+        height: 154
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9cfb27f5ad85bd800800000000000000
+      internalID: 638201467130527689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_40
+      rect:
+        serializedVersion: 2
+        x: 234
+        y: 148
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c8b810d7658a4abf0800000000000000
+      internalID: -313940984591185012
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_41
+      rect:
+        serializedVersion: 2
+        x: 316
+        y: 150
+        width: 8
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e846d716f22b9a10800000000000000
+      internalID: 1917164506733496550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: stinger_03_00699_42
+      rect:
+        serializedVersion: 2
+        x: 1
+        y: 0
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c79a8a14baa3dcd0800000000000000
+      internalID: -2534494474763331645
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      stinger_03_00699_0: -8047580894747802805
+      stinger_03_00699_1: -8937952022865910053
+      stinger_03_00699_10: 189180126432152558
+      stinger_03_00699_11: -8502368708890129360
+      stinger_03_00699_12: -4811066479422804736
+      stinger_03_00699_13: -3360553306383441360
+      stinger_03_00699_14: 1273454088991616869
+      stinger_03_00699_15: -7926765555608645209
+      stinger_03_00699_16: -1144075921167997130
+      stinger_03_00699_17: 6375669658092273880
+      stinger_03_00699_18: -523055269873938981
+      stinger_03_00699_19: -2860377514462712539
+      stinger_03_00699_2: -2120063506105853520
+      stinger_03_00699_20: 2013498760841719267
+      stinger_03_00699_21: -3303926633928658085
+      stinger_03_00699_22: 3909091871690218652
+      stinger_03_00699_23: 2701774525999604158
+      stinger_03_00699_24: 1876072641192408169
+      stinger_03_00699_25: 6192076153231455662
+      stinger_03_00699_26: 2877500154164420632
+      stinger_03_00699_27: -7837839700875775110
+      stinger_03_00699_28: 5562712435243760023
+      stinger_03_00699_29: -8247380345435139032
+      stinger_03_00699_3: -6260715375603435682
+      stinger_03_00699_30: -2017286536489273697
+      stinger_03_00699_31: 9012754858107436918
+      stinger_03_00699_32: 759615055217415683
+      stinger_03_00699_33: 6698305894924849742
+      stinger_03_00699_34: -5392907828365523145
+      stinger_03_00699_35: 3067152868512092104
+      stinger_03_00699_36: 7889738593053436124
+      stinger_03_00699_37: -2127978276134762065
+      stinger_03_00699_38: 4594766700412604255
+      stinger_03_00699_39: 638201467130527689
+      stinger_03_00699_4: 8956941071948940847
+      stinger_03_00699_40: -313940984591185012
+      stinger_03_00699_41: 1917164506733496550
+      stinger_03_00699_42: -2534494474763331645
+      stinger_03_00699_5: -5492818360584901772
+      stinger_03_00699_6: 6653343048582627602
+      stinger_03_00699_7: -4965949493159840770
+      stinger_03_00699_8: -9065421863329516207
+      stinger_03_00699_9: -3346900585794267819
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
