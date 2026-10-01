@@ -13,6 +13,8 @@ Assets/
 │   ├── TournamentManager.uss     # Estils visuals Cyberpunk per a Display 1
 │   ├── Display2Manager.uxml      # Interfície de presentació per a Públic/Escena (Display 2)
 │   └── Display2Manager.uss       # Estils visuals d'alta visibilitat i pantalla VS per a Display 2
+├── Videos/
+│   └── NouArbitre/               # Carpeta dedicada als vídeos de NOU ÀRBITRE (ex: NOU_ARBITRE.mp4)
 └── Scripts/
     ├── Models/
     │   ├── Player.cs             # Model de dades de Jugador
@@ -20,7 +22,7 @@ Assets/
     │   └── TournamentModel.cs    # Lògica del Torneig, sincronització i estat MultiDisplay (`DisplayViewType`)
     └── Controllers/
         ├── TournamentUIController.cs # Controlador per al Display 1 (Control & Configuració)
-        └── Display2Controller.cs     # Controlador per al Display 2 (Audiència & Pantalla VS)
+        └── Display2Controller.cs     # Controlador per al Display 2 (Audiència & Pantalla VS & Vídeo)
 ```
 
 ---
@@ -63,10 +65,22 @@ He creat una **Eina Automàtica d'Editor** perquè no hagis de configurar res ma
 - **Display 1 (Control & Configuració)**:
   - Gestió completa de jugadors, rondes, marcatge de guanyadors i edició de noms.
   - **Barra de Control de Display 2**: botons `📊 Quadre`, `⚔️ Combat`, `🏆 Podi` per commutar a l'instant la vista enviada a la pantalla de públic.
+  - **Botons Acció de Vídeo (`GO` i `REP`)**:
+    - Ubicats fora dels arrays de navegació i amb un disseny més gran i vistós.
+    - **▶ GO**: Executa la transició *Stinger* (si està activada) i inicia la reproducció del vídeo `NOU ARBITRE` des del timestamp configurat (`GO Start (s)`).
+    - **🔄 REP**: Reprodueix el vídeo `NOU ARBITRE` directament sense transició *Stinger* des del timestamp configurat (`REP Start (s)`).
+    - **Configuració de temps**: Es poden ajustar els segons d'inici en temps real a la barra lateral o des de l'Inspector de Unity.
+    - **Àudio integrat**: El so del vídeo es reprodueix directament al 100% de volum.
   - **Botó ⚔️ als Combats**: clic ràpid en qualsevol enfrontament per enviar directament la pantalla VS d'aquell combat al Display 2.
+
+- **Dreceres de Teclat (Hotkeys)**:
+  - **`TAB`**: Posa la pantalla a **GO**. Si ja s'està a la vista de vídeo i es torna a prémer **`TAB`**, passa a **REP** (i manté **REP** en totes les premudes posteriors fins que se surti de la vista).
+  - **`Page DOWN` / `↓`**: Obre sempre la vista del **Quadre**.
+  - **`Page UP` / `↑`**: Obre sempre la vista de **Combat**.
 
 - **Display 2 (Pantalla de Públic)**:
   - Totalment neta de botons, menús o camps d'edició.
   - **Vista Quadre / Classificació**: mostra el quadre complet actualitzat en temps real.
   - **Vista Combat VS (Goku vs Vegeta)**: pantalles d'enfrontament directe amb targetes de jugadors glowing, inicials, llavors, estat del combat i banners de victòria.
+  - **Vista Vídeo NOU ÀRBITRE**: pantalla de reproducció de vídeo a pantalla completa amb canal d'àudio actiu.
   - **Arquitectura Extensible (`DisplayViewType`)**: dissenyada per afegir fàcilment noves vistes en el futur segons les teves necessitats.

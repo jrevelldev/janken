@@ -59,6 +59,12 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
 
+                <!-- VIDEO ACTION BUTTONS GROUP (OUTSIDE NAV ARRAYS & LARGER) -->
+                <ui:VisualElement class="video-action-group">
+                    <ui:Button name="BtnGo" text="▶ GO" class="btn-video-action btn-video-go" tooltip="Reproduir vídeo NOU ÀRBITRE amb Stinger" />
+                    <ui:Button name="BtnRep" text="🔄 REP" class="btn-video-action btn-video-rep" tooltip="Reproduir vídeo NOU ÀRBITRE directament (Sense Stinger)" />
+                </ui:VisualElement>
+
                 <ui:VisualElement class="header-controls">
                     <ui:Toggle name="ToggleStinger" label="🎬 Stinger: ON" value="true" class="toggle-stinger" />
                     <ui:Button name="BtnToggleMusic" text="🎵 Música: OFF" class="btn-secondary btn-music" />

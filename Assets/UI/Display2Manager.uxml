@@ -91,6 +91,11 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
+        <!-- VIEW 6: VIDEO PLAYBACK VIEW (NOU ARBITRE) -->
+        <ui:VisualElement name="VideoViewContainer" class="display2-view-container display2-hidden" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; flex-grow: 1; align-items: center; justify-content: center; background-color: #000000; z-index: 5;">
+            <ui:VisualElement name="VideoDisplayElement" style="width: 100%; height: 100%; flex-grow: 1;" />
+        </ui:VisualElement>
+
         <!-- STINGER TRANSITION OVERLAY -->
         <ui:VisualElement name="StingerOverlay" class="stinger-overlay display2-hidden" />
 

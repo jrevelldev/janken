@@ -614,5 +614,50 @@
     border-color: #a855f7;
 }
 
+/* Video Action Buttons (GO & REP) - Outside nav arrays & larger */
+.video-action-group {
+    flex-direction: row;
+    align-items: center;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+.btn-video-action {
+    height: 42px;
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 15px;
+    -unity-font-style: bold;
+    border-radius: 8px;
+    border-width: 2px;
+    margin-left: 4px;
+    margin-right: 4px;
+    transition-duration: 0.15s;
+    -unity-text-align: middle-center;
+}
+
+.btn-video-go {
+    background-color: #dc2626;
+    color: #ffffff;
+    border-color: #ef4444;
+}
+
+.btn-video-go:hover {
+    background-color: #ef4444;
+    border-color: #fca5a5;
+}
+
+.btn-video-rep {
+    background-color: #2563eb;
+    color: #ffffff;
+    border-color: #3b82f6;
+}
+
+.btn-video-rep:hover {
+    background-color: #3b82f6;
+    border-color: #93c5fd;
+}
+
+
 
 

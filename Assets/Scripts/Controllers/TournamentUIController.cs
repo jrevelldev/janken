@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.Video;
 using Janken.Tournament;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace Janken.Controllers
 {
@@ -20,6 +23,14 @@ namespace Janken.Controllers
         [SerializeField] private VideoPlayer videoPlayer;
         [SerializeField] private VideoClip backgroundVideoClip;
         [SerializeField] private float fadeDuration = 1.5f;
+
+        [Header("Nou Àrbitre Video Settings")]
+        [SerializeField] private VideoClip nouArbitreVideoClip;
+        [SerializeField] private float goVideoStartTime = 0f;
+        [SerializeField] private float repVideoStartTime = 0f;
+
+        private Button btnGo;
+        private Button btnRep;
 
         private UIDocument uiDocument;
         private VisualElement rootVisualElement;
@@ -59,11 +70,17 @@ namespace Janken.Controllers
         private bool useStingerTransitions = true;
 
         private TournamentModel tournamentModel;
+        private bool hasPlayedGoInCurrentVideoSession = false;
 
         private void Start()
         {
             InitializeAudio();
             InitializeUI();
+        }
+
+        private void Update()
+        {
+            HandleHotkeys();
         }
 
         private void InitializeAudio()
@@ -85,6 +102,21 @@ namespace Janken.Controllers
                     if (vClip != null)
                     {
                         backgroundVideoClip = vClip;
+                        break;
+                    }
+                }
+            }
+
+            if (nouArbitreVideoClip == null)
+            {
+                string[] videoGuids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos" });
+                foreach (string guid in videoGuids)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                    var vClip = UnityEditor.AssetDatabase.LoadAssetAtPath<VideoClip>(path);
+                    if (vClip != null)
+                    {
+                        nouArbitreVideoClip = vClip;
                         break;
                     }
                 }
@@ -219,6 +251,10 @@ namespace Janken.Controllers
             // Music & Stinger Control
             btnToggleMusic = rootVisualElement.Q<Button>("BtnToggleMusic");
             toggleStinger = rootVisualElement.Q<Toggle>("ToggleStinger");
+
+            // Video Action Controls (GO & REP)
+            btnGo = rootVisualElement.Q<Button>("BtnGo");
+            btnRep = rootVisualElement.Q<Button>("BtnRep");
         }
 
         private void RegisterEvents()
@@ -256,6 +292,10 @@ namespace Janken.Controllers
             if (btnChromaCombatSF != null) btnChromaCombatSF.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaCombatSF);
             if (btnChromaChampion != null) btnChromaChampion.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaChampion);
 
+            // Video Action Controls (GO & REP)
+            if (btnGo != null) btnGo.clicked += () => PlayNouArbitreVideo(useStinger: true);
+            if (btnRep != null) btnRep.clicked += () => PlayNouArbitreVideo(useStinger: false);
+
             // Stinger Toggle Control
             if (toggleStinger != null)
             {
@@ -273,6 +313,84 @@ namespace Janken.Controllers
 
             // Music Toggle Control
             if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
+        }
+
+        private void PlayNouArbitreVideo(bool useStinger)
+        {
+            if (useStinger)
+            {
+                hasPlayedGoInCurrentVideoSession = true;
+            }
+            float targetTime = useStinger ? goVideoStartTime : repVideoStartTime;
+            if (display2Controller != null)
+            {
+                display2Controller.PlayNouArbitreVideo(useStinger, targetTime);
+            }
+            else if (tournamentModel != null)
+            {
+                tournamentModel.SetDisplayView(DisplayViewType.NouArbitreVideo);
+            }
+        }
+
+        private void HandleHotkeys()
+        {
+            if (tournamentModel == null) return;
+            if (IsUserEditingText()) return;
+
+            bool tabPressed = false;
+            bool pageDownPressed = false;
+            bool pageUpPressed = false;
+
+#if ENABLE_INPUT_SYSTEM
+            var kb = Keyboard.current;
+            if (kb != null)
+            {
+                tabPressed = kb.tabKey.wasPressedThisFrame;
+                pageDownPressed = kb.pageDownKey.wasPressedThisFrame || kb.downArrowKey.wasPressedThisFrame;
+                pageUpPressed = kb.pageUpKey.wasPressedThisFrame || kb.upArrowKey.wasPressedThisFrame;
+            }
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            tabPressed = Input.GetKeyDown(KeyCode.Tab);
+            pageDownPressed = Input.GetKeyDown(KeyCode.PageDown) || Input.GetKeyDown(KeyCode.DownArrow);
+            pageUpPressed = Input.GetKeyDown(KeyCode.PageUp) || Input.GetKeyDown(KeyCode.UpArrow);
+#endif
+
+            // TAB Hotkey: First press from another view -> GO. Subsequent presses in video view -> REP.
+            if (tabPressed)
+            {
+                if (tournamentModel.CurrentDisplayView != DisplayViewType.NouArbitreVideo || !hasPlayedGoInCurrentVideoSession)
+                {
+                    hasPlayedGoInCurrentVideoSession = true;
+                    PlayNouArbitreVideo(useStinger: true);
+                }
+                else
+                {
+                    PlayNouArbitreVideo(useStinger: false);
+                }
+            }
+
+            // Page Down / Down Arrow: Always open Quadre (Bracket)
+            if (pageDownPressed)
+            {
+                RequestDisplayViewChange(DisplayViewType.Bracket);
+            }
+
+            // Page Up / Up Arrow: Always open Combat
+            if (pageUpPressed)
+            {
+                RequestDisplayViewChange(DisplayViewType.Combat);
+            }
+        }
+
+        private bool IsUserEditingText()
+        {
+            if (rootVisualElement?.focusController?.focusedElement == null) return false;
+            var focused = rootVisualElement.focusController.focusedElement;
+
+            if (focused is TextField) return true;
+
+            string typeName = focused.GetType().Name;
+            return typeName.Contains("TextField") || typeName.Contains("TextInput") || typeName.Contains("Editor");
         }
 
         private void RequestDisplayViewChange(DisplayViewType targetView)
@@ -405,6 +523,10 @@ namespace Janken.Controllers
 
         private void OnDisplayViewChanged(DisplayViewType newView)
         {
+            if (newView != DisplayViewType.NouArbitreVideo)
+            {
+                hasPlayedGoInCurrentVideoSession = false;
+            }
             UpdateDisplay2StatusUI();
         }
 
@@ -469,6 +591,9 @@ namespace Janken.Controllers
                     case DisplayViewType.ChromaChampion:
                         string cChamp = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
                         display2StatusText.text = $"🟢 DISPLAY 2 (CROMA): Mostrant CAMPIÓ ( {cChamp} )";
+                        break;
+                    case DisplayViewType.NouArbitreVideo:
+                        display2StatusText.text = "🎬 DISPLAY 2: Reproduint vídeo NOU ÀRBITRE";
                         break;
                 }
             }

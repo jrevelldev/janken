@@ -25,6 +25,16 @@ namespace Janken.Controllers
         private Coroutine activeStingerCoroutine;
         private bool isStingerPlaying = false;
 
+        [Header("Nou Àrbitre Video Settings")]
+        [SerializeField] private UnityEngine.Video.VideoPlayer videoPlayer;
+        [SerializeField] private UnityEngine.Video.VideoClip nouArbitreClip;
+        [SerializeField] private float goVideoStartTime = 0f;
+        [SerializeField] private float repVideoStartTime = 0f;
+        private float currentPlaybackStartTime = 0f;
+        private VisualElement videoViewContainer;
+        private VisualElement videoDisplayElement;
+        private RenderTexture videoRenderTexture;
+
         public void SetStingerEnabled(bool enabled)
         {
             useStingerTransitions = enabled;
@@ -93,6 +103,22 @@ namespace Janken.Controllers
 
         private void Start()
         {
+#if UNITY_EDITOR
+            if (nouArbitreClip == null)
+            {
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos" });
+                foreach (string guid in guids)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                    var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Video.VideoClip>(path);
+                    if (clip != null)
+                    {
+                        nouArbitreClip = clip;
+                        break;
+                    }
+                }
+            }
+#endif
             ActivateSecondaryDisplay();
             InitializeUI();
         }
@@ -124,7 +150,7 @@ namespace Janken.Controllers
 
             if (tournamentModel != null)
             {
-                tournamentModel.OnTournamentUpdated += RefreshCurrentView;
+                tournamentModel.OnTournamentUpdated += OnTournamentUpdated;
                 tournamentModel.OnDisplayViewChanged += OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
                 tournamentModel.OnSelectedRoundChanged += OnSelectedRoundChanged;
@@ -137,11 +163,21 @@ namespace Janken.Controllers
         {
             if (tournamentModel != null)
             {
-                tournamentModel.OnTournamentUpdated -= RefreshCurrentView;
+                tournamentModel.OnTournamentUpdated -= OnTournamentUpdated;
                 tournamentModel.OnDisplayViewChanged -= OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged -= OnSelectedMatchChanged;
                 tournamentModel.OnSelectedRoundChanged -= OnSelectedRoundChanged;
             }
+        }
+
+        private void OnTournamentUpdated()
+        {
+            // Do not interrupt active video playback when tournament bracket data updates
+            if (tournamentModel != null && tournamentModel.CurrentDisplayView == DisplayViewType.NouArbitreVideo)
+            {
+                return;
+            }
+            RefreshCurrentView();
         }
 
         public void InitializeUI()
@@ -203,6 +239,9 @@ namespace Janken.Controllers
 
             championViewContainer = rootVisualElement.Q<VisualElement>("ChampionViewContainer");
             championStageName = rootVisualElement.Q<Label>("ChampionStageName");
+
+            videoViewContainer = rootVisualElement.Q<VisualElement>("VideoViewContainer");
+            videoDisplayElement = rootVisualElement.Q<VisualElement>("VideoDisplayElement");
 
             stingerOverlay = rootVisualElement.Q<VisualElement>("StingerOverlay");
         }
@@ -330,12 +369,26 @@ namespace Janken.Controllers
         {
             if (tournamentModel == null) return;
 
+            // Stop video playback if navigating away from video view
+            if (tournamentModel.CurrentDisplayView != DisplayViewType.NouArbitreVideo)
+            {
+                if (videoPlayer != null && videoPlayer.isPlaying)
+                {
+                    videoPlayer.Stop();
+                }
+                if (videoDisplayElement != null)
+                {
+                    videoDisplayElement.style.display = DisplayStyle.None;
+                }
+            }
+
             // Hide all views first
             SetContainerVisible(bracketViewContainer, false);
             SetContainerVisible(singleRoundViewContainer, false);
             SetContainerVisible(combatViewContainer, false);
             SetContainerVisible(combatSFViewContainer, false);
             SetContainerVisible(championViewContainer, false);
+            SetContainerVisible(videoViewContainer, false);
 
             bool isChroma = IsChromaView(tournamentModel.CurrentDisplayView);
             UpdateBackgroundChromaMode(isChroma);
@@ -376,6 +429,174 @@ namespace Janken.Controllers
                     if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "PODI CAMPIÓ (CROMA KEY)" : "PODI DE CAMPIÓ";
                     RenderChampionView();
                     break;
+
+                case DisplayViewType.NouArbitreVideo:
+                    SetContainerVisible(videoViewContainer, true);
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = "REPRODUINT VÍDEO: NOU ÀRBITRE";
+                    if (videoPlayer == null || !videoPlayer.isPlaying)
+                    {
+                        ExecuteVideoPlayback(currentPlaybackStartTime);
+                    }
+                    break;
+            }
+        }
+
+        public void PlayNouArbitreVideo(bool useStinger, float startTime)
+        {
+            if (!useStinger && startTime == 0f && repVideoStartTime > 0f)
+            {
+                startTime = repVideoStartTime;
+            }
+            else if (useStinger && startTime == 0f && goVideoStartTime > 0f)
+            {
+                startTime = goVideoStartTime;
+            }
+
+            currentPlaybackStartTime = startTime;
+            Action startPlaybackAction = () =>
+            {
+                bool wasStingerPlaying = isStingerPlaying;
+                if (!useStinger) isStingerPlaying = true; // Temporarily prevent OnDisplayViewChanged from triggering a Stinger transition
+
+                try
+                {
+                    if (tournamentModel != null && tournamentModel.CurrentDisplayView != DisplayViewType.NouArbitreVideo)
+                    {
+                        tournamentModel.SetDisplayView(DisplayViewType.NouArbitreVideo);
+                    }
+                    else
+                    {
+                        SetContainerVisible(videoViewContainer, true);
+                        if (headerSubtitleLabel != null) headerSubtitleLabel.text = "REPRODUINT VÍDEO: NOU ÀRBITRE";
+                    }
+
+                    ExecuteVideoPlayback(currentPlaybackStartTime);
+                }
+                finally
+                {
+                    if (!useStinger) isStingerPlaying = wasStingerPlaying;
+                }
+            };
+
+            if (useStinger && useStingerTransitions)
+            {
+                PlayStingerTransition(startPlaybackAction);
+            }
+            else
+            {
+                startPlaybackAction();
+            }
+        }
+
+        private void ExecuteVideoPlayback(float startTime)
+        {
+            if (videoPlayer == null)
+            {
+                videoPlayer = GetComponent<UnityEngine.Video.VideoPlayer>();
+                if (videoPlayer == null)
+                {
+                    videoPlayer = gameObject.AddComponent<UnityEngine.Video.VideoPlayer>();
+                }
+            }
+
+#if UNITY_EDITOR
+            if (nouArbitreClip == null)
+            {
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos" });
+                foreach (string guid in guids)
+                {
+                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                    var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Video.VideoClip>(path);
+                    if (clip != null)
+                    {
+                        nouArbitreClip = clip;
+                        break;
+                    }
+                }
+            }
+#endif
+
+            if (nouArbitreClip != null)
+            {
+                videoPlayer.clip = nouArbitreClip;
+            }
+
+            if (videoPlayer.clip == null)
+            {
+                Debug.LogWarning("[Janken] VideoClip NOU ARBITRE no trobat ni assignat! Revisa que hi hagi un fitxer de vídeo a Assets/Videos/NouArbitre/ o assigna'l a l'Inspector de Unity.");
+                return;
+            }
+
+            int w = Screen.width > 0 ? Screen.width : 1920;
+            int h = Screen.height > 0 ? Screen.height : 1080;
+
+            if (videoRenderTexture == null || !videoRenderTexture.IsCreated() || videoRenderTexture.width != w || videoRenderTexture.height != h)
+            {
+                if (videoRenderTexture != null)
+                {
+                    videoRenderTexture.Release();
+                    Destroy(videoRenderTexture);
+                }
+                videoRenderTexture = new RenderTexture(w, h, 24, RenderTextureFormat.ARGB32);
+                videoRenderTexture.Create();
+            }
+
+            videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
+            videoPlayer.targetTexture = videoRenderTexture;
+
+            if (videoDisplayElement != null)
+            {
+                videoDisplayElement.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(videoRenderTexture));
+                videoDisplayElement.style.display = DisplayStyle.Flex;
+                videoDisplayElement.style.width = new Length(100, LengthUnit.Percent);
+                videoDisplayElement.style.height = new Length(100, LengthUnit.Percent);
+            }
+
+            videoPlayer.playOnAwake = false;
+            videoPlayer.isLooping = false;
+            videoPlayer.audioOutputMode = UnityEngine.Video.VideoAudioOutputMode.Direct;
+            videoPlayer.EnableAudioTrack(0, true);
+            videoPlayer.SetDirectAudioVolume(0, 1.0f);
+
+            // Normalize start time: Unity VideoPlayer.time is in SECONDS.
+            // If entered in milliseconds (e.g., 30000 for 30s), convert ms to seconds.
+            double clipLength = videoPlayer.clip != null ? videoPlayer.clip.length : (videoPlayer.length > 0 ? videoPlayer.length : 0);
+            if (clipLength > 0)
+            {
+                if (startTime > clipLength && startTime / 1000.0 <= clipLength)
+                {
+                    startTime = (float)(startTime / 1000.0);
+                }
+                else if (startTime >= clipLength)
+                {
+                    startTime = (float)Math.Max(0, clipLength - 0.5);
+                }
+            }
+            else if (startTime >= 1000f)
+            {
+                startTime /= 1000f;
+            }
+
+            float finalSeekTime = startTime;
+
+            videoPlayer.Pause();
+
+            if (!videoPlayer.isPrepared)
+            {
+                UnityEngine.Video.VideoPlayer.EventHandler preparedHandler = null;
+                preparedHandler = (vp) =>
+                {
+                    vp.prepareCompleted -= preparedHandler;
+                    vp.time = finalSeekTime;
+                    vp.Play();
+                };
+                videoPlayer.prepareCompleted += preparedHandler;
+                videoPlayer.Prepare();
+            }
+            else
+            {
+                videoPlayer.time = finalSeekTime;
+                videoPlayer.Play();
             }
         }
 
