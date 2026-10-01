@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Janken.VFX.StingerAnimationData
   stingerName: stinger_03
   fps: 30
-  cutFrameIndex: 11
+  cutFrameIndex: 12
   stingerSound: {fileID: 0}
   frames:
   - {fileID: 21300000, guid: 4dce32bde255c4060a665c24a3f8fccd, type: 3}

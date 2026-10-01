@@ -10,9 +10,13 @@ Aquest és un sistema complet de gestió de quadre de torneig (*bracket manager*
 Assets/
 ├── UI/
 │   ├── TournamentManager.uxml    # Interfície principal de Control i Configuració (Display 1)
-│   ├── TournamentManager.uss     # Estils visuals Cyberpunk per a Display 1
+│   ├── TournamentManager.uss     # Estils visuals Girocòmic JANKEN per a Display 1
 │   ├── Display2Manager.uxml      # Interfície de presentació per a Públic/Escena (Display 2)
-│   └── Display2Manager.uss       # Estils visuals d'alta visibilitat i pantalla VS per a Display 2
+│   └── Display2Manager.uss       # Estils visuals Girocòmic JANKEN per a Display 2 (Fons i UI Japonesa)
+├── Sprites/
+│   ├── Backgrounds/              # Fons i elements del cartell (Japanese_Background_Full.png, Japanese_Sun_Circle.png)
+│   ├── UI/                       # Logotip, Banners i Icones de Pedra, Paper i Tisora (Icon_Rock, Icon_Paper, Icon_Scissors)
+│   └── Posters/                  # Pàgines d'alta resolució exportades del cartell original de Girocòmic JANKEN
 ├── Videos/
 │   └── NouArbitre/               # Carpeta dedicada als vídeos de NOU ÀRBITRE (ex: NOU_ARBITRE.mp4)
 └── Scripts/

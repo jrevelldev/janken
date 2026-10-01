@@ -1,18 +1,18 @@
-/* TournamentManager.uss - Modern Dark Cyberpunk Aesthetic */
+/* TournamentManager.uss - Girocòmic JANKEN Japanese High-Contrast Theme */
 
 :root {
-    --bg-dark: #0f172a;
-    --bg-card: #1e293b;
-    --bg-card-hover: #334155;
-    --bg-card-winner: #1e3a8a;
-    --border-color: #334155;
-    --accent-cyan: #06b6d4;
-    --accent-purple: #8b5cf6;
-    --accent-gold: #f59e0b;
-    --text-primary: #f8fafc;
-    --text-muted: #94a3b8;
-    --accent-success: #06b6d4;
-    --danger-red: #ef4444;
+    --bg-dark: #12100E;         /* Sumi Ink Deep Black */
+    --bg-card: #1C1917;         /* High-contrast Sumi Card */
+    --bg-card-hover: #2B2520;
+    --bg-card-winner: #8E161C;  /* Japanese Crimson Winner */
+    --border-color: #443B33;
+    --accent-cyan: #D91E28;      /* Primary Accent: Japanese Crimson Red */
+    --accent-purple: #D4AF37;    /* Secondary Accent: Japanese Gold */
+    --accent-gold: #F2C94C;      /* Bright Gold */
+    --text-primary: #FFFFFF;     /* Pure White text */
+    --text-muted: #C2B7A5;       /* Muted Ochre-Gray */
+    --accent-success: #D91E28;   /* Crimson Red */
+    --danger-red: #D91E28;       /* Crimson Red */
 }
 
 .main-container {
@@ -28,9 +28,9 @@
 /* Header Bar */
 .top-header {
     height: 74px;
-    background-color: rgba(15, 23, 42, 0.95);
-    border-bottom-width: 1px;
-    border-bottom-color: var(--border-color);
+    background-color: #12100E;
+    border-bottom-width: 2px;
+    border-bottom-color: #D4AF37;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -40,9 +40,10 @@
 }
 
 .header-title {
-    font-size: 22px;
+    font-size: 24px;
     -unity-font-style: bold;
-    color: var(--accent-cyan);
+    color: #D91E28;
+    letter-spacing: 1px;
 }
 
 .header-controls {
@@ -52,22 +53,22 @@
 
 .toggle-stinger {
     margin-right: 12px;
-    font-size: 12px;
+    font-size: 13px;
     -unity-font-style: bold;
     color: var(--text-primary);
 }
 
 .toggle-stinger .unity-toggle__label {
-    color: #38bdf8;
+    color: #F2C94C;
     margin-right: 6px;
 }
 
 /* Sidebar / Setup Panel */
 .sidebar {
-    width: 320px;
-    background-color: rgba(30, 41, 59, 0.85);
-    border-right-width: 1px;
-    border-right-color: var(--border-color);
+    width: 330px;
+    background-color: #181513;
+    border-right-width: 2px;
+    border-right-color: #D4AF37;
     padding: 16px;
     flex-direction: column;
 }
@@ -75,10 +76,10 @@
 .sidebar-title {
     font-size: 16px;
     -unity-font-style: bold;
-    color: var(--text-primary);
+    color: #FFFFFF;
     margin-bottom: 12px;
-    border-bottom-width: 1px;
-    border-bottom-color: var(--border-color);
+    border-bottom-width: 2px;
+    border-bottom-color: #D91E28;
     padding-bottom: 8px;
 }
 
@@ -92,17 +93,20 @@
     flex-grow: 1;
     margin-right: 4px;
     margin-left: 4px;
-    background-color: #334155;
-    color: var(--text-primary);
+    background-color: #26211E;
+    color: #FFFFFF;
     border-radius: 6px;
-    border-width: 0;
+    border-width: 1px;
+    border-color: #D4AF37;
     padding: 6px 10px;
     -unity-font-style: bold;
     transition-duration: 0.15s;
 }
 
 .btn-preset:hover {
-    background-color: var(--accent-purple);
+    background-color: #D91E28;
+    color: #FFFFFF;
+    border-color: #F2C94C;
 }
 
 .input-add-container {
@@ -115,51 +119,53 @@
 }
 
 .player-input .unity-text-field__input {
-    background-color: #0f172a;
-    color: #f8fafc;
+    background-color: #0E0C0A;
+    color: #FFFFFF;
     border-radius: 6px;
     border-width: 1px;
-    border-color: var(--border-color);
+    border-color: #D4AF37;
     padding: 6px 10px;
 }
 
 .player-input .unity-text-field__input:hover {
-    border-color: var(--accent-cyan);
+    border-color: #F2C94C;
 }
 
 .player-input .unity-text-field__input:focus {
-    border-color: var(--accent-cyan);
-    background-color: #1e293b;
-    color: #f8fafc;
+    border-color: #D91E28;
+    background-color: #1A1816;
+    color: #FFFFFF;
 }
 
 .btn-primary {
-    background-color: var(--accent-cyan);
-    color: #0f172a;
+    background-color: #D91E28;
+    color: #FFFFFF;
     -unity-font-style: bold;
     border-radius: 6px;
-    border-width: 0;
+    border-width: 1px;
+    border-color: #F2C94C;
     padding: 8px 16px;
     transition-duration: 0.15s;
 }
 
 .btn-primary:hover {
-    background-color: #38bdf8;
+    background-color: #F02430;
 }
 
 .btn-secondary {
-    background-color: #334155;
-    color: var(--text-primary);
+    background-color: #2E2824;
+    color: #FFFFFF;
     -unity-font-style: bold;
     border-radius: 6px;
-    border-width: 0;
+    border-width: 1px;
+    border-color: #443B33;
     padding: 8px 12px;
     margin-left: 6px;
     transition-duration: 0.15s;
 }
 
 .btn-secondary:hover {
-    background-color: #475569;
+    background-color: #443B33;
 }
 
 .btn-danger {
@@ -180,18 +186,18 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    background-color: rgba(15, 23, 42, 0.6);
+    background-color: #1C1917;
     border-radius: 6px;
     padding: 8px 12px;
     margin-bottom: 6px;
     border-width: 1px;
-    border-color: rgba(51, 65, 85, 0.5);
+    border-color: #38312C;
 }
 
 .player-item-seed {
-    color: var(--accent-cyan);
+    color: #F2C94C;
     -unity-font-style: bold;
-    width: 24px;
+    width: 28px;
 }
 
 .player-item-name {

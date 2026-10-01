@@ -1,11 +1,13 @@
-/* Display2Manager.uss - Stage & Audience View Stylesheet */
+/* Display2Manager.uss - Girocòmic JANKEN Official Anime & Pop Styling */
 
 .display2-root {
     flex-grow: 1;
     width: 100%;
     height: 100%;
-    background-color: #090d16;
-    color: #f8fafc;
+    background-image: url('project:/Assets/Sprites/Backgrounds/Background.png');
+    -unity-background-scale-mode: scale-and-crop;
+    background-color: #F7F4EB;
+    color: #FFFFFF;
     flex-direction: column;
 }
 
@@ -25,28 +27,217 @@
 .display2-bracket-scroll {
     width: 100%;
     height: 100%;
-}
-
-.display2-bracket-scroll .unity-scroll-view__content-container {
-    flex-grow: 1;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
+    flex-direction: column;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    overflow: hidden;
 }
 
 .display2-bracket-centered {
-    justify-content: center;
-    align-items: flex-start;
-    align-self: center;
+    justify-content: flex-start !important;
+    align-items: flex-start !important;
+    align-self: flex-start !important;
+    margin-left: 45px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
-/* COMBAT VS VIEW STYLING */
-.combat-round-title {
-    font-size: 28px;
+/* ANIMATED BRACKET CONTAINER */
+.bracket-container {
+    flex-direction: row;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    transition-property: translate, opacity;
+    transition-duration: 0.6s;
+    transition-timing-function: ease-out;
+    translate: 0px 0px;
+    opacity: 1;
+}
+
+.bracket-hidden {
+    translate: -80px 0px;
+    opacity: 0;
+}
+
+/* BRACKET ROUND HEADERS WITH RED BRUSH BACKGROUND & PERMANENT MARKER FONT */
+.round-header {
+    width: 200px;
+    height: 44px;
+    font-size: 14px;
     -unity-font-style: bold;
-    color: #f59e0b;
-    margin-top: 40px;
-    margin-bottom: 20px;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
+    -unity-text-align: middle-center;
+    align-self: center;
+    padding-top: 8px;
+    padding-bottom: 4px;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: transparent;
+    border-width: 0px;
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+}
+
+/* FINAL ROUND ANIMATED GOLD RIBBON BANNER & CROWN */
+.final-banner-crown {
+    width: 210px;
+    height: 90px;
+    background-image: url('project:/Assets/Sprites/UI/Final_Banner_Crown.png');
+    -unity-background-scale-mode: scale-to-fit;
+    align-self: center;
+    margin-bottom: -15px;
+    transition-property: translate, opacity, scale;
+    transition-duration: 0.65s;
+    transition-timing-function: ease-out-back;
+    translate: 0px 0px;
+    scale: 1 1;
+    opacity: 1;
+    picking-mode: Ignore;
+    z-index: 80;
+}
+
+.final-banner-hidden {
+    translate: 160px 0px;
+    scale: 0.7 0.7;
+    opacity: 0;
+}
+
+/* MATCH CARDS IN DISPLAY 2 BRACKET (PRONOUNCED BORDERS & BOLDER TEXT) */
+.match-card {
+    height: 84px;
+    background-color: #12100E;
+    border-radius: 14px;
+    border-width: 3px;
+    border-color: #D4AF37;
+    overflow: hidden;
+    transition-duration: 0.2s;
+}
+
+.match-card-completed {
+    border-color: #D91E28;
+    border-width: 3px;
+}
+
+.match-card:hover {
+    border-color: #F2C94C;
+}
+
+.match-slot {
+    height: 42px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 14px;
+    padding-right: 12px;
+    background-color: #FFFDF8;
+    border-bottom-width: 2px;
+    border-bottom-color: rgba(74, 64, 56, 0.4);
+    transition-duration: 0.15s;
+}
+
+.match-slot:hover {
+    background-color: #F5EFE0;
+}
+
+.match-slot-winner {
+    background-color: #D91E28 !important;
+    border-left-width: 6px;
+    border-left-color: #F2C94C;
+}
+
+.match-slot-winner .slot-player-name {
+    color: #FFFFFF !important;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+}
+
+.match-slot-loser {
+    opacity: 0.9;
+    background-color: #161412 !important;
+}
+
+.match-slot-loser .slot-player-name {
+    color: #FFFFFF !important;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+}
+
+.match-slot-empty {
+    background-color: #FFFDF8;
+    opacity: 0.7;
+}
+
+.match-slot-empty .slot-player-name {
+    color: #777777;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+}
+
+.slot-player-name {
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #141210;
+    flex-grow: 1;
+}
+
+.slot-score {
+    font-size: 16px;
+    -unity-font-style: bold;
+    color: #F2C94C;
+    width: 24px;
+    text-align: center;
+}
+
+/* CONNECTOR LINES (PRONOUNCED 4PX) */
+.connector-arm {
+    position: absolute;
+    background-color: #D91E28;
+}
+
+.connector-arm-active {
+    background-color: #F2C94C;
+}
+
+/* REFEREE ANIMATED CHARACTER (SLIDE IN RIGHT TO LEFT - HUGE SIZE) */
+.referee-character {
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 780px;
+    height: 850px;
+    background-image: url('project:/Assets/Sprites/UI/Referee_Character.png');
+    -unity-background-scale-mode: scale-to-fit;
+    transition-property: translate, opacity;
+    transition-duration: 0.65s;
+    transition-timing-function: ease-out-back;
+    translate: 0px 0px;
+    opacity: 1;
+    picking-mode: Ignore;
+    z-index: 90;
+}
+
+.referee-hidden {
+    translate: 880px 0px;
+    opacity: 0;
+    transition-duration: 0.35s;
+    transition-timing-function: ease-in;
+}
+
+/* COMBAT VS VIEW STYLING WITH RED BRUSH HEADER & PERMANENT MARKER FONT */
+.combat-round-title {
+    font-size: 22px;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: transparent;
+    border-width: 0px;
+    padding: 12px 48px;
+    margin-top: 24px;
+    margin-bottom: 24px;
     text-align: center;
     letter-spacing: 2px;
 }
@@ -55,201 +246,220 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
-    width: 90%;
-    margin-bottom: 40px;
+    width: 100%;
+    margin-bottom: 20px;
 }
 
-/* NEUTRAL CLEAN CARD STYLING WHEN IDLE */
+/* JAPANESE CARD STYLING WHEN IDLE */
 .combat-player-card {
-    width: 380px;
-    height: 440px;
-    background-color: #1e293b;
+    width: 300px;
+    height: 410px;
+    background-color: #161412;
     border-radius: 20px;
-    border-width: 2px;
-    border-color: #334155;
+    border-width: 3px;
+    border-color: #D4AF37;
     align-items: center;
     justify-content: center;
-    padding: 30px;
+    padding: 20px;
     scale: 1 1;
     transition-property: scale, border-color, background-color, opacity;
     transition-duration: 0.35s;
 }
 
 .p1-card {
-    border-color: #334155;
-    background-color: #1e293b;
+    border-color: #D4AF37;
+    background-color: #161412;
 }
 
 .p2-card {
-    border-color: #334155;
-    background-color: #1e293b;
+    border-color: #D4AF37;
+    background-color: #161412;
 }
 
 /* WINNER POP-OUT & LOSER DIM ANIMATIONS */
 .combat-card-winner {
-    scale: 1.12 1.12;
+    scale: 1.08 1.08;
     border-width: 4px !important;
-    border-color: #f59e0b !important;
-    background-color: rgba(245, 158, 11, 0.15) !important;
+    border-color: #F2C94C !important;
+    background-color: #8E161C !important;
     z-index: 10;
 }
 
 .combat-card-winner .player-avatar-circle {
-    border-color: #f59e0b !important;
-    background-color: #d97706 !important;
+    border-color: #F2C94C !important;
+    background-color: #D91E28 !important;
 }
 
 .combat-card-winner .combat-player-status {
-    background-color: #f59e0b !important;
-    color: #0f172a !important;
+    background-color: #F2C94C !important;
+    color: #12100E !important;
     -unity-font-style: bold;
 }
 
 .combat-card-loser {
-    scale: 0.88 0.88;
-    opacity: 0.35 !important;
-    border-color: #334155 !important;
+    scale: 0.9 0.9;
+    opacity: 0.4 !important;
+    border-color: #4A4038 !important;
 }
 
 .combat-card-loser .combat-player-status {
-    background-color: #334155 !important;
-    color: #94a3b8 !important;
+    background-color: #38312C !important;
+    color: #C2B7A5 !important;
 }
 
 /* AVATAR CIRCLE */
 .player-avatar-circle {
-    width: 130px;
-    height: 130px;
-    border-radius: 65px;
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
     align-items: center;
     justify-content: center;
-    margin-bottom: 20px;
-    border-width: 3px;
+    margin-bottom: 14px;
+    border-width: 4px;
     transition-duration: 0.35s;
 }
 
 .p1-avatar {
-    background-color: #334155;
-    border-color: #475569;
+    background-color: #D91E28;
+    border-color: #F2C94C;
 }
 
 .p2-avatar {
-    background-color: #334155;
-    border-color: #475569;
+    background-color: #1E3A8A;
+    border-color: #F2C94C;
 }
 
 .player-avatar-initials {
-    font-size: 54px;
+    font-size: 46px;
     -unity-font-style: bold;
-    color: #ffffff;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
     -unity-text-align: middle-center;
 }
 
 .combat-player-seed {
-    font-size: 14px;
+    font-size: 12px;
     -unity-font-style: bold;
-    color: #94a3b8;
-    margin-bottom: 6px;
+    color: #12100E;
+    background-color: #F2C94C;
+    padding: 2px 10px;
+    border-radius: 10px;
+    margin-bottom: 8px;
 }
 
 .combat-player-name {
-    font-size: 34px;
+    font-size: 32px;
     -unity-font-style: bold;
-    color: #f8fafc;
-    margin-bottom: 14px;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
+    margin-bottom: 12px;
     text-align: center;
 }
 
 .combat-player-status {
     font-size: 14px;
     -unity-font-style: bold;
-    color: #94a3b8;
-    background-color: rgba(15, 23, 42, 0.8);
-    padding: 6px 18px;
-    border-radius: 12px;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: transparent;
+    border-width: 0px;
+    padding: 5px 22px;
     transition-duration: 0.35s;
 }
 
-/* VS EMBLEM */
+/* VS BRUSH BADGE IMAGE */
 .vs-emblem-container {
-    width: 140px;
-    height: 140px;
+    width: 180px;
+    height: 160px;
+    background-image: url('project:/Assets/Sprites/UI/VS_Brush_Badge.png');
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: transparent;
+    border-width: 0px;
     align-items: center;
     justify-content: center;
-    margin-left: 30px;
-    margin-right: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 .vs-emblem-text {
-    font-size: 72px;
-    -unity-font-style: bold;
-    color: #f59e0b;
-    -unity-text-outline-width: 2px;
-    -unity-text-outline-color: #78350f;
-    letter-spacing: -4px;
+    display: none;
 }
 
 .vs-pulse-ring {
-    position: absolute;
-    width: 120px;
-    height: 120px;
-    border-radius: 60px;
-    border-width: 3px;
-    border-color: rgba(245, 158, 11, 0.3);
+    display: none;
 }
 
 /* CHAMPION STAGE */
 .champion-stage {
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    background-color: rgba(30, 41, 59, 0.95);
+    padding: 36px 30px;
+    background-color: rgba(22, 20, 18, 0.96);
     border-width: 4px;
-    border-color: #f59e0b;
+    border-color: #F2C94C;
     border-radius: 24px;
-    width: 600px;
+    width: 540px;
 }
 
 .champion-huge-trophy {
-    font-size: 90px;
+    font-size: 80px;
     margin-bottom: 10px;
 }
 
 .champion-stage-subtitle {
-    font-size: 20px;
+    font-size: 22px;
     -unity-font-style: bold;
-    color: #f59e0b;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #F2C94C;
     letter-spacing: 2px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .champion-stage-name {
-    font-size: 48px;
+    font-size: 32px;
     -unity-font-style: bold;
-    color: #ffffff;
-    margin-bottom: 16px;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF !important;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: transparent;
+    border-width: 0px;
+    padding: 14px 56px;
+    margin-bottom: 20px;
     text-align: center;
+    -unity-text-align: middle-center;
+    align-self: center;
+    letter-spacing: 2px;
 }
 
 .champion-stage-footer {
-    font-size: 16px;
-    color: #94a3b8;
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #C2B7A5;
 }
 
 /* CHROMA KEY BACKGROUND OVERRIDE */
 .display2-chroma-bg {
+    background-image: none !important;
     background-color: #00ff00 !important;
 }
 
 /* SINGLE ROUND FOCUS VIEW */
 .round-focus-title {
-    font-size: 32px;
+    font-size: 24px;
     -unity-font-style: bold;
-    color: #f59e0b;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    text-align: center;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: transparent;
+    border-width: 0px;
+    padding: 12px 48px;
+    margin-bottom: 24px;
+    align-self: center;
     letter-spacing: 2px;
 }
 
@@ -257,7 +467,6 @@
     justify-content: center;
     align-items: center;
     align-self: center;
-    padding: 20px;
 }
 
 .single-round-column {
@@ -275,10 +484,10 @@
 .sf-hud-bar {
     width: 92%;
     height: 110px;
-    background-color: rgba(15, 23, 42, 0.95);
+    background-color: rgba(18, 16, 14, 0.96);
     border-radius: 20px;
     border-width: 3px;
-    border-color: #38bdf8;
+    border-color: #D91E28;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -290,12 +499,12 @@
     flex-direction: row;
     align-items: center;
     height: 75px;
-    background-color: rgba(30, 41, 59, 0.95);
+    background-color: rgba(28, 25, 23, 0.95);
     border-radius: 14px;
     padding-left: 12px;
     padding-right: 20px;
     border-width: 2px;
-    border-color: #475569;
+    border-color: #D4AF37;
     min-width: 280px;
     transition-duration: 0.25s;
 }
@@ -305,12 +514,12 @@
     align-items: center;
     justify-content: flex-end;
     height: 75px;
-    background-color: rgba(30, 41, 59, 0.95);
+    background-color: rgba(28, 25, 23, 0.95);
     border-radius: 14px;
     padding-left: 20px;
     padding-right: 12px;
     border-width: 2px;
-    border-color: #475569;
+    border-color: #D4AF37;
     min-width: 280px;
     transition-duration: 0.25s;
 }
@@ -319,9 +528,9 @@
     width: 54px;
     height: 54px;
     border-radius: 27px;
-    background-color: #0ea5e9;
+    background-color: #D91E28;
     border-width: 2px;
-    border-color: #ffffff;
+    border-color: #FFFFFF;
     align-items: center;
     justify-content: center;
 }
@@ -329,28 +538,28 @@
 .sf-avatar-initials {
     font-size: 24px;
     -unity-font-style: bold;
-    color: #ffffff;
+    color: #FFFFFF;
 }
 
 .sf-player-name {
     font-size: 26px;
     -unity-font-style: bold;
-    color: #ffffff;
+    color: #FFFFFF;
     margin-left: 14px;
     margin-right: 14px;
 }
 
 .sf-player-seed {
-    font-size: 12px;
-    color: #94a3b8;
+    font-size: 13px;
+    color: #F2C94C;
     -unity-font-style: bold;
 }
 
 .sf-player-badge {
     font-size: 14px;
     -unity-font-style: bold;
-    color: #0f172a;
-    background-color: #38bdf8;
+    color: #FFFFFF;
+    background-color: #D91E28;
     padding: 4px 10px;
     border-radius: 8px;
     margin-left: 8px;
@@ -363,31 +572,31 @@
 }
 
 .sf-round-title {
-    font-size: 13px;
+    font-size: 14px;
     -unity-font-style: bold;
-    color: #f59e0b;
+    color: #F2C94C;
     letter-spacing: 1px;
     margin-bottom: 2px;
 }
 
 .sf-vs-text {
-    font-size: 38px;
+    font-size: 40px;
     -unity-font-style: bold;
-    color: #ef4444;
+    color: #D91E28;
     -unity-text-outline-width: 2px;
-    -unity-text-outline-color: #7f1d1d;
+    -unity-text-outline-color: #400508;
     letter-spacing: -2px;
 }
 
 .sf-card-winner {
-    border-color: #f59e0b !important;
-    background-color: rgba(245, 158, 11, 0.25) !important;
+    border-color: #F2C94C !important;
+    background-color: rgba(217, 30, 40, 0.45) !important;
     scale: 1.05 1.05;
 }
 
 .sf-card-winner .sf-player-badge {
-    background-color: #f59e0b !important;
-    color: #0f172a !important;
+    background-color: #F2C94C !important;
+    color: #12100E !important;
 }
 
 .sf-card-loser {
@@ -408,4 +617,156 @@
     picking-mode: Ignore;
     z-index: 999;
 }
+
+/* CHROMA KEY BACKGROUND OVERRIDE */
+.display2-chroma-bg {
+    background-image: none !important;
+    background-color: #00ff00 !important;
+}
+
+/* STREET FIGHTER TOP BAR / LOWER THIRD HUD OVERLAY (CHROMA KEY MODE) */
+.sf-overlay-view {
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding-top: 24px;
+}
+
+.sf-hud-bar {
+    width: 92%;
+    height: 110px;
+    background-color: rgba(18, 16, 14, 0.96);
+    border-radius: 20px;
+    border-width: 3px;
+    border-color: #D91E28;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.sf-p1-card {
+    flex-direction: row;
+    align-items: center;
+    height: 75px;
+    background-color: rgba(28, 25, 23, 0.95);
+    border-radius: 14px;
+    padding-left: 12px;
+    padding-right: 20px;
+    border-width: 2px;
+    border-color: #D4AF37;
+    min-width: 280px;
+    transition-duration: 0.25s;
+}
+
+.sf-p2-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    height: 75px;
+    background-color: rgba(28, 25, 23, 0.95);
+    border-radius: 14px;
+    padding-left: 20px;
+    padding-right: 12px;
+    border-width: 2px;
+    border-color: #D4AF37;
+    min-width: 280px;
+    transition-duration: 0.25s;
+}
+
+.sf-avatar-box {
+    width: 54px;
+    height: 54px;
+    border-radius: 27px;
+    background-color: #D91E28;
+    border-width: 2px;
+    border-color: #FFFFFF;
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-avatar-initials {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+}
+
+.sf-player-name {
+    font-size: 26px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    margin-left: 14px;
+    margin-right: 14px;
+}
+
+.sf-player-seed {
+    font-size: 13px;
+    color: #F2C94C;
+    -unity-font-style: bold;
+}
+
+.sf-player-badge {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: #FFFFFF;
+    background-color: #D91E28;
+    padding: 4px 10px;
+    border-radius: 8px;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.sf-vs-center {
+    align-items: center;
+    justify-content: center;
+}
+
+.sf-round-title {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: #F2C94C;
+    letter-spacing: 1px;
+    margin-bottom: 2px;
+}
+
+.sf-vs-text {
+    font-size: 40px;
+    -unity-font-style: bold;
+    color: #D91E28;
+    -unity-text-outline-width: 2px;
+    -unity-text-outline-color: #400508;
+    letter-spacing: -2px;
+}
+
+.sf-card-winner {
+    border-color: #F2C94C !important;
+    background-color: rgba(217, 30, 40, 0.45) !important;
+    scale: 1.05 1.05;
+}
+
+.sf-card-winner .sf-player-badge {
+    background-color: #F2C94C !important;
+    color: #12100E !important;
+}
+
+.sf-card-loser {
+    opacity: 0.45 !important;
+}
+
+/* STINGER ANIMATION OVERLAY */
+.stinger-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -unity-background-scale-mode: stretch-to-fill;
+    transform-origin: center center;
+    picking-mode: Ignore;
+    z-index: 999;
+}
+
+
 

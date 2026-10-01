@@ -58,7 +58,7 @@ namespace Janken.Controllers
         private Label headerSubtitleLabel;
 
         private VisualElement bracketViewContainer;
-        private ScrollView bracketScrollView;
+        private VisualElement bracketScrollView;
         private VisualElement bracketContainer;
 
         private VisualElement singleRoundViewContainer;
@@ -99,6 +99,15 @@ namespace Janken.Controllers
         private VisualElement championViewContainer;
         private Label championStageName;
 
+        [Header("Referee Character Poses (Janken Trio)")]
+        [SerializeField] private Sprite refereeRockSprite;
+        [SerializeField] private Sprite refereePaperSprite;
+        [SerializeField] private Sprite refereeScissorsSprite;
+        [SerializeField] private bool allowRefereeHorizontalFlip = true;
+        private int lastRefereePoseIndex = -1;
+
+        private VisualElement refereeCharacter;
+
         private TournamentModel tournamentModel;
 
         private void Start()
@@ -118,6 +127,13 @@ namespace Janken.Controllers
                     }
                 }
             }
+
+            if (refereeRockSprite == null)
+                refereeRockSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Referee_Rock.png");
+            if (refereePaperSprite == null)
+                refereePaperSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Referee_Paper.png");
+            if (refereeScissorsSprite == null)
+                refereeScissorsSprite = UnityEditor.AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/Referee_Scissors.png");
 #endif
             ActivateSecondaryDisplay();
             InitializeUI();
@@ -198,7 +214,7 @@ namespace Janken.Controllers
             headerSubtitleLabel = rootVisualElement.Q<Label>("Display2HeaderSubtitle");
 
             bracketViewContainer = rootVisualElement.Q<VisualElement>("BracketViewContainer");
-            bracketScrollView = rootVisualElement.Q<ScrollView>("Display2BracketScrollView");
+            bracketScrollView = rootVisualElement.Q<VisualElement>("Display2BracketScrollView");
             bracketContainer = rootVisualElement.Q<VisualElement>("Display2BracketContainer");
 
             singleRoundViewContainer = rootVisualElement.Q<VisualElement>("SingleRoundViewContainer");
@@ -243,7 +259,115 @@ namespace Janken.Controllers
             videoViewContainer = rootVisualElement.Q<VisualElement>("VideoViewContainer");
             videoDisplayElement = rootVisualElement.Q<VisualElement>("VideoDisplayElement");
 
+            refereeCharacter = rootVisualElement.Q<VisualElement>("RefereeCharacter");
             stingerOverlay = rootVisualElement.Q<VisualElement>("StingerOverlay");
+        }
+
+        private Coroutine refereeAnimCoroutine;
+        private VisualElement activeFinalBanner;
+
+        private void TriggerRefereeEntranceAnimation(bool show)
+        {
+            if (refereeCharacter == null) return;
+
+            if (refereeAnimCoroutine != null)
+            {
+                StopCoroutine(refereeAnimCoroutine);
+            }
+
+            if (show)
+            {
+                refereeCharacter.style.display = DisplayStyle.Flex;
+                refereeAnimCoroutine = StartCoroutine(AnimateRefereeEntranceRoutine());
+            }
+            else
+            {
+                refereeCharacter.AddToClassList("referee-hidden");
+            }
+        }
+
+        private IEnumerator AnimateRefereeEntranceRoutine()
+        {
+            if (refereeCharacter == null) yield break;
+
+            // 1. Force exit state off-screen right first
+            refereeCharacter.AddToClassList("referee-hidden");
+
+            // 2. Wait for character to slide completely off-screen (0.35s exit transition)
+            yield return new WaitForSeconds(0.35f);
+
+            // 3. NOW THAT HE IS OFF-SCREEN: Select next pose & horizontal flip!
+            SelectRandomRefereePose();
+
+            // 4. Brief pause off-screen before entrance (0.1f)
+            yield return new WaitForSeconds(0.1f);
+
+            // 5. Slide in smoothly from right to left with new pose!
+            if (refereeCharacter != null)
+            {
+                refereeCharacter.RemoveFromClassList("referee-hidden");
+            }
+            refereeAnimCoroutine = null;
+        }
+
+        private void SelectRandomRefereePose()
+        {
+            if (refereeCharacter == null) return;
+
+            // Pick next index different from last (0: Rock, 1: Paper, 2: Scissors)
+            int nextPoseIndex = lastRefereePoseIndex;
+            int attempts = 0;
+            while (nextPoseIndex == lastRefereePoseIndex && attempts < 20)
+            {
+                nextPoseIndex = UnityEngine.Random.Range(0, 3);
+                attempts++;
+            }
+            lastRefereePoseIndex = nextPoseIndex;
+
+            Sprite selectedSprite = null;
+            switch (nextPoseIndex)
+            {
+                case 0: selectedSprite = refereeRockSprite; break;
+                case 1: selectedSprite = refereePaperSprite; break;
+                case 2: selectedSprite = refereeScissorsSprite; break;
+            }
+
+            if (selectedSprite != null)
+            {
+                refereeCharacter.style.backgroundImage = new StyleBackground(selectedSprite);
+            }
+
+            // Horizontal Flip (50% chance for random flip)
+            if (allowRefereeHorizontalFlip)
+            {
+                float flipX = UnityEngine.Random.value > 0.5f ? -1f : 1f;
+                refereeCharacter.style.scale = new StyleScale(new Scale(new Vector2(flipX, 1f)));
+            }
+            else
+            {
+                refereeCharacter.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
+            }
+        }
+
+        private void TriggerBracketEntranceAnimation()
+        {
+            if (bracketContainer == null) return;
+            bracketContainer.AddToClassList("bracket-hidden");
+            if (activeFinalBanner != null) activeFinalBanner.AddToClassList("final-banner-hidden");
+            StartCoroutine(AnimateBracketEntranceRoutine());
+        }
+
+        private IEnumerator AnimateBracketEntranceRoutine()
+        {
+            yield return new WaitForSeconds(0.1f);
+            if (bracketContainer != null)
+            {
+                bracketContainer.RemoveFromClassList("bracket-hidden");
+            }
+            if (activeFinalBanner != null)
+            {
+                activeFinalBanner.RemoveFromClassList("final-banner-hidden");
+            }
         }
 
         private void OnDisplayViewChanged(DisplayViewType newView)
@@ -392,6 +516,7 @@ namespace Janken.Controllers
 
             bool isChroma = IsChromaView(tournamentModel.CurrentDisplayView);
             UpdateBackgroundChromaMode(isChroma);
+            TriggerRefereeEntranceAnimation(!isChroma && tournamentModel.CurrentDisplayView != DisplayViewType.NouArbitreVideo);
 
             switch (tournamentModel.CurrentDisplayView)
             {
@@ -400,6 +525,7 @@ namespace Janken.Controllers
                     SetContainerVisible(bracketViewContainer, true);
                     if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "VISTA QUADRE (CROMA KEY)" : "VISTA DEL QUADRE";
                     RenderCleanBracket();
+                    TriggerBracketEntranceAnimation();
                     break;
 
                 case DisplayViewType.SingleRound:
@@ -756,6 +882,7 @@ namespace Janken.Controllers
 
         private void RenderCleanBracket()
         {
+            activeFinalBanner = null;
             if (bracketContainer == null) return;
             bracketContainer.Clear();
 
@@ -772,33 +899,33 @@ namespace Janken.Controllers
             int totalRounds = tournamentModel.Rounds.Count;
 
             // Dynamic Sizing based on tournament size (4, 8, or 16 players)
-            float HEADER_HEIGHT = 36f;
-            float HEADER_MARGIN = 20f;
-            float CARD_HEIGHT = 80f;
-            float BASE_GAP = 24f;
-            float COLUMN_WIDTH = 260f;
-            float SLOT_FONT_SIZE = 14f;
-            float HEADER_FONT_SIZE = 14f;
+            float HEADER_HEIGHT = 38f;
+            float HEADER_MARGIN = 16f;
+            float CARD_HEIGHT = 76f;
+            float BASE_GAP = 18f;
+            float COLUMN_WIDTH = 185f;
+            float SLOT_FONT_SIZE = 13f;
+            float HEADER_FONT_SIZE = 13f;
 
             if (totalRounds <= 2) // 4 Players (2 Rounds) -> Make much larger!
             {
-                HEADER_HEIGHT = 50f;
-                HEADER_MARGIN = 26f;
-                CARD_HEIGHT = 130f;
-                BASE_GAP = 44f;
-                COLUMN_WIDTH = 360f;
-                SLOT_FONT_SIZE = 22f;
-                HEADER_FONT_SIZE = 20f;
-            }
-            else if (totalRounds == 3) // 8 Players (3 Rounds) -> Make much larger!
-            {
-                HEADER_HEIGHT = 50f;
-                HEADER_MARGIN = 26f;
+                HEADER_HEIGHT = 48f;
+                HEADER_MARGIN = 24f;
                 CARD_HEIGHT = 125f;
-                BASE_GAP = 36f;
-                COLUMN_WIDTH = 340f;
+                BASE_GAP = 38f;
+                COLUMN_WIDTH = 300f;
                 SLOT_FONT_SIZE = 20f;
                 HEADER_FONT_SIZE = 18f;
+            }
+            else if (totalRounds == 3) // 8 Players (3 Rounds) -> Make larger!
+            {
+                HEADER_HEIGHT = 46f;
+                HEADER_MARGIN = 22f;
+                CARD_HEIGHT = 115f;
+                BASE_GAP = 30f;
+                COLUMN_WIDTH = 250f;
+                SLOT_FONT_SIZE = 17f;
+                HEADER_FONT_SIZE = 16f;
             }
 
             float HEADER_TOTAL = HEADER_HEIGHT + HEADER_MARGIN;
@@ -810,24 +937,43 @@ namespace Janken.Controllers
                 var roundColumn = new VisualElement();
                 roundColumn.AddToClassList("round-column");
                 roundColumn.style.width = COLUMN_WIDTH;
+                roundColumn.style.alignItems = Align.Center;
+
+                bool isFinalRound = (r == totalRounds - 1);
 
                 var roundHeader = new Label(tournamentModel.GetRoundTitle(r));
                 roundHeader.AddToClassList("round-header");
                 roundHeader.style.height = HEADER_HEIGHT;
                 roundHeader.style.marginBottom = HEADER_MARGIN;
                 roundHeader.style.fontSize = HEADER_FONT_SIZE;
+                roundHeader.style.width = Math.Min(COLUMN_WIDTH - 5f, 180f);
+                if (isFinalRound)
+                {
+                    roundHeader.style.visibility = Visibility.Hidden;
+                }
                 roundColumn.Add(roundHeader);
 
                 float multiplier = (float)Math.Pow(2, r);
                 float topOffset = (SLOT_HEIGHT * (multiplier - 1f)) / 2f;
                 float gap = SLOT_HEIGHT * (multiplier - 1f) + BASE_GAP;
 
+                if (isFinalRound)
+                {
+                    var finalBanner = new VisualElement();
+                    finalBanner.AddToClassList("final-banner-crown");
+                    finalBanner.AddToClassList("final-banner-hidden");
+                    finalBanner.style.marginTop = topOffset - 85f;
+                    activeFinalBanner = finalBanner;
+                    roundColumn.Add(finalBanner);
+                }
+
                 for (int m = 0; m < roundMatches.Count; m++)
                 {
                     Match match = roundMatches[m];
                     VisualElement matchCard = CreateCleanMatchCard(match, CARD_HEIGHT, SLOT_FONT_SIZE);
+                    matchCard.style.width = new Length(100, LengthUnit.Percent);
 
-                    float marginTop = (m == 0) ? topOffset : gap;
+                    float marginTop = (m == 0) ? (isFinalRound ? 0f : topOffset) : gap;
                     matchCard.style.marginTop = marginTop;
 
                     roundColumn.Add(matchCard);
@@ -840,6 +986,7 @@ namespace Janken.Controllers
                 {
                     var connectorColumn = new VisualElement();
                     connectorColumn.AddToClassList("connector-column");
+                    connectorColumn.style.width = 24f;
 
                     int nextRoundMatchesCount = roundMatches.Count / 2;
                     for (int m = 0; m < nextRoundMatchesCount; m++)
@@ -859,32 +1006,32 @@ namespace Janken.Controllers
                         if (match1Active) upperArm.AddToClassList("connector-arm-active");
                         upperArm.style.top = yUpper - 1f;
                         upperArm.style.left = 0f;
-                        upperArm.style.width = 16f;
-                        upperArm.style.height = 2f;
+                        upperArm.style.width = 12f;
+                        upperArm.style.height = 4f;
 
                         var lowerArm = new VisualElement();
                         lowerArm.AddToClassList("connector-arm");
                         if (match2Active) lowerArm.AddToClassList("connector-arm-active");
                         lowerArm.style.top = yLower - 1f;
                         lowerArm.style.left = 0f;
-                        lowerArm.style.width = 16f;
-                        lowerArm.style.height = 2f;
+                        lowerArm.style.width = 12f;
+                        lowerArm.style.height = 4f;
 
                         var verticalBar = new VisualElement();
                         verticalBar.AddToClassList("connector-arm");
                         if (match1Active || match2Active) verticalBar.AddToClassList("connector-arm-active");
                         verticalBar.style.top = yUpper - 1f;
-                        verticalBar.style.left = 15f;
-                        verticalBar.style.width = 2f;
-                        verticalBar.style.height = yLower - yUpper + 2f;
+                        verticalBar.style.left = 10f;
+                        verticalBar.style.width = 4f;
+                        verticalBar.style.height = yLower - yUpper + 4f;
 
                         var outArm = new VisualElement();
                         outArm.AddToClassList("connector-arm");
                         if (match1Active || match2Active) outArm.AddToClassList("connector-arm-active");
                         outArm.style.top = yMid - 1f;
-                        outArm.style.left = 16f;
-                        outArm.style.width = 16f;
-                        outArm.style.height = 2f;
+                        outArm.style.left = 12f;
+                        outArm.style.width = 12f;
+                        outArm.style.height = 4f;
 
                         connectorColumn.Add(upperArm);
                         connectorColumn.Add(lowerArm);
@@ -1036,7 +1183,7 @@ namespace Janken.Controllers
             float CARD_HEIGHT = 100f;
             float BASE_GAP = 16f;
             float SLOT_FONT_SIZE = 18f;
-            float CARD_WIDTH = 380f;
+            float CARD_WIDTH = 340f;
 
             int matchCount = roundMatches.Count;
 
@@ -1044,15 +1191,16 @@ namespace Janken.Controllers
             {
                 // 8 Matches (e.g. Vuitens for 16 players) -> 2 columns of 4 matches!
                 singleRoundContainer.style.flexDirection = FlexDirection.Row;
-                singleRoundContainer.style.justifyContent = Justify.Center;
+                singleRoundContainer.style.justifyContent = Justify.FlexStart;
+                singleRoundContainer.style.alignItems = Align.FlexStart;
 
-                CARD_HEIGHT = 70f;
-                BASE_GAP = 10f;
-                SLOT_FONT_SIZE = 14f;
+                CARD_HEIGHT = 86f;
+                BASE_GAP = 16f;
+                SLOT_FONT_SIZE = 17f;
                 CARD_WIDTH = 340f;
 
                 var col1 = new VisualElement();
-                col1.style.marginRight = 20f;
+                col1.style.marginRight = 28f;
                 var col2 = new VisualElement();
 
                 for (int m = 0; m < matchCount; m++)
@@ -1073,32 +1221,32 @@ namespace Janken.Controllers
             {
                 // 1 column (4, 2, or 1 matches)
                 singleRoundContainer.style.flexDirection = FlexDirection.Column;
-                singleRoundContainer.style.alignItems = Align.Center;
+                singleRoundContainer.style.alignItems = Align.FlexStart;
 
                 if (matchCount == 4)
                 {
-                    CARD_HEIGHT = 85f;
-                    BASE_GAP = 14f;
-                    SLOT_FONT_SIZE = 16f;
+                    CARD_HEIGHT = 105f;
+                    BASE_GAP = 20f;
+                    SLOT_FONT_SIZE = 20f;
                     CARD_WIDTH = 420f;
                 }
                 else if (matchCount == 2)
                 {
-                    CARD_HEIGHT = 120f;
-                    BASE_GAP = 24f;
-                    SLOT_FONT_SIZE = 22f;
+                    CARD_HEIGHT = 140f;
+                    BASE_GAP = 30f;
+                    SLOT_FONT_SIZE = 24f;
                     CARD_WIDTH = 480f;
                 }
                 else // 1 Match (Final)
                 {
-                    CARD_HEIGHT = 180f;
+                    CARD_HEIGHT = 200f;
                     BASE_GAP = 0f;
-                    SLOT_FONT_SIZE = 28f;
+                    SLOT_FONT_SIZE = 30f;
                     CARD_WIDTH = 550f;
                 }
 
                 var roundColumn = new VisualElement();
-                roundColumn.style.alignItems = Align.Center;
+                roundColumn.style.alignItems = Align.FlexStart;
 
                 for (int m = 0; m < matchCount; m++)
                 {

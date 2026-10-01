@@ -6,15 +6,15 @@
 
         <!-- VIEW 1: BRACKET / ROSTER VIEW -->
         <ui:VisualElement name="BracketViewContainer" class="display2-view-container">
-            <ui:ScrollView name="Display2BracketScrollView" mode="Horizontal" class="bracket-scroll-view display2-bracket-scroll">
+            <ui:VisualElement name="Display2BracketScrollView" class="bracket-scroll-view display2-bracket-scroll">
                 <ui:VisualElement name="Display2BracketContainer" class="bracket-container display2-bracket-centered">
                     <!-- Clean bracket dynamically rendered here without buttons -->
                 </ui:VisualElement>
-            </ui:ScrollView>
+            </ui:VisualElement>
         </ui:VisualElement>
 
         <!-- VIEW 2: SINGLE ROUND FOCUS VIEW (NO SCROLL, FIT TO SCREEN) -->
-        <ui:VisualElement name="SingleRoundViewContainer" class="display2-view-container display2-hidden">
+        <ui:VisualElement name="SingleRoundViewContainer" class="display2-view-container display2-hidden" style="align-items: center; justify-content: center; width: 880px; height: 100%;">
             <ui:Label name="SingleRoundHeaderTitle" text="QUARTS DE FINAL" class="round-focus-title" />
             <ui:VisualElement name="Display2SingleRoundContainer" class="single-round-container">
                 <!-- Clean single round dynamically rendered here -->
@@ -22,7 +22,7 @@
         </ui:VisualElement>
 
         <!-- VIEW 3: COMBAT VS VIEW (Goku vs Vegeta Style) -->
-        <ui:VisualElement name="CombatViewContainer" class="display2-view-container display2-hidden">
+        <ui:VisualElement name="CombatViewContainer" class="display2-view-container display2-hidden" style="align-items: center; justify-content: center; width: 880px; height: 100%;">
             <ui:Label name="CombatRoundTitle" text="SEMIFINALS - COMBAT #1" class="combat-round-title" />
             
             <ui:VisualElement class="combat-stage">
@@ -82,7 +82,7 @@
         </ui:VisualElement>
 
         <!-- VIEW 5: CHAMPION CELEBRATION VIEW -->
-        <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display2-hidden">
+        <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display2-hidden" style="align-items: center; justify-content: center; width: 880px; height: 100%;">
             <ui:VisualElement class="champion-stage">
                 <ui:Label text="🏆" class="champion-huge-trophy" />
                 <ui:Label text="CAMPIÓ DEL TORNEIG" class="champion-stage-subtitle" />
@@ -95,6 +95,9 @@
         <ui:VisualElement name="VideoViewContainer" class="display2-view-container display2-hidden" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; flex-grow: 1; align-items: center; justify-content: center; background-color: #000000; z-index: 5;">
             <ui:VisualElement name="VideoDisplayElement" style="width: 100%; height: 100%; flex-grow: 1;" />
         </ui:VisualElement>
+
+        <!-- REFEREE CHARACTER ANIMATED CUTOUT -->
+        <ui:VisualElement name="RefereeCharacter" class="referee-character referee-hidden" />
 
         <!-- STINGER TRANSITION OVERLAY -->
         <ui:VisualElement name="StingerOverlay" class="stinger-overlay display2-hidden" />
