@@ -73,6 +73,7 @@
                         <ui:Toggle name="ToggleStinger" label="🎬 Stinger" value="true" class="toggle-stinger" />
                         <ui:Button name="BtnToggleMusic" text="🎵 Música" class="btn-secondary btn-music" />
                         <ui:Button name="BtnToggleSidebar" text="⚙️" class="btn-secondary btn-icon-only" tooltip="Configuració del Torneig" />
+                        <ui:Button name="BtnCloseApp" text="✕" class="btn-close-app" tooltip="Tancar aplicació" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
@@ -91,6 +92,20 @@
                     <!-- Dynamic Round Columns & Champion card inserted here via C# -->
                 </ui:VisualElement>
             </ui:ScrollView>
+        </ui:VisualElement>
+
+        <!-- QUIT CONFIRMATION MODAL -->
+        <ui:VisualElement name="ConfirmQuitModal" class="modal-overlay modal-hidden">
+            <ui:VisualElement class="modal-card">
+                <ui:VisualElement class="modal-header">
+                    <ui:Label text="⚠️ TANCAR APLICACIÓ" class="modal-title" />
+                </ui:VisualElement>
+                <ui:Label text="Segur que vols tancar el programa JANKEN?" class="modal-message" />
+                <ui:VisualElement class="modal-actions">
+                    <ui:Button name="BtnConfirmQuitYes" text="Sí, Tancar" class="btn-modal-yes" />
+                    <ui:Button name="BtnConfirmQuitNo" text="No, Cancel·lar" class="btn-modal-no" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -74,6 +74,12 @@ namespace Janken.Controllers
         private bool isMusicPlaying = false;
         private bool useStingerTransitions = true;
 
+        // Quit Confirmation Modal & Close Button
+        private Button btnCloseApp;
+        private VisualElement confirmQuitModal;
+        private Button btnConfirmQuitYes;
+        private Button btnConfirmQuitNo;
+
         private TournamentModel tournamentModel;
         private bool hasPlayedGoInCurrentVideoSession = false;
 
@@ -279,6 +285,12 @@ namespace Janken.Controllers
             // Video Action Controls (GO & REP)
             btnGo = rootVisualElement.Q<Button>("BtnGo");
             btnRep = rootVisualElement.Q<Button>("BtnRep");
+
+            // Quit Confirmation Modal & Close Button
+            btnCloseApp = rootVisualElement.Q<Button>("BtnCloseApp");
+            confirmQuitModal = rootVisualElement.Q<VisualElement>("ConfirmQuitModal");
+            btnConfirmQuitYes = rootVisualElement.Q<Button>("BtnConfirmQuitYes");
+            btnConfirmQuitNo = rootVisualElement.Q<Button>("BtnConfirmQuitNo");
         }
 
         private void RegisterEvents()
@@ -337,6 +349,11 @@ namespace Janken.Controllers
 
             // Music Toggle Control
             if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
+
+            // Quit Confirmation Modal & Close Button Events
+            if (btnCloseApp != null) btnCloseApp.clicked += ShowQuitConfirmationModal;
+            if (btnConfirmQuitYes != null) btnConfirmQuitYes.clicked += QuitApplication;
+            if (btnConfirmQuitNo != null) btnConfirmQuitNo.clicked += HideQuitConfirmationModal;
         }
 
         private void OnSwapDisplaysClicked()
@@ -351,6 +368,8 @@ namespace Janken.Controllers
 
         public void ApplyDisplayTargetMapping()
         {
+            int numDisplays = Display.displays.Length;
+
             int d2Target = isDisplaySwapped ? 2 : 1; // 1 = Physical Monitor 2, 2 = Physical Monitor 3
             int d3Target = isDisplaySwapped ? 1 : 2;
 
@@ -361,35 +380,101 @@ namespace Janken.Controllers
                     : "🔁 Monitors: D2 (Pantalla 2) | D3 (Pantalla 3)";
             }
 
+            if (display2Controller == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                display2Controller = FindFirstObjectByType<Display2Controller>(FindObjectsInactive.Include);
+#else
+                display2Controller = FindObjectOfType<Display2Controller>();
+#endif
+            }
+
+            if (display3Controller == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                display3Controller = FindFirstObjectByType<Display3Controller>(FindObjectsInactive.Include);
+#else
+                display3Controller = FindObjectOfType<Display3Controller>();
+#endif
+            }
+
+            var camObj2 = GameObject.Find("Display2_Camera");
+            var camObj3 = GameObject.Find("Display3_Camera");
+
+            // When there are only 2 monitors in a standalone build (or numDisplays == 2),
+            // targetDisplay 2 does not exist physically. Deactivate the audience display object and camera mapped to display 2 (index 2).
+            // This prevents Unity UI Toolkit & Cameras from falling back to targetDisplay 1 or 0, eliminating constant rapid flickering!
+            bool isTwoMonitorsBuild = (!Application.isEditor && numDisplays == 2);
+
             if (display2Controller != null)
             {
-                var doc = display2Controller.GetComponent<UIDocument>();
-                if (doc != null && doc.panelSettings != null)
+                bool d2Active = !(isTwoMonitorsBuild && d2Target >= numDisplays);
+                display2Controller.gameObject.SetActive(d2Active);
+                if (camObj2 != null) camObj2.SetActive(d2Active);
+
+                if (d2Active)
                 {
-                    doc.panelSettings.targetDisplay = d2Target;
-                }
-                var camObj = GameObject.Find("Display2_Camera");
-                if (camObj != null)
-                {
-                    var cam = camObj.GetComponent<Camera>();
-                    if (cam != null) cam.targetDisplay = d2Target;
+                    var doc = display2Controller.GetComponent<UIDocument>();
+                    if (doc != null && doc.panelSettings != null)
+                    {
+                        doc.panelSettings.targetDisplay = d2Target;
+                    }
+                    if (camObj2 != null)
+                    {
+                        var cam = camObj2.GetComponent<Camera>();
+                        if (cam != null) cam.targetDisplay = d2Target;
+                    }
                 }
             }
 
             if (display3Controller != null)
             {
-                var doc = display3Controller.GetComponent<UIDocument>();
-                if (doc != null && doc.panelSettings != null)
+                bool d3Active = !(isTwoMonitorsBuild && d3Target >= numDisplays);
+                display3Controller.gameObject.SetActive(d3Active);
+                if (camObj3 != null) camObj3.SetActive(d3Active);
+
+                if (d3Active)
                 {
-                    doc.panelSettings.targetDisplay = d3Target;
-                }
-                var camObj = GameObject.Find("Display3_Camera");
-                if (camObj != null)
-                {
-                    var cam = camObj.GetComponent<Camera>();
-                    if (cam != null) cam.targetDisplay = d3Target;
+                    var doc = display3Controller.GetComponent<UIDocument>();
+                    if (doc != null && doc.panelSettings != null)
+                    {
+                        doc.panelSettings.targetDisplay = d3Target;
+                    }
+                    if (camObj3 != null)
+                    {
+                        var cam = camObj3.GetComponent<Camera>();
+                        if (cam != null) cam.targetDisplay = d3Target;
+                    }
                 }
             }
+        }
+
+        public void ShowQuitConfirmationModal()
+        {
+            if (confirmQuitModal != null)
+            {
+                confirmQuitModal.RemoveFromClassList("modal-hidden");
+                confirmQuitModal.style.display = DisplayStyle.Flex;
+            }
+        }
+
+        public void HideQuitConfirmationModal()
+        {
+            if (confirmQuitModal != null)
+            {
+                confirmQuitModal.AddToClassList("modal-hidden");
+                confirmQuitModal.style.display = DisplayStyle.None;
+            }
+        }
+
+        public void QuitApplication()
+        {
+            Debug.Log("[Janken] Tancant l'aplicació...");
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
 
         private void PlayNouArbitreVideo(bool useStinger)
@@ -416,6 +501,7 @@ namespace Janken.Controllers
             bool tabPressed = false;
             bool pageDownPressed = false;
             bool pageUpPressed = false;
+            bool escapePressed = false;
 
 #if ENABLE_INPUT_SYSTEM
             var kb = Keyboard.current;
@@ -424,12 +510,27 @@ namespace Janken.Controllers
                 tabPressed = kb.tabKey.wasPressedThisFrame;
                 pageDownPressed = kb.pageDownKey.wasPressedThisFrame || kb.downArrowKey.wasPressedThisFrame;
                 pageUpPressed = kb.pageUpKey.wasPressedThisFrame || kb.upArrowKey.wasPressedThisFrame;
+                escapePressed = kb.escapeKey.wasPressedThisFrame;
             }
 #elif ENABLE_LEGACY_INPUT_MANAGER
             tabPressed = Input.GetKeyDown(KeyCode.Tab);
             pageDownPressed = Input.GetKeyDown(KeyCode.PageDown) || Input.GetKeyDown(KeyCode.DownArrow);
             pageUpPressed = Input.GetKeyDown(KeyCode.PageUp) || Input.GetKeyDown(KeyCode.UpArrow);
+            escapePressed = Input.GetKeyDown(KeyCode.Escape);
 #endif
+
+            // Escape Hotkey: Toggle Quit Confirmation Modal
+            if (escapePressed)
+            {
+                if (confirmQuitModal != null && confirmQuitModal.style.display == DisplayStyle.Flex && !confirmQuitModal.ClassListContains("modal-hidden"))
+                {
+                    HideQuitConfirmationModal();
+                }
+                else
+                {
+                    ShowQuitConfirmationModal();
+                }
+            }
 
             // TAB Hotkey: First press from another view -> GO. Subsequent presses in video view -> REP.
             if (tabPressed)
