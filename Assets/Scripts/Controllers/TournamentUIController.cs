@@ -59,6 +59,7 @@ namespace Janken.Controllers
         private Button btnViewRound;
         private Button btnViewCombat;
         private Button btnViewChampion;
+        private Button btnChromaCleanFeed;
         private Button btnChromaBracket;
         private Button btnChromaRound;
         private Button btnChromaCombatSF;
@@ -261,6 +262,7 @@ namespace Janken.Controllers
             btnViewChampion = rootVisualElement.Q<Button>("BtnViewChampion");
 
             // Display Controls (Chroma Key OBS)
+            btnChromaCleanFeed = rootVisualElement.Q<Button>("BtnChromaCleanFeed");
             btnChromaBracket = rootVisualElement.Q<Button>("BtnChromaBracket");
             btnChromaRound = rootVisualElement.Q<Button>("BtnChromaRound");
             btnChromaCombatSF = rootVisualElement.Q<Button>("BtnChromaCombatSF");
@@ -310,6 +312,7 @@ namespace Janken.Controllers
             if (btnViewChampion != null) btnViewChampion.clicked += () => RequestDisplayViewChange(DisplayViewType.ChampionPodium);
 
             // Display View Controls (Chroma Key OBS)
+            if (btnChromaCleanFeed != null) btnChromaCleanFeed.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaCleanFeed);
             if (btnChromaBracket != null) btnChromaBracket.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaBracket);
             if (btnChromaRound != null) btnChromaRound.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaSingleRound);
             if (btnChromaCombatSF != null) btnChromaCombatSF.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaCombatSF);
@@ -619,6 +622,7 @@ namespace Janken.Controllers
             SetButtonActive(btnViewChampion, tournamentModel.CurrentDisplayView == DisplayViewType.ChampionPodium);
 
             // Highlight Active View Button (Chroma)
+            SetButtonActive(btnChromaCleanFeed, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCleanFeed);
             SetButtonActive(btnChromaBracket, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket);
             SetButtonActive(btnChromaRound, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound);
             SetButtonActive(btnChromaCombatSF, tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF);
@@ -647,6 +651,9 @@ namespace Janken.Controllers
                     case DisplayViewType.ChampionPodium:
                         string champ = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
                         display2StatusText.text = $"📺 DISPLAY 2: Mostrant CAMPIÓ DEL TORNEIG ( {champ} )";
+                        break;
+                    case DisplayViewType.ChromaCleanFeed:
+                        display2StatusText.text = "🟢 DISPLAY (CROMA): Fons Verd Pur Net (Clean Feed)";
                         break;
                     case DisplayViewType.ChromaBracket:
                         display2StatusText.text = "🟢 DISPLAY 2 (CROMA): Mostrant QUADRE GENERAL (Fons Verd OBS)";
@@ -689,7 +696,8 @@ namespace Janken.Controllers
                     bool isChroma = tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket ||
                                     tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound ||
                                     tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF ||
-                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion;
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCleanFeed;
                     tournamentModel.SetDisplayView(isChroma ? DisplayViewType.ChromaSingleRound : DisplayViewType.SingleRound);
                     if (display2Controller != null) display2Controller.RefreshCurrentView();
                 });
@@ -852,7 +860,8 @@ namespace Janken.Controllers
                     bool isChroma = tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket ||
                                     tournamentModel.CurrentDisplayView == DisplayViewType.ChromaSingleRound ||
                                     tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCombatSF ||
-                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion;
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaChampion ||
+                                    tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCleanFeed;
                     tournamentModel.SetDisplayView(isChroma ? DisplayViewType.ChromaSingleRound : DisplayViewType.SingleRound);
                     if (display2Controller != null) display2Controller.RefreshCurrentView();
                     evt.StopPropagation();

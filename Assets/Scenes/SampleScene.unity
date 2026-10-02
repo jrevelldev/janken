@@ -119,6 +119,91 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &36328496
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 36328499}
+  - component: {fileID: 36328498}
+  - component: {fileID: 36328497}
+  m_Layer: 0
+  m_Name: Display3_Audience
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &36328497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36328496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f0aa6e8f73644cfeb082469e847d1cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Janken.Controllers.Display3Controller
+  useStingerTransitions: 1
+  randomizeStingerFlip: 1
+  useRandomStingerFromLibrary: 1
+  activeStinger: {fileID: 11400000, guid: 24896bd4380ac4632b768362a9758995, type: 2}
+  stingerLibrary:
+  - {fileID: 11400000, guid: 24896bd4380ac4632b768362a9758995, type: 2}
+  - {fileID: 11400000, guid: b243dd517331e47d183f41f8fddec3e6, type: 2}
+  - {fileID: 11400000, guid: 3a23b92213a2a48fca4b97dc2f13c7b3, type: 2}
+  - {fileID: 11400000, guid: bb7181fd44e144ffbbe99080d08c5948, type: 2}
+  videoPlayer: {fileID: 0}
+  nouArbitreClip: {fileID: 0}
+  goVideoStartTime: 0
+  repVideoStartTime: 0
+  refereeRockSprite: {fileID: 0}
+  refereePaperSprite: {fileID: 0}
+  refereeScissorsSprite: {fileID: 0}
+  allowRefereeHorizontalFlip: 1
+--- !u!114 &36328498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36328496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: a77b8193d01249b6b72a112233445566, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 84af465b66eb8404db65d2bebfe2ef56, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &36328499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36328496}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &277617538
 GameObject:
   m_ObjectHideFlags: 0
@@ -247,6 +332,89 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &379904180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 379904182}
+  - component: {fileID: 379904181}
+  m_Layer: 0
+  m_Name: Display3_Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!20 &379904181
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379904180}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.035, g: 0.05, b: 0.086, a: 1}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 2
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &379904182
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379904180}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,7 +667,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6036e05b8f857406c99698560bc9d84c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Janken.Controllers.TournamentUIController
-  display2Controller: {fileID: 0}
+  display2Controller: {fileID: 1278015257}
+  display3Controller: {fileID: 36328497}
   audioSource: {fileID: 952439890}
   backgroundMusicClip: {fileID: 8300000, guid: 8b359220211c5412e907f96b33032da9, type: 3}
   videoPlayer: {fileID: 0}
@@ -680,6 +849,7 @@ MonoBehaviour:
   stingerLibrary:
   - {fileID: 11400000, guid: 24896bd4380ac4632b768362a9758995, type: 2}
   - {fileID: 11400000, guid: b243dd517331e47d183f41f8fddec3e6, type: 2}
+  - {fileID: 11400000, guid: 3a23b92213a2a48fca4b97dc2f13c7b3, type: 2}
   - {fileID: 11400000, guid: bb7181fd44e144ffbbe99080d08c5948, type: 2}
   videoPlayer: {fileID: 0}
   nouArbitreClip: {fileID: 32900000, guid: fc3f421a838db42598e73a4e3ad88292, type: 3}
@@ -736,3 +906,5 @@ SceneRoots:
   - {fileID: 952439889}
   - {fileID: 1278015259}
   - {fileID: 277617540}
+  - {fileID: 36328499}
+  - {fileID: 379904182}

@@ -565,6 +565,10 @@ namespace Janken.Controllers
                     RenderChampionView();
                     break;
 
+                case DisplayViewType.ChromaCleanFeed:
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = "FONS VERD PUR (CLEAN FEED)";
+                    break;
+
                 case DisplayViewType.NouArbitreVideo:
                     SetContainerVisible(videoViewContainer, true);
                     if (headerSubtitleLabel != null) headerSubtitleLabel.text = "REPRODUINT VÍDEO: NOU ÀRBITRE";
@@ -756,7 +760,8 @@ namespace Janken.Controllers
             return view == DisplayViewType.ChromaBracket ||
                    view == DisplayViewType.ChromaSingleRound ||
                    view == DisplayViewType.ChromaCombatSF ||
-                   view == DisplayViewType.ChromaChampion;
+                   view == DisplayViewType.ChromaChampion ||
+                   view == DisplayViewType.ChromaCleanFeed;
         }
 
         private void SetContainerVisible(VisualElement element, bool visible)

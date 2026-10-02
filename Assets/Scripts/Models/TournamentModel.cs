@@ -15,6 +15,7 @@ namespace Janken.Tournament
         ChromaSingleRound,  // Vista ronda seleccionada (Fons Verd Croma OBS)
         ChromaCombatSF,     // Vista combat HUD Top Bar Street Fighter (Fons Verd Croma OBS)
         ChromaChampion,     // Vista campió (Fons Verd Croma OBS)
+        ChromaCleanFeed,    // Fons verd croma pur 100% net sense grafismes ni personatge (Clean Feed)
         NouArbitreVideo     // Vista de vídeo NOU ÀRBITRE
     }
 

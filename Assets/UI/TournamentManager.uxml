@@ -50,9 +50,10 @@
                             <ui:Button name="BtnViewChampion" text="🏆 Podi" class="btn-display-view" />
                         </ui:VisualElement>
 
-                        <!-- TIER 2: CHROMA KEY OVERLAY VIEWS (OBS GREEN - WITHOUT UNUSED CHROMA BRACKET) -->
+                        <!-- TIER 2: CHROMA KEY OVERLAY VIEWS (OBS GREEN) -->
                         <ui:VisualElement class="display2-control-bar chroma-bar">
-                            <ui:Label text="🟢 CROMA OBS:" class="display2-bar-label chroma-label" />
+                            <ui:Label text="🟢 CROMA:" class="display2-bar-label chroma-label" />
+                            <ui:Button name="BtnChromaCleanFeed" text="🟩 Verd Croma (Clean)" class="btn-display-view btn-chroma-view" tooltip="Fons 100% verd croma pur sense grafismes ni personatge (Clean Feed)" />
                             <ui:Button name="BtnChromaRound" text="🔍 Ronda Croma" class="btn-display-view btn-chroma-view" />
                             <ui:Button name="BtnChromaCombatSF" text="🥊 SF Top Bar" class="btn-display-view btn-chroma-view" />
                             <ui:Button name="BtnChromaChampion" text="🏆 Podi Croma" class="btn-display-view btn-chroma-view" />
