@@ -1,0 +1,108 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:Style src="project://database/Assets/UI/TournamentManager.uss" />
+    <ui:Style src="project://database/Assets/UI/Display3Manager.uss" />
+
+    <ui:VisualElement name="Display2Root" class="display3-root">
+        <!-- ROTATED BACKGROUND IMAGE: 90 DEGREES CLOCKWISE SO RED CIRCLE IS AT THE BOTTOM -->
+        <ui:VisualElement name="Display3Background" class="display3-bg-rotated" />
+
+        <!-- VIEW 1: BRACKET / ROSTER VIEW -->
+        <ui:VisualElement name="BracketViewContainer" class="display2-view-container">
+            <ui:VisualElement name="Display2BracketScrollView" class="bracket-scroll-view display2-bracket-scroll">
+                <ui:VisualElement name="Display2BracketContainer" class="bracket-container display2-bracket-centered">
+                    <!-- Clean bracket dynamically rendered here without buttons -->
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 2: SINGLE ROUND FOCUS VIEW (NO SCROLL, FIT TO VERTICAL UPPER ZONE) -->
+        <ui:VisualElement name="SingleRoundViewContainer" class="display2-view-container display3-upper-view-container display2-hidden">
+            <ui:Label name="SingleRoundHeaderTitle" text="QUARTS DE FINAL" class="round-focus-title" />
+            <ui:VisualElement name="Display2SingleRoundContainer" class="single-round-container">
+                <!-- Clean single round dynamically rendered here -->
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 3: COMBAT VS VIEW (VERTICAL UPPER ZONE FIT) -->
+        <ui:VisualElement name="CombatViewContainer" class="display2-view-container display3-upper-view-container display2-hidden">
+            <ui:Label name="CombatRoundTitle" text="SEMIFINALS - COMBAT #1" class="combat-round-title" />
+            
+            <ui:VisualElement class="combat-stage">
+                <!-- PLAYER 1 CARD (LEFT) -->
+                <ui:VisualElement name="Player1Card" class="combat-player-card p1-card">
+                    <ui:VisualElement class="player-avatar-circle p1-avatar">
+                        <ui:Label name="Player1Initials" text="G" class="player-avatar-initials" />
+                    </ui:VisualElement>
+                    <ui:Label name="Player1Seed" text="#1 SEED" class="combat-player-seed" />
+                    <ui:Label name="Player1Name" text="Goku" class="combat-player-name" />
+                    <ui:Label name="Player1Status" text="COMBATENT" class="combat-player-status" />
+                </ui:VisualElement>
+
+                <!-- VS LOGO EMBLEM (CENTER) -->
+                <ui:VisualElement class="vs-emblem-container">
+                    <ui:Label text="VS" class="vs-emblem-text" />
+                    <ui:VisualElement class="vs-pulse-ring" />
+                </ui:VisualElement>
+
+                <!-- PLAYER 2 CARD (RIGHT) -->
+                <ui:VisualElement name="Player2Card" class="combat-player-card p2-card">
+                    <ui:VisualElement class="player-avatar-circle p2-avatar">
+                        <ui:Label name="Player2Initials" text="V" class="player-avatar-initials" />
+                    </ui:VisualElement>
+                    <ui:Label name="Player2Seed" text="#2 SEED" class="combat-player-seed" />
+                    <ui:Label name="Player2Name" text="Vegeta" class="combat-player-name" />
+                    <ui:Label name="Player2Status" text="COMBATENT" class="combat-player-status" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 4: COMBAT STREET FIGHTER TOP BAR / HUD (VERTICAL CHROMA OVERLAY) -->
+        <ui:VisualElement name="CombatSFViewContainer" class="display2-view-container display2-hidden sf-overlay-view">
+            <ui:VisualElement class="sf-hud-bar">
+                <!-- P1 HUD CARD (TOP) -->
+                <ui:VisualElement name="SFP1Card" class="sf-player-card sf-p1-card">
+                    <ui:VisualElement class="sf-avatar-box">
+                        <ui:Label name="SFP1Initials" text="GO" class="sf-avatar-initials" />
+                    </ui:VisualElement>
+                    <ui:Label name="SFP1Name" text="Goku" class="sf-player-name" />
+                </ui:VisualElement>
+
+                <!-- VS HUD CENTER EMBLEM -->
+                <ui:VisualElement class="sf-vs-center">
+                    <ui:Label name="SFRoundTitle" text="SEMIFINALS - COMBAT #1" class="sf-round-title" />
+                    <ui:Label text="VS" class="sf-vs-text" />
+                </ui:VisualElement>
+
+                <!-- P2 HUD CARD (BOTTOM) -->
+                <ui:VisualElement name="SFP2Card" class="sf-player-card sf-p2-card">
+                    <ui:Label name="SFP2Name" text="Vegeta" class="sf-player-name" />
+                    <ui:VisualElement class="sf-avatar-box">
+                        <ui:Label name="SFP2Initials" text="VE" class="sf-avatar-initials" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 5: CHAMPION CELEBRATION VIEW (VERTICAL UPPER ZONE FIT) -->
+        <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display3-upper-view-container display2-hidden">
+            <ui:VisualElement class="champion-stage">
+                <ui:Label text="🏆" class="champion-huge-trophy" />
+                <ui:Label text="CAMPIÓ DEL TORNEIG" class="champion-stage-subtitle" />
+                <ui:Label name="ChampionStageName" text="GOKU" class="champion-stage-name" />
+                <ui:Label text="¡ENHORABONA AL NOU CAMPIÓ!" class="champion-stage-footer" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- VIEW 6: VIDEO PLAYBACK VIEW (NOU ARBITRE) -->
+        <ui:VisualElement name="VideoViewContainer" class="display2-view-container display2-hidden" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; width: 100%; height: 100%; flex-grow: 1; align-items: center; justify-content: center; background-color: #000000; z-index: 5;">
+            <ui:VisualElement name="VideoDisplayElement" style="width: 100%; height: 100%; flex-grow: 1;" />
+        </ui:VisualElement>
+
+        <!-- REFEREE CHARACTER ANIMATED CUTOUT -->
+        <ui:VisualElement name="RefereeCharacter" class="referee-character referee-hidden" />
+
+        <!-- STINGER TRANSITION OVERLAY -->
+        <ui:VisualElement name="StingerOverlay" class="stinger-overlay display2-hidden" />
+
+    </ui:VisualElement>
+</ui:UXML>

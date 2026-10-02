@@ -79,7 +79,9 @@ namespace Janken.Controllers
         private Label player2Name;
         private Label player2Status;
 
+        private VisualElement vsEmblemContainer;
         private Label combatStatusBanner;
+        private Coroutine combatAnimCoroutine;
 
         // Street Fighter Top Bar HUD (Chroma Overlay)
         private VisualElement combatSFViewContainer;
@@ -146,9 +148,14 @@ namespace Janken.Controllers
                 Display.displays[1].Activate();
                 Debug.Log("[Janken MultiDisplay] Display 2 activat amb èxit.");
             }
-            else
+            if (Display.displays.Length > 2)
             {
-                Debug.Log("[Janken MultiDisplay] Només s'ha detectat 1 display físic. Display 2 s'està provant en mode secundari.");
+                Display.displays[2].Activate();
+                Debug.Log("[Janken MultiDisplay] Display 3 activat amb èxit.");
+            }
+            if (Display.displays.Length <= 1)
+            {
+                Debug.Log("[Janken MultiDisplay] Només s'ha detectat 1 display físic. Displays 2 i 3 s'estan provant en mode secundari.");
             }
         }
 
@@ -236,6 +243,7 @@ namespace Janken.Controllers
             player2Name = rootVisualElement.Q<Label>("Player2Name");
             player2Status = rootVisualElement.Q<Label>("Player2Status");
 
+            vsEmblemContainer = rootVisualElement.Q<VisualElement>(className: "vs-emblem-container");
             combatStatusBanner = rootVisualElement.Q<Label>("CombatStatusBanner");
 
             // Street Fighter HUD Top Bar
@@ -540,6 +548,7 @@ namespace Janken.Controllers
                     if (headerSubtitleLabel != null) headerSubtitleLabel.text = "ENFRONTAMENT DIRECTE";
                     Match activeMatch = tournamentModel.SelectedCombatMatch ?? tournamentModel.GetNextPlayableMatch();
                     RenderCombatView(activeMatch);
+                    TriggerCombatEntranceAnimation();
                     break;
 
                 case DisplayViewType.ChromaCombatSF:
@@ -850,6 +859,32 @@ namespace Janken.Controllers
                 if (player2Status != null) player2Status.text = "COMBATENT";
                 if (combatStatusBanner != null) combatStatusBanner.text = "⚡ COMBAT EN CURS - PREPARATS PER LLUITAR!";
             }
+        }
+
+        protected void TriggerCombatEntranceAnimation()
+        {
+            if (combatAnimCoroutine != null) StopCoroutine(combatAnimCoroutine);
+            combatAnimCoroutine = StartCoroutine(AnimateCombatEntranceRoutine());
+        }
+
+        protected IEnumerator AnimateCombatEntranceRoutine()
+        {
+            if (vsEmblemContainer != null) vsEmblemContainer.AddToClassList("vs-emblem-hidden");
+            if (player1Card != null) player1Card.AddToClassList("p1-card-hidden");
+            if (player2Card != null) player2Card.AddToClassList("p2-card-hidden");
+
+            yield return new WaitForEndOfFrame();
+
+            // Step 1: VS emblem scales up 0 -> 100% with bounce
+            if (vsEmblemContainer != null) vsEmblemContainer.RemoveFromClassList("vs-emblem-hidden");
+
+            // Step 2: 0.25s delay then player cards slide in from top/bottom or left/right
+            yield return new WaitForSeconds(0.25f);
+
+            if (player1Card != null) player1Card.RemoveFromClassList("p1-card-hidden");
+            if (player2Card != null) player2Card.RemoveFromClassList("p2-card-hidden");
+
+            combatAnimCoroutine = null;
         }
 
         private string GetInitials(string name)

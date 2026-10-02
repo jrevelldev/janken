@@ -16,6 +16,7 @@ namespace Janken.Controllers
     {
         [Header("MultiDisplay References")]
         [SerializeField] private Display2Controller display2Controller;
+        [SerializeField] private Display3Controller display3Controller;
 
         [Header("Audio Settings")]
         [SerializeField] private AudioSource audioSource;
@@ -31,6 +32,9 @@ namespace Janken.Controllers
 
         private Button btnGo;
         private Button btnRep;
+        private Button btnSwapDisplays;
+        private bool isDisplaySwapped = false;
+        private const string PREF_SWAP_DISPLAYS = "Janken_SwapDisplays";
 
         private UIDocument uiDocument;
         private VisualElement rootVisualElement;
@@ -180,7 +184,7 @@ namespace Janken.Controllers
 
             tournamentModel = new TournamentModel();
 
-            // Link Display 2 Controller
+            // Link Display 2 & 3 Controllers
             if (display2Controller == null)
             {
 #if UNITY_2023_1_OR_NEWER
@@ -190,13 +194,30 @@ namespace Janken.Controllers
 #endif
             }
 
+            if (display3Controller == null)
+            {
+#if UNITY_2023_1_OR_NEWER
+                display3Controller = FindFirstObjectByType<Display3Controller>();
+#else
+                display3Controller = FindObjectOfType<Display3Controller>();
+#endif
+            }
+
             if (display2Controller != null)
             {
                 display2Controller.BindModel(tournamentModel);
             }
 
+            if (display3Controller != null)
+            {
+                display3Controller.BindModel(tournamentModel);
+            }
+
+            isDisplaySwapped = PlayerPrefs.GetInt(PREF_SWAP_DISPLAYS, 0) == 1;
+
             BindUIElements();
             RegisterEvents();
+            ApplyDisplayTargetMapping();
 
             tournamentModel.OnDisplayViewChanged += OnDisplayViewChanged;
             tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
@@ -233,13 +254,13 @@ namespace Janken.Controllers
             btnGenerateBracket = rootVisualElement.Q<Button>("BtnGenerateBracket");
             btnToggleSidebar = rootVisualElement.Q<Button>("BtnToggleSidebar");
 
-            // Display 2 Controls (Standard)
+            // Display Controls (Standard)
             btnViewBracket = rootVisualElement.Q<Button>("BtnViewBracket");
             btnViewRound = rootVisualElement.Q<Button>("BtnViewRound");
             btnViewCombat = rootVisualElement.Q<Button>("BtnViewCombat");
             btnViewChampion = rootVisualElement.Q<Button>("BtnViewChampion");
 
-            // Display 2 Controls (Chroma Key OBS)
+            // Display Controls (Chroma Key OBS)
             btnChromaBracket = rootVisualElement.Q<Button>("BtnChromaBracket");
             btnChromaRound = rootVisualElement.Q<Button>("BtnChromaRound");
             btnChromaCombatSF = rootVisualElement.Q<Button>("BtnChromaCombatSF");
@@ -248,9 +269,10 @@ namespace Janken.Controllers
             roundSelectorContainer = rootVisualElement.Q<VisualElement>("RoundSelectorContainer");
             display2StatusText = rootVisualElement.Q<Label>("Display2StatusText");
 
-            // Music & Stinger Control
+            // Music, Stinger & Display Swap Control
             btnToggleMusic = rootVisualElement.Q<Button>("BtnToggleMusic");
             toggleStinger = rootVisualElement.Q<Toggle>("ToggleStinger");
+            btnSwapDisplays = rootVisualElement.Q<Button>("BtnSwapDisplays");
 
             // Video Action Controls (GO & REP)
             btnGo = rootVisualElement.Q<Button>("BtnGo");
@@ -279,14 +301,15 @@ namespace Janken.Controllers
             if (btnResetDefaults != null) btnResetDefaults.clicked += OnResetDefaultsClicked;
             if (btnGenerateBracket != null) btnGenerateBracket.clicked += OnGenerateBracketClicked;
             if (btnToggleSidebar != null) btnToggleSidebar.clicked += OnToggleSidebarClicked;
+            if (btnSwapDisplays != null) btnSwapDisplays.clicked += OnSwapDisplaysClicked;
 
-            // Display 2 View Controls (Standard)
+            // Display View Controls (Standard)
             if (btnViewBracket != null) btnViewBracket.clicked += () => RequestDisplayViewChange(DisplayViewType.Bracket);
             if (btnViewRound != null) btnViewRound.clicked += () => RequestDisplayViewChange(DisplayViewType.SingleRound);
             if (btnViewCombat != null) btnViewCombat.clicked += () => RequestDisplayViewChange(DisplayViewType.Combat);
             if (btnViewChampion != null) btnViewChampion.clicked += () => RequestDisplayViewChange(DisplayViewType.ChampionPodium);
 
-            // Display 2 View Controls (Chroma Key OBS)
+            // Display View Controls (Chroma Key OBS)
             if (btnChromaBracket != null) btnChromaBracket.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaBracket);
             if (btnChromaRound != null) btnChromaRound.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaSingleRound);
             if (btnChromaCombatSF != null) btnChromaCombatSF.clicked += () => RequestDisplayViewChange(DisplayViewType.ChromaCombatSF);
@@ -304,15 +327,66 @@ namespace Janken.Controllers
                 {
                     useStingerTransitions = evt.newValue;
                     toggleStinger.label = useStingerTransitions ? "🎬 Stinger: ON" : "🎬 Stinger: OFF";
-                    if (display2Controller != null)
-                    {
-                        display2Controller.SetStingerEnabled(useStingerTransitions);
-                    }
+                    if (display2Controller != null) display2Controller.SetStingerEnabled(useStingerTransitions);
+                    if (display3Controller != null) display3Controller.SetStingerEnabled(useStingerTransitions);
                 });
             }
 
             // Music Toggle Control
             if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
+        }
+
+        private void OnSwapDisplaysClicked()
+        {
+            isDisplaySwapped = !isDisplaySwapped;
+            PlayerPrefs.SetInt(PREF_SWAP_DISPLAYS, isDisplaySwapped ? 1 : 0);
+            PlayerPrefs.Save();
+            ApplyDisplayTargetMapping();
+            UpdateDisplay2StatusUI();
+            Debug.Log($"[Janken MultiDisplay] Target Displays canviats: D2(Hor)={(isDisplaySwapped ? "Monitor 3" : "Monitor 2")}, D3(Ver)={(isDisplaySwapped ? "Monitor 2" : "Monitor 3")}");
+        }
+
+        public void ApplyDisplayTargetMapping()
+        {
+            int d2Target = isDisplaySwapped ? 2 : 1; // 1 = Physical Monitor 2, 2 = Physical Monitor 3
+            int d3Target = isDisplaySwapped ? 1 : 2;
+
+            if (btnSwapDisplays != null)
+            {
+                btnSwapDisplays.text = isDisplaySwapped 
+                    ? "🔄 Monitors: D2 (Pantalla 3) | D3 (Pantalla 2)" 
+                    : "🔁 Monitors: D2 (Pantalla 2) | D3 (Pantalla 3)";
+            }
+
+            if (display2Controller != null)
+            {
+                var doc = display2Controller.GetComponent<UIDocument>();
+                if (doc != null && doc.panelSettings != null)
+                {
+                    doc.panelSettings.targetDisplay = d2Target;
+                }
+                var camObj = GameObject.Find("Display2_Camera");
+                if (camObj != null)
+                {
+                    var cam = camObj.GetComponent<Camera>();
+                    if (cam != null) cam.targetDisplay = d2Target;
+                }
+            }
+
+            if (display3Controller != null)
+            {
+                var doc = display3Controller.GetComponent<UIDocument>();
+                if (doc != null && doc.panelSettings != null)
+                {
+                    doc.panelSettings.targetDisplay = d3Target;
+                }
+                var camObj = GameObject.Find("Display3_Camera");
+                if (camObj != null)
+                {
+                    var cam = camObj.GetComponent<Camera>();
+                    if (cam != null) cam.targetDisplay = d3Target;
+                }
+            }
         }
 
         private void PlayNouArbitreVideo(bool useStinger)
@@ -322,11 +396,10 @@ namespace Janken.Controllers
                 hasPlayedGoInCurrentVideoSession = true;
             }
             float targetTime = useStinger ? goVideoStartTime : repVideoStartTime;
-            if (display2Controller != null)
-            {
-                display2Controller.PlayNouArbitreVideo(useStinger, targetTime);
-            }
-            else if (tournamentModel != null)
+            if (display2Controller != null) display2Controller.PlayNouArbitreVideo(useStinger, targetTime);
+            if (display3Controller != null) display3Controller.PlayNouArbitreVideo(useStinger, targetTime);
+
+            if (display2Controller == null && display3Controller == null && tournamentModel != null)
             {
                 tournamentModel.SetDisplayView(DisplayViewType.NouArbitreVideo);
             }

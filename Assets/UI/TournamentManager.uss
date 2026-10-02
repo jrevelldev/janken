@@ -27,23 +27,37 @@
 
 /* Header Bar */
 .top-header {
-    height: 74px;
+    min-height: 68px;
+    height: auto;
     background-color: #12100E;
     border-bottom-width: 2px;
     border-bottom-color: #D4AF37;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-top: 6px;
+    padding-bottom: 6px;
     width: 100%;
 }
 
+.header-left-group {
+    flex-direction: row;
+    align-items: center;
+}
+
+.header-right-group {
+    flex-direction: row;
+    align-items: center;
+}
+
 .header-title {
-    font-size: 24px;
+    font-size: 20px;
     -unity-font-style: bold;
     color: #D91E28;
     letter-spacing: 1px;
+    margin-right: 12px;
 }
 
 .header-controls {
@@ -659,10 +673,25 @@
     border-color: #3b82f6;
 }
 
-.btn-video-rep:hover {
-    background-color: #3b82f6;
-    border-color: #93c5fd;
+.btn-swap-displays {
+    background-color: #334155;
+    color: #f8fafc;
+    border-color: #64748b;
+    border-width: 1px;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    -unity-font-style: bold;
+    margin-right: 8px;
+    transition-duration: 0.15s;
 }
+
+.btn-swap-displays:hover {
+    background-color: #475569;
+    border-color: #38bdf8;
+    color: #38bdf8;
+}
+
 
 
 

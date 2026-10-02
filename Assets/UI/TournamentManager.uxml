@@ -36,45 +36,49 @@
         <ui:VisualElement style="flex-grow: 1; flex-direction: column;">
             <!-- Header Bar -->
             <ui:VisualElement class="top-header">
-                <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN" class="header-title" />
-                
-                <!-- CONTROL DISPLAY 2 BAR (EXPANDED DUAL TIER) -->
-                <ui:VisualElement class="display2-control-bar-group">
-                    <!-- TIER 1: STANDARD DISPLAY 2 VIEWS -->
-                    <ui:VisualElement class="display2-control-bar">
-                        <ui:Label text="ESTÀNDARD:" class="display2-bar-label" />
-                        <ui:Button name="BtnViewBracket" text="📊 Quadre" class="btn-display-view btn-display-view-active" />
-                        <ui:Button name="BtnViewRound" text="🔍 Ronda" class="btn-display-view" />
-                        <ui:Button name="BtnViewCombat" text="⚔️ Combat" class="btn-display-view" />
-                        <ui:Button name="BtnViewChampion" text="🏆 Podi" class="btn-display-view" />
-                    </ui:VisualElement>
+                <ui:VisualElement class="header-left-group">
+                    <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN" class="header-title" />
+                    
+                    <!-- CONTROL DISPLAY VIEWS BAR -->
+                    <ui:VisualElement class="display2-control-bar-group">
+                        <!-- TIER 1: STANDARD VIEWS -->
+                        <ui:VisualElement class="display2-control-bar">
+                            <ui:Label text="ESTÀNDARD:" class="display2-bar-label" />
+                            <ui:Button name="BtnViewBracket" text="📊 Quadre" class="btn-display-view btn-display-view-active" />
+                            <ui:Button name="BtnViewRound" text="🔍 Ronda" class="btn-display-view" />
+                            <ui:Button name="BtnViewCombat" text="⚔️ Combat" class="btn-display-view" />
+                            <ui:Button name="BtnViewChampion" text="🏆 Podi" class="btn-display-view" />
+                        </ui:VisualElement>
 
-                    <!-- TIER 2: CHROMA KEY OVERLAY VIEWS (OBS GREEN) -->
-                    <ui:VisualElement class="display2-control-bar chroma-bar">
-                        <ui:Label text="🟢 CROMA OBS:" class="display2-bar-label chroma-label" />
-                        <ui:Button name="BtnChromaBracket" text="📊 Quadre Croma" class="btn-display-view btn-chroma-view" />
-                        <ui:Button name="BtnChromaRound" text="🔍 Ronda Croma" class="btn-display-view btn-chroma-view" />
-                        <ui:Button name="BtnChromaCombatSF" text="🥊 SF Top Bar" class="btn-display-view btn-chroma-view" />
-                        <ui:Button name="BtnChromaChampion" text="🏆 Podi Croma" class="btn-display-view btn-chroma-view" />
+                        <!-- TIER 2: CHROMA KEY OVERLAY VIEWS (OBS GREEN - WITHOUT UNUSED CHROMA BRACKET) -->
+                        <ui:VisualElement class="display2-control-bar chroma-bar">
+                            <ui:Label text="🟢 CROMA OBS:" class="display2-bar-label chroma-label" />
+                            <ui:Button name="BtnChromaRound" text="🔍 Ronda Croma" class="btn-display-view btn-chroma-view" />
+                            <ui:Button name="BtnChromaCombatSF" text="🥊 SF Top Bar" class="btn-display-view btn-chroma-view" />
+                            <ui:Button name="BtnChromaChampion" text="🏆 Podi Croma" class="btn-display-view btn-chroma-view" />
+                        </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
 
-                <!-- VIDEO ACTION BUTTONS GROUP (OUTSIDE NAV ARRAYS & LARGER) -->
-                <ui:VisualElement class="video-action-group">
-                    <ui:Button name="BtnGo" text="▶ GO" class="btn-video-action btn-video-go" tooltip="Reproduir vídeo NOU ÀRBITRE amb Stinger" />
-                    <ui:Button name="BtnRep" text="🔄 REP" class="btn-video-action btn-video-rep" tooltip="Reproduir vídeo NOU ÀRBITRE directament (Sense Stinger)" />
-                </ui:VisualElement>
+                <ui:VisualElement class="header-right-group">
+                    <!-- VIDEO ACTION BUTTONS GROUP -->
+                    <ui:VisualElement class="video-action-group">
+                        <ui:Button name="BtnGo" text="▶ GO" class="btn-video-action btn-video-go" tooltip="Reproduir vídeo NOU ÀRBITRE amb Stinger" />
+                        <ui:Button name="BtnRep" text="🔄 REP" class="btn-video-action btn-video-rep" tooltip="Reproduir vídeo NOU ÀRBITRE directament (Sense Stinger)" />
+                    </ui:VisualElement>
 
-                <ui:VisualElement class="header-controls">
-                    <ui:Toggle name="ToggleStinger" label="🎬 Stinger: ON" value="true" class="toggle-stinger" />
-                    <ui:Button name="BtnToggleMusic" text="🎵 Música: OFF" class="btn-secondary btn-music" />
-                    <ui:Button name="BtnToggleSidebar" text="⚙️ Configuració" class="btn-secondary" />
+                    <ui:VisualElement class="header-controls">
+                        <ui:Button name="BtnSwapDisplays" text="🔁 Monitors: D2 / D3" class="btn-secondary btn-swap-displays" tooltip="Clic per intercanviar l'ordre dels monitors físics de Display 2 (Horitzontal) i Display 3 (Vertical)" />
+                        <ui:Toggle name="ToggleStinger" label="🎬 Stinger" value="true" class="toggle-stinger" />
+                        <ui:Button name="BtnToggleMusic" text="🎵 Música" class="btn-secondary btn-music" />
+                        <ui:Button name="BtnToggleSidebar" text="⚙️" class="btn-secondary btn-icon-only" tooltip="Configuració del Torneig" />
+                    </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
 
             <!-- SUB-HEADER DISPLAY STATUS & ROUND FILTER BAR -->
             <ui:VisualElement class="display2-status-banner">
-                <ui:Label name="Display2StatusText" text="📺 DISPLAY 2: Mostrant Quadre / Classificació" class="display2-status-text" />
+                <ui:Label name="Display2StatusText" text="📺 D2 (Horitzontal): Monitor 2 | 📱 D3 (Vertical): Monitor 3" class="display2-status-text" />
                 <ui:VisualElement name="RoundSelectorContainer" class="round-selector-container">
                     <!-- Dynamic round selector pill buttons inserted here via C# -->
                 </ui:VisualElement>
