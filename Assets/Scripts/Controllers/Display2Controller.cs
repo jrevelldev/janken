@@ -178,6 +178,11 @@ namespace Janken.Controllers
                 tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
                 tournamentModel.OnSelectedRoundChanged += OnSelectedRoundChanged;
 
+                if (rootVisualElement == null)
+                {
+                    InitializeUI();
+                }
+
                 RefreshCurrentView();
             }
         }
@@ -186,7 +191,7 @@ namespace Janken.Controllers
         {
             if (tournamentModel != null)
             {
-                tournamentModel.OnTournamentUpdated -= OnTournamentUpdated;
+                tournamentModel.OnTournamentUpdated -= RefreshCurrentView;
                 tournamentModel.OnDisplayViewChanged -= OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged -= OnSelectedMatchChanged;
                 tournamentModel.OnSelectedRoundChanged -= OnSelectedRoundChanged;
@@ -212,6 +217,11 @@ namespace Janken.Controllers
             if (rootVisualElement == null) return;
 
             BindUIElements();
+
+            if (tournamentModel != null)
+            {
+                RefreshCurrentView();
+            }
         }
 
         private void BindUIElements()
@@ -561,7 +571,7 @@ namespace Janken.Controllers
                 case DisplayViewType.ChampionPodium:
                 case DisplayViewType.ChromaChampion:
                     SetContainerVisible(championViewContainer, true);
-                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "PODI CAMPIÓ (CROMA KEY)" : "PODI DE CAMPIÓ";
+                    if (headerSubtitleLabel != null) headerSubtitleLabel.text = isChroma ? "PODI DE VICTÒRIA (CROMA KEY)" : "PODI DE VICTÒRIA";
                     RenderChampionView();
                     break;
 
@@ -845,23 +855,23 @@ namespace Janken.Controllers
                 {
                     if (player1Card != null) player1Card.AddToClassList("combat-card-winner");
                     if (player2Card != null) player2Card.AddToClassList("combat-card-loser");
-                    if (player1Status != null) player1Status.text = "🏆 VICTÒRIA!";
-                    if (player2Status != null) player2Status.text = "ELIMINAT/ADA";
+                    if (player1Status != null) player1Status.text = "⭐";
+                    if (player2Status != null) player2Status.text = "";
                     if (combatStatusBanner != null) combatStatusBanner.text = $"🏆 GUANYADOR/A: {match.player1.name.ToUpper()}";
                 }
                 else
                 {
                     if (player2Card != null) player2Card.AddToClassList("combat-card-winner");
                     if (player1Card != null) player1Card.AddToClassList("combat-card-loser");
-                    if (player2Status != null) player2Status.text = "🏆 VICTÒRIA!";
-                    if (player1Status != null) player1Status.text = "ELIMINAT/ADA";
+                    if (player2Status != null) player2Status.text = "⭐";
+                    if (player1Status != null) player1Status.text = "";
                     if (combatStatusBanner != null) combatStatusBanner.text = $"🏆 GUANYADOR/A: {match.player2.name.ToUpper()}";
                 }
             }
             else
             {
-                if (player1Status != null) player1Status.text = "COMBATENT";
-                if (player2Status != null) player2Status.text = "COMBATENT";
+                if (player1Status != null) player1Status.text = "";
+                if (player2Status != null) player2Status.text = "";
                 if (combatStatusBanner != null) combatStatusBanner.text = "⚡ COMBAT EN CURS - PREPARATS PER LLUITAR!";
             }
         }
@@ -938,34 +948,36 @@ namespace Janken.Controllers
 
             int totalRounds = tournamentModel.Rounds.Count;
 
-            // Dynamic Sizing based on tournament size (4, 8, or 16 players)
-            float HEADER_HEIGHT = 38f;
-            float HEADER_MARGIN = 16f;
-            float CARD_HEIGHT = 76f;
-            float BASE_GAP = 18f;
-            float COLUMN_WIDTH = 185f;
-            float SLOT_FONT_SIZE = 13f;
-            float HEADER_FONT_SIZE = 13f;
+            bool isDisplay3 = (this is Display3Controller);
 
-            if (totalRounds <= 2) // 4 Players (2 Rounds) -> Make much larger!
+            // Dynamic Sizing based on tournament size (4, 8, or 16 players) - Large prominent fonts
+            float HEADER_HEIGHT = isDisplay3 ? 56f : 50f;
+            float HEADER_MARGIN = 14f;
+            float CARD_HEIGHT = isDisplay3 ? 120f : 104f;
+            float BASE_GAP = isDisplay3 ? 14f : 8f;
+            float COLUMN_WIDTH = isDisplay3 ? 255f : 230f;
+            float SLOT_FONT_SIZE = isDisplay3 ? 28f : 24f;
+            float HEADER_FONT_SIZE = isDisplay3 ? 26f : 22f;
+
+            if (totalRounds <= 2) // 4 Players (2 Rounds) -> Extra large!
             {
-                HEADER_HEIGHT = 48f;
+                HEADER_HEIGHT = isDisplay3 ? 66f : 62f;
                 HEADER_MARGIN = 24f;
-                CARD_HEIGHT = 125f;
-                BASE_GAP = 38f;
-                COLUMN_WIDTH = 300f;
-                SLOT_FONT_SIZE = 20f;
-                HEADER_FONT_SIZE = 18f;
+                CARD_HEIGHT = isDisplay3 ? 175f : 160f;
+                BASE_GAP = 36f;
+                COLUMN_WIDTH = isDisplay3 ? 370f : 340f;
+                SLOT_FONT_SIZE = isDisplay3 ? 42f : 36f;
+                HEADER_FONT_SIZE = isDisplay3 ? 36f : 32f;
             }
-            else if (totalRounds == 3) // 8 Players (3 Rounds) -> Make larger!
+            else if (totalRounds == 3) // 8 Players (3 Rounds) -> Large!
             {
-                HEADER_HEIGHT = 46f;
-                HEADER_MARGIN = 22f;
-                CARD_HEIGHT = 115f;
-                BASE_GAP = 30f;
-                COLUMN_WIDTH = 250f;
-                SLOT_FONT_SIZE = 17f;
-                HEADER_FONT_SIZE = 16f;
+                HEADER_HEIGHT = isDisplay3 ? 60f : 56f;
+                HEADER_MARGIN = 20f;
+                CARD_HEIGHT = isDisplay3 ? 150f : 138f;
+                BASE_GAP = 28f;
+                COLUMN_WIDTH = isDisplay3 ? 320f : 290f;
+                SLOT_FONT_SIZE = isDisplay3 ? 34f : 30f;
+                HEADER_FONT_SIZE = isDisplay3 ? 30f : 26f;
             }
 
             float HEADER_TOTAL = HEADER_HEIGHT + HEADER_MARGIN;
@@ -986,7 +998,7 @@ namespace Janken.Controllers
                 roundHeader.style.height = HEADER_HEIGHT;
                 roundHeader.style.marginBottom = HEADER_MARGIN;
                 roundHeader.style.fontSize = HEADER_FONT_SIZE;
-                roundHeader.style.width = Math.Min(COLUMN_WIDTH - 5f, 180f);
+                roundHeader.style.width = Math.Max(COLUMN_WIDTH + 26f, 240f);
                 if (isFinalRound)
                 {
                     roundHeader.style.visibility = Visibility.Hidden;
@@ -1083,8 +1095,8 @@ namespace Janken.Controllers
                 }
                 else
                 {
-                    // Champion Card in final round
-                    if (tournamentModel.Champion != null)
+                    // Champion Card in final round (Only on Display 2 horizontal)
+                    if (tournamentModel.Champion != null && !isDisplay3)
                     {
                         var championConnectorCol = new VisualElement();
                         championConnectorCol.AddToClassList("connector-column");
@@ -1113,7 +1125,7 @@ namespace Janken.Controllers
                         var iconLabel = new Label("🏆");
                         iconLabel.AddToClassList("champion-icon");
 
-                        var titleLabel = new Label("CAMPIÓ DEL TORNEIG");
+                        var titleLabel = new Label("VICTÒRIA DEL TORNEIG");
                         titleLabel.AddToClassList("champion-title");
 
                         var nameLabel = new Label(tournamentModel.Champion.name);
@@ -1218,6 +1230,7 @@ namespace Janken.Controllers
             }
 
             var roundMatches = tournamentModel.Rounds[roundIndex];
+            bool isDisplay3 = (this is Display3Controller);
 
             // Dynamic Sizing so ALL matches fit without vertical scrolling!
             float CARD_HEIGHT = 100f;
@@ -1234,10 +1247,10 @@ namespace Janken.Controllers
                 singleRoundContainer.style.justifyContent = Justify.FlexStart;
                 singleRoundContainer.style.alignItems = Align.FlexStart;
 
-                CARD_HEIGHT = 86f;
+                CARD_HEIGHT = isDisplay3 ? 130f : 115f;
                 BASE_GAP = 16f;
-                SLOT_FONT_SIZE = 17f;
-                CARD_WIDTH = 340f;
+                SLOT_FONT_SIZE = isDisplay3 ? 32f : 28f;
+                CARD_WIDTH = isDisplay3 ? 440f : 410f;
 
                 var col1 = new VisualElement();
                 col1.style.marginRight = 28f;
@@ -1265,24 +1278,24 @@ namespace Janken.Controllers
 
                 if (matchCount == 4)
                 {
-                    CARD_HEIGHT = 105f;
+                    CARD_HEIGHT = isDisplay3 ? 165f : 145f;
                     BASE_GAP = 20f;
-                    SLOT_FONT_SIZE = 20f;
-                    CARD_WIDTH = 420f;
+                    SLOT_FONT_SIZE = isDisplay3 ? 40f : 34f;
+                    CARD_WIDTH = isDisplay3 ? 530f : 490f;
                 }
                 else if (matchCount == 2)
                 {
-                    CARD_HEIGHT = 140f;
+                    CARD_HEIGHT = isDisplay3 ? 210f : 185f;
                     BASE_GAP = 30f;
-                    SLOT_FONT_SIZE = 24f;
-                    CARD_WIDTH = 480f;
+                    SLOT_FONT_SIZE = isDisplay3 ? 48f : 40f;
+                    CARD_WIDTH = isDisplay3 ? 600f : 550f;
                 }
                 else // 1 Match (Final)
                 {
-                    CARD_HEIGHT = 200f;
+                    CARD_HEIGHT = isDisplay3 ? 260f : 240f;
                     BASE_GAP = 0f;
-                    SLOT_FONT_SIZE = 30f;
-                    CARD_WIDTH = 550f;
+                    SLOT_FONT_SIZE = isDisplay3 ? 56f : 48f;
+                    CARD_WIDTH = isDisplay3 ? 680f : 640f;
                 }
 
                 var roundColumn = new VisualElement();

@@ -35,7 +35,7 @@
                     </ui:VisualElement>
                     <ui:Label name="Player1Seed" text="#1 SEED" class="combat-player-seed" />
                     <ui:Label name="Player1Name" text="Goku" class="combat-player-name" />
-                    <ui:Label name="Player1Status" text="COMBATENT" class="combat-player-status" />
+                    <ui:Label name="Player1Status" text="" class="combat-player-status" />
                 </ui:VisualElement>
 
                 <!-- VS LOGO EMBLEM (CENTER) -->
@@ -51,7 +51,7 @@
                     </ui:VisualElement>
                     <ui:Label name="Player2Seed" text="#2 SEED" class="combat-player-seed" />
                     <ui:Label name="Player2Name" text="Vegeta" class="combat-player-name" />
-                    <ui:Label name="Player2Status" text="COMBATENT" class="combat-player-status" />
+                    <ui:Label name="Player2Status" text="" class="combat-player-status" />
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -69,8 +69,8 @@
 
                 <!-- VS HUD CENTER EMBLEM -->
                 <ui:VisualElement class="sf-vs-center">
+                    <ui:VisualElement class="sf-vs-badge" />
                     <ui:Label name="SFRoundTitle" text="SEMIFINALS - COMBAT #1" class="sf-round-title" />
-                    <ui:Label text="VS" class="sf-vs-text" />
                 </ui:VisualElement>
 
                 <!-- P2 HUD CARD (BOTTOM) -->
@@ -87,9 +87,9 @@
         <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display3-upper-view-container display2-hidden">
             <ui:VisualElement class="champion-stage">
                 <ui:Label text="🏆" class="champion-huge-trophy" />
-                <ui:Label text="CAMPIÓ DEL TORNEIG" class="champion-stage-subtitle" />
+                <ui:Label text="VICTÒRIA DEL TORNEIG" class="champion-stage-subtitle" />
                 <ui:Label name="ChampionStageName" text="GOKU" class="champion-stage-name" />
-                <ui:Label text="¡ENHORABONA AL NOU CAMPIÓ!" class="champion-stage-footer" />
+                <ui:Label text="¡ENHORABONA PER LA VICTÒRIA!" class="champion-stage-footer" />
             </ui:VisualElement>
         </ui:VisualElement>
 

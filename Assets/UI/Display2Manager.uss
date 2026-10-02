@@ -61,22 +61,25 @@
 
 /* BRACKET ROUND HEADERS WITH RED BRUSH BACKGROUND & PERMANENT MARKER FONT */
 .round-header {
-    width: 200px;
-    height: 44px;
-    font-size: 14px;
+    min-width: 240px;
+    height: 48px;
+    font-size: 20px;
     -unity-font-style: bold;
     -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
     color: #FFFFFF;
     -unity-text-align: middle-center;
     align-self: center;
-    padding-top: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 4px;
     padding-bottom: 4px;
     background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
     -unity-background-scale-mode: stretch-to-fill;
     background-color: transparent;
     border-width: 0px;
     margin-bottom: 18px;
-    letter-spacing: 1px;
+    letter-spacing: 0px;
+    white-space: nowrap;
 }
 
 /* FINAL ROUND ANIMATED GOLD RIBBON BANNER & CROWN */
@@ -105,7 +108,7 @@
 
 /* MATCH CARDS IN DISPLAY 2 BRACKET (PRONOUNCED BORDERS & BOLDER TEXT) */
 .match-card {
-    height: 84px;
+    height: 108px;
     background-color: #12100E;
     border-radius: 14px;
     border-width: 3px;
@@ -124,7 +127,7 @@
 }
 
 .match-slot {
-    height: 42px;
+    height: 54px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -175,11 +178,12 @@
 }
 
 .slot-player-name {
-    font-size: 17px;
+    font-size: 28px;
     -unity-font-style: bold;
     -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
     color: #141210;
     flex-grow: 1;
+    letter-spacing: 0.5px;
 }
 
 .slot-score {
@@ -307,9 +311,10 @@
 }
 
 .combat-card-winner .combat-player-status {
-    background-color: #F2C94C !important;
-    color: #12100E !important;
-    -unity-font-style: bold;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #F2C94C !important;
+    font-size: 32px;
 }
 
 .combat-card-loser {
@@ -319,8 +324,9 @@
 }
 
 .combat-card-loser .combat-player-status {
-    background-color: #38312C !important;
-    color: #C2B7A5 !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: transparent !important;
 }
 
 /* AVATAR CIRCLE */
@@ -373,15 +379,16 @@
 }
 
 .combat-player-status {
-    font-size: 14px;
+    font-size: 28px;
     -unity-font-style: bold;
-    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
-    color: #FFFFFF;
-    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
-    -unity-background-scale-mode: stretch-to-fill;
+    color: #F2C94C;
+    background-image: none;
     background-color: transparent;
     border-width: 0px;
-    padding: 5px 22px;
+    padding: 0px;
+    margin-top: 4px;
+    height: 36px;
+    -unity-text-align: middle-center;
     transition-duration: 0.35s;
 }
 
@@ -606,13 +613,13 @@
     margin-bottom: 2px;
 }
 
-.sf-vs-text {
-    font-size: 40px;
-    -unity-font-style: bold;
-    color: #D91E28;
-    -unity-text-outline-width: 2px;
-    -unity-text-outline-color: #400508;
-    letter-spacing: -2px;
+.sf-vs-badge {
+    width: 80px;
+    height: 70px;
+    background-image: url('project:/Assets/Sprites/UI/VS_Brush_Badge.png');
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: transparent;
+    border-width: 0px;
 }
 
 .sf-card-winner {
@@ -659,7 +666,8 @@
 }
 
 .sf-hud-bar {
-    width: 92%;
+    width: auto;
+    max-width: 1250px;
     height: 110px;
     background-color: rgba(18, 16, 14, 0.96);
     border-radius: 20px;
@@ -667,9 +675,9 @@
     border-color: #D91E28;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    padding-left: 20px;
-    padding-right: 20px;
+    justify-content: center;
+    padding-left: 24px;
+    padding-right: 24px;
 }
 
 .sf-p1-card {
@@ -682,7 +690,7 @@
     padding-right: 20px;
     border-width: 2px;
     border-color: #D4AF37;
-    min-width: 280px;
+    margin-right: 15px;
     transition-duration: 0.25s;
 }
 
@@ -697,7 +705,7 @@
     padding-right: 12px;
     border-width: 2px;
     border-color: #D4AF37;
-    min-width: 280px;
+    margin-left: 15px;
     transition-duration: 0.25s;
 }
 
@@ -719,8 +727,9 @@
 }
 
 .sf-player-name {
-    font-size: 26px;
+    font-size: 32px;
     -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
     color: #FFFFFF;
     margin-left: 14px;
     margin-right: 14px;
@@ -748,21 +757,25 @@
     justify-content: center;
 }
 
-.sf-round-title {
-    font-size: 14px;
-    -unity-font-style: bold;
-    color: #F2C94C;
-    letter-spacing: 1px;
-    margin-bottom: 2px;
+.sf-vs-badge {
+    width: 140px;
+    height: 105px;
+    background-image: url('project:/Assets/Sprites/UI/VS_Brush_Badge.png');
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: transparent;
+    border-width: 0px;
 }
 
-.sf-vs-text {
-    font-size: 40px;
+.sf-round-title {
+    font-size: 15px;
     -unity-font-style: bold;
-    color: #D91E28;
-    -unity-text-outline-width: 2px;
-    -unity-text-outline-color: #400508;
-    letter-spacing: -2px;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    padding: 5px 18px;
+    margin-top: -8px;
+    white-space: nowrap;
 }
 
 .sf-card-winner {

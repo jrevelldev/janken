@@ -23,6 +23,15 @@
     color: var(--text-primary);
     font-size: 14px;
     flex-direction: row;
+    overflow: hidden;
+}
+
+.main-tournament-area {
+    flex-grow: 1;
+    flex-shrink: 1;
+    height: 100%;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 /* Header Bar */
@@ -198,7 +207,15 @@
 
 .player-scroll-list {
     flex-grow: 1;
+    flex-shrink: 1;
     margin-bottom: 12px;
+    horizontal-scroller-visibility: hidden;
+}
+
+.player-scroll-list .unity-scroll-view__horizontal-scroller {
+    display: none;
+    height: 0px;
+    opacity: 0;
 }
 
 .player-item-row {
@@ -254,8 +271,16 @@
 /* Bracket Scroll View */
 .bracket-scroll-view {
     flex-grow: 1;
+    flex-shrink: 1;
     height: 100%;
     padding: 20px;
+    vertical-scroller-visibility: hidden;
+}
+
+.bracket-scroll-view .unity-scroll-view__vertical-scroller {
+    display: none;
+    width: 0px;
+    opacity: 0;
 }
 
 .bracket-container {

@@ -14,10 +14,10 @@
 /* ROTATED BACKGROUND IMAGE: 90 DEGREES CLOCKWISE SO RED CIRCLE IS AT THE BOTTOM */
 .display3-bg-rotated {
     position: absolute;
-    width: 1920px;
-    height: 1080px;
-    top: 420px;
-    left: -420px;
+    width: 2400px;
+    height: 1400px;
+    top: 500px;
+    left: -660px;
     background-image: url('project:/Assets/Sprites/Backgrounds/Background.png');
     -unity-background-scale-mode: scale-and-crop;
     rotate: 90deg;
@@ -86,24 +86,27 @@
     opacity: 0;
 }
 
-/* BRACKET ROUND HEADERS WITH RED BRUSH BACKGROUND */
+/* BRACKET ROUND HEADERS WITH RED BRUSH BACKGROUND & PERMANENT MARKER FONT */
 .round-header {
-    width: 200px;
-    height: 44px;
-    font-size: 14px;
+    min-width: 250px;
+    height: 52px;
+    font-size: 22px;
     -unity-font-style: bold;
     -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
     color: #FFFFFF;
     -unity-text-align: middle-center;
     align-self: center;
-    padding-top: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 4px;
     padding-bottom: 4px;
     background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
     -unity-background-scale-mode: stretch-to-fill;
     background-color: transparent;
     border-width: 0px;
     margin-bottom: 18px;
-    letter-spacing: 1px;
+    letter-spacing: 0px;
+    white-space: nowrap;
 }
 
 /* FINAL ROUND ANIMATED GOLD RIBBON BANNER & CROWN */
@@ -132,7 +135,7 @@
 
 /* MATCH CARDS IN BRACKET */
 .match-card {
-    height: 84px;
+    height: 120px;
     background-color: #12100E;
     border-radius: 14px;
     border-width: 3px;
@@ -151,7 +154,7 @@
 }
 
 .match-slot {
-    height: 42px;
+    height: 60px;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
@@ -172,7 +175,6 @@
 .match-slot-winner .slot-player-name {
     color: #FFFFFF !important;
     -unity-font-style: bold;
-    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
 }
 
 .match-slot-loser {
@@ -183,15 +185,14 @@
 .match-slot-loser .slot-player-name {
     color: #FFFFFF !important;
     -unity-font-style: bold;
-    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
 }
 
 .slot-player-name {
-    font-size: 17px;
+    font-size: 30px;
     -unity-font-style: bold;
-    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
     color: #141210;
     flex-grow: 1;
+    letter-spacing: 0.5px;
 }
 
 .slot-score {
@@ -294,9 +295,10 @@
 }
 
 .combat-card-winner .combat-player-status {
-    background-color: #F2C94C !important;
-    color: #12100E !important;
-    -unity-font-style: bold;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #F2C94C !important;
+    font-size: 34px;
 }
 
 .combat-card-loser {
@@ -306,8 +308,9 @@
 }
 
 .combat-card-loser .combat-player-status {
-    background-color: #38312C !important;
-    color: #C2B7A5 !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    color: transparent !important;
 }
 
 /* AVATAR CIRCLE */
@@ -360,15 +363,16 @@
 }
 
 .combat-player-status {
-    font-size: 16px;
+    font-size: 30px;
     -unity-font-style: bold;
-    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
-    color: #FFFFFF;
-    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
-    -unity-background-scale-mode: stretch-to-fill;
+    color: #F2C94C;
+    background-image: none;
     background-color: transparent;
     border-width: 0px;
-    padding: 6px 26px;
+    padding: 0px;
+    margin-top: 4px;
+    height: 38px;
+    -unity-text-align: middle-center;
     transition-duration: 0.35s;
 }
 
@@ -554,7 +558,7 @@
 }
 
 .sf-player-name {
-    font-size: 34px;
+    font-size: 40px;
     -unity-font-style: bold;
     -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
     color: #FFFFFF;
@@ -563,21 +567,29 @@
 .sf-vs-center {
     align-items: center;
     justify-content: center;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+.sf-vs-badge {
+    width: 170px;
+    height: 130px;
+    background-image: url('project:/Assets/Sprites/UI/VS_Brush_Badge.png');
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: transparent;
+    border-width: 0px;
 }
 
 .sf-round-title {
     font-size: 18px;
     -unity-font-style: bold;
     -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
-    color: #F2C94C;
-    margin-bottom: 6px;
-}
-
-.sf-vs-text {
-    font-size: 40px;
-    -unity-font-style: bold;
-    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
-    color: #D91E28;
+    color: #FFFFFF;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    padding: 6px 22px;
+    margin-top: -10px;
+    white-space: nowrap;
 }
 
 /* REFEREE ANIMATED CHARACTER (SLIDES IN FROM LEFT TO RIGHT - LARGER SIZE) */

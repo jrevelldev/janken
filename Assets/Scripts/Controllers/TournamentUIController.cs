@@ -191,23 +191,33 @@ namespace Janken.Controllers
 
             tournamentModel = new TournamentModel();
 
-            // Link Display 2 & 3 Controllers
+            // Link Display 2 & 3 Controllers (ensure exact types so Display3 doesn't shadow Display2)
             if (display2Controller == null)
             {
-#if UNITY_2023_1_OR_NEWER
-                display2Controller = FindFirstObjectByType<Display2Controller>();
-#else
-                display2Controller = FindObjectOfType<Display2Controller>();
-#endif
+                var d2Obj = GameObject.Find("Display2_Audience");
+                if (d2Obj != null) display2Controller = d2Obj.GetComponent<Display2Controller>();
+                if (display2Controller == null)
+                {
+                    var allD2 = FindObjectsOfType<Display2Controller>(true);
+                    foreach (var d in allD2)
+                    {
+                        if (d.GetType() == typeof(Display2Controller))
+                        {
+                            display2Controller = d;
+                            break;
+                        }
+                    }
+                }
             }
 
             if (display3Controller == null)
             {
-#if UNITY_2023_1_OR_NEWER
-                display3Controller = FindFirstObjectByType<Display3Controller>();
-#else
-                display3Controller = FindObjectOfType<Display3Controller>();
-#endif
+                var d3Obj = GameObject.Find("Display3_Audience");
+                if (d3Obj != null) display3Controller = d3Obj.GetComponent<Display3Controller>();
+                if (display3Controller == null)
+                {
+                    display3Controller = FindObjectOfType<Display3Controller>(true);
+                }
             }
 
             if (display2Controller != null)
@@ -751,7 +761,7 @@ namespace Janken.Controllers
                         break;
                     case DisplayViewType.ChampionPodium:
                         string champ = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
-                        display2StatusText.text = $"📺 DISPLAY 2: Mostrant CAMPIÓ DEL TORNEIG ( {champ} )";
+                        display2StatusText.text = $"📺 DISPLAY 2: Mostrant VICTÒRIA DEL TORNEIG ( {champ} )";
                         break;
                     case DisplayViewType.ChromaCleanFeed:
                         display2StatusText.text = "🟢 DISPLAY (CROMA): Fons Verd Pur Net (Clean Feed)";
@@ -771,7 +781,7 @@ namespace Janken.Controllers
                         break;
                     case DisplayViewType.ChromaChampion:
                         string cChamp = tournamentModel.Champion != null ? tournamentModel.Champion.name : "EN CURS";
-                        display2StatusText.text = $"🟢 DISPLAY 2 (CROMA): Mostrant CAMPIÓ ( {cChamp} )";
+                        display2StatusText.text = $"🟢 DISPLAY 2 (CROMA): Mostrant VICTÒRIA DEL TORNEIG ( {cChamp} )";
                         break;
                     case DisplayViewType.NouArbitreVideo:
                         display2StatusText.text = "🎬 DISPLAY 2: Reproduint vídeo NOU ÀRBITRE";
@@ -1077,7 +1087,7 @@ namespace Janken.Controllers
                         var iconLabel = new Label("🏆");
                         iconLabel.AddToClassList("champion-icon");
 
-                        var titleLabel = new Label("CAMPIÓ DEL TORNEIG");
+                        var titleLabel = new Label("VICTÒRIA DEL TORNEIG");
                         titleLabel.AddToClassList("champion-title");
 
                         var nameLabel = new Label(tournamentModel.Champion.name);

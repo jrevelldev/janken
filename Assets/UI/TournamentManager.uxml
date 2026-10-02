@@ -33,7 +33,7 @@
         </ui:VisualElement>
 
         <!-- Main Tournament Area -->
-        <ui:VisualElement style="flex-grow: 1; flex-direction: column;">
+        <ui:VisualElement class="main-tournament-area" style="flex-grow: 1; flex-shrink: 1; height: 100%; flex-direction: column; overflow: hidden;">
             <!-- Header Bar -->
             <ui:VisualElement class="top-header">
                 <ui:VisualElement class="header-left-group">
@@ -87,7 +87,7 @@
             </ui:VisualElement>
 
             <!-- Bracket Container Scroll View -->
-            <ui:ScrollView name="BracketScrollView" mode="Horizontal" class="bracket-scroll-view">
+            <ui:ScrollView name="BracketScrollView" mode="Horizontal" vertical-scroller-visibility="Hidden" class="bracket-scroll-view">
                 <ui:VisualElement name="BracketContainer" class="bracket-container">
                     <!-- Dynamic Round Columns & Champion card inserted here via C# -->
                 </ui:VisualElement>
