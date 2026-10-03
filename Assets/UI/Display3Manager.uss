@@ -9,6 +9,7 @@
     flex-direction: column;
     overflow: hidden;
     position: relative;
+    picking-mode: Ignore;
 }
 
 /* ROTATED BACKGROUND IMAGE: 90 DEGREES CLOCKWISE SO RED CIRCLE IS AT THE BOTTOM */

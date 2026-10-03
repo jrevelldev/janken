@@ -148,14 +148,6 @@ namespace Janken.Editor
             // Auto-process & Assign Stingers for Display 3
             SetupStingersForController(controller3);
 
-            // Wire display2Controller and display3Controller on TournamentUIController
-            SerializedProperty d2Prop = serController.FindProperty("display2Controller");
-            SerializedProperty d3Prop = serController.FindProperty("display3Controller");
-            if (d2Prop != null) d2Prop.objectReferenceValue = controller2;
-            if (d3Prop != null) d3Prop.objectReferenceValue = controller3;
-            serController.ApplyModifiedProperties();
-            EditorUtility.SetDirty(controller1);
-
             // 6. Setup Camera for Display 2
             GameObject camObj2 = GameObject.Find("Display2_Camera");
             if (camObj2 == null)
@@ -185,6 +177,20 @@ namespace Janken.Editor
             cam3.clearFlags = CameraClearFlags.SolidColor;
             cam3.backgroundColor = new Color(0.035f, 0.05f, 0.086f);
             cam3.cullingMask = 0;
+
+            // Wire display2Controller, display3Controller, display2Camera, and display3Camera on TournamentUIController
+            SerializedProperty d2Prop = serController.FindProperty("display2Controller");
+            SerializedProperty d3Prop = serController.FindProperty("display3Controller");
+            SerializedProperty cam2Prop = serController.FindProperty("display2Camera");
+            SerializedProperty cam3Prop = serController.FindProperty("display3Camera");
+
+            if (d2Prop != null) d2Prop.objectReferenceValue = controller2;
+            if (d3Prop != null) d3Prop.objectReferenceValue = controller3;
+            if (cam2Prop != null) cam2Prop.objectReferenceValue = cam2;
+            if (cam3Prop != null) cam3Prop.objectReferenceValue = cam3;
+
+            serController.ApplyModifiedProperties();
+            EditorUtility.SetDirty(controller1);
 
             // 8. Mark Scene Dirty so changes are saved
             EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());

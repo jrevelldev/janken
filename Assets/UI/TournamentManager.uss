@@ -391,6 +391,27 @@
     flex-grow: 1;
 }
 
+.slot-player-name-btn {
+    font-size: 13px;
+    -unity-font-style: bold;
+    color: var(--text-primary);
+    flex-grow: 1;
+    background-color: transparent;
+    border-width: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+    -unity-text-align: middle-left;
+    transition-duration: 0.15s;
+}
+
+.slot-player-name-btn:hover {
+    color: var(--accent-gold);
+    background-color: transparent;
+}
+
 .slot-score {
     font-size: 14px;
     -unity-font-style: bold;

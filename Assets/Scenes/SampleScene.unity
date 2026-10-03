@@ -669,6 +669,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Janken.Controllers.TournamentUIController
   display2Controller: {fileID: 1278015257}
   display3Controller: {fileID: 36328497}
+  display2Camera: {fileID: 277617539}
+  display3Camera: {fileID: 379904181}
   audioSource: {fileID: 952439890}
   backgroundMusicClip: {fileID: 8300000, guid: 8b359220211c5412e907f96b33032da9, type: 3}
   videoPlayer: {fileID: 0}

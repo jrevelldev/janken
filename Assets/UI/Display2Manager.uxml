@@ -14,7 +14,7 @@
         </ui:VisualElement>
 
         <!-- VIEW 2: SINGLE ROUND FOCUS VIEW (NO SCROLL, FIT TO SCREEN) -->
-        <ui:VisualElement name="SingleRoundViewContainer" class="display2-view-container display2-hidden" style="align-items: center; justify-content: center; width: 880px; height: 100%;">
+        <ui:VisualElement name="SingleRoundViewContainer" class="display2-view-container display2-hidden">
             <ui:Label name="SingleRoundHeaderTitle" text="QUARTS DE FINAL" class="round-focus-title" />
             <ui:VisualElement name="Display2SingleRoundContainer" class="single-round-container">
                 <!-- Clean single round dynamically rendered here -->
@@ -22,7 +22,7 @@
         </ui:VisualElement>
 
         <!-- VIEW 3: COMBAT VS VIEW (Goku vs Vegeta Style) -->
-        <ui:VisualElement name="CombatViewContainer" class="display2-view-container display2-hidden" style="align-items: center; justify-content: center; width: 880px; height: 100%;">
+        <ui:VisualElement name="CombatViewContainer" class="display2-view-container display2-hidden">
             <ui:Label name="CombatRoundTitle" text="SEMIFINALS - COMBAT #1" class="combat-round-title" />
             
             <ui:VisualElement class="combat-stage">
@@ -67,8 +67,8 @@
 
                 <!-- VS HUD CENTER EMBLEM -->
                 <ui:VisualElement class="sf-vs-center">
-                    <ui:VisualElement class="sf-vs-badge" />
                     <ui:Label name="SFRoundTitle" text="SEMIFINALS - COMBAT #1" class="sf-round-title" />
+                    <ui:VisualElement class="sf-vs-badge" />
                 </ui:VisualElement>
 
                 <!-- P2 HUD RIGHT CARD (Ultra Minimal: Circle Initials + Big Name) -->
@@ -82,7 +82,7 @@
         </ui:VisualElement>
 
         <!-- VIEW 5: CHAMPION CELEBRATION VIEW -->
-        <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display2-hidden" style="align-items: center; justify-content: center; width: 880px; height: 100%;">
+        <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display2-hidden">
             <ui:VisualElement class="champion-stage">
                 <ui:Label text="🏆" class="champion-huge-trophy" />
                 <ui:Label text="VICTÒRIA DEL TORNEIG" class="champion-stage-subtitle" />

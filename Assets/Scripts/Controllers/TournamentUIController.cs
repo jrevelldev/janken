@@ -17,6 +17,8 @@ namespace Janken.Controllers
         [Header("MultiDisplay References")]
         [SerializeField] private Display2Controller display2Controller;
         [SerializeField] private Display3Controller display3Controller;
+        [SerializeField] private Camera display2Camera;
+        [SerializeField] private Camera display3Camera;
 
         [Header("Audio Settings")]
         [SerializeField] private AudioSource audioSource;
@@ -185,40 +187,14 @@ namespace Janken.Controllers
         {
             uiDocument = GetComponent<UIDocument>();
             if (uiDocument == null) return;
+            uiDocument.sortingOrder = 100;
 
             rootVisualElement = uiDocument.rootVisualElement;
             if (rootVisualElement == null) return;
 
             tournamentModel = new TournamentModel();
 
-            // Link Display 2 & 3 Controllers (ensure exact types so Display3 doesn't shadow Display2)
-            if (display2Controller == null)
-            {
-                var d2Obj = GameObject.Find("Display2_Audience");
-                if (d2Obj != null) display2Controller = d2Obj.GetComponent<Display2Controller>();
-                if (display2Controller == null)
-                {
-                    var allD2 = FindObjectsOfType<Display2Controller>(true);
-                    foreach (var d in allD2)
-                    {
-                        if (d.GetType() == typeof(Display2Controller))
-                        {
-                            display2Controller = d;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (display3Controller == null)
-            {
-                var d3Obj = GameObject.Find("Display3_Audience");
-                if (d3Obj != null) display3Controller = d3Obj.GetComponent<Display3Controller>();
-                if (display3Controller == null)
-                {
-                    display3Controller = FindObjectOfType<Display3Controller>(true);
-                }
-            }
+            EnsureAllDisplayReferences();
 
             if (display2Controller != null)
             {
@@ -235,6 +211,7 @@ namespace Janken.Controllers
             BindUIElements();
             RegisterEvents();
             ApplyDisplayTargetMapping();
+            HideQuitConfirmationModal();
 
             tournamentModel.OnDisplayViewChanged += OnDisplayViewChanged;
             tournamentModel.OnSelectedMatchChanged += OnSelectedMatchChanged;
@@ -368,94 +345,245 @@ namespace Janken.Controllers
 
         private void OnSwapDisplaysClicked()
         {
-            isDisplaySwapped = !isDisplaySwapped;
-            PlayerPrefs.SetInt(PREF_SWAP_DISPLAYS, isDisplaySwapped ? 1 : 0);
+            int numDisplays = Display.displays.Length;
+            if (!Application.isEditor && numDisplays <= 2)
+            {
+                int currentMode = PlayerPrefs.GetInt("Janken_Display2_Mode", 0);
+                int nextMode = (currentMode + 1) % 3; // 0=Horiz, 1=Vert, 2=Off
+                PlayerPrefs.SetInt("Janken_Display2_Mode", nextMode);
+            }
+            else
+            {
+                int currentMode = PlayerPrefs.GetInt("Janken_Display3_Mode", 0);
+                int nextMode = (currentMode + 1) % 3; // 0=Default, 1=Swapped, 2=Off
+                PlayerPrefs.SetInt("Janken_Display3_Mode", nextMode);
+            }
             PlayerPrefs.Save();
+
             ApplyDisplayTargetMapping();
             UpdateDisplay2StatusUI();
-            Debug.Log($"[Janken MultiDisplay] Target Displays canviats: D2(Hor)={(isDisplaySwapped ? "Monitor 3" : "Monitor 2")}, D3(Ver)={(isDisplaySwapped ? "Monitor 2" : "Monitor 3")}");
+            Debug.Log($"[Janken MultiDisplay] Mode de pantalles canviat amb èxit.");
+        }
+
+        private void EnsureAllDisplayReferences()
+        {
+            var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            if (activeScene.isLoaded)
+            {
+                var rootObjects = activeScene.GetRootGameObjects();
+                foreach (var root in rootObjects)
+                {
+                    FindReferencesInHierarchy(root.transform);
+                }
+            }
+        }
+
+        private void FindReferencesInHierarchy(Transform current)
+        {
+            if (current.name == "Display2_Audience")
+            {
+                var d2 = current.GetComponent<Display2Controller>();
+                if (d2 != null && d2.GetType() == typeof(Display2Controller))
+                {
+                    display2Controller = d2;
+                }
+            }
+            else if (current.name == "Display3_Audience")
+            {
+                var d3 = current.GetComponent<Display3Controller>();
+                if (d3 != null)
+                {
+                    display3Controller = d3;
+                }
+            }
+            else if (current.name == "Display2_Camera")
+            {
+                var cam2 = current.GetComponent<Camera>();
+                if (cam2 != null) display2Camera = cam2;
+            }
+            else if (current.name == "Display3_Camera")
+            {
+                var cam3 = current.GetComponent<Camera>();
+                if (cam3 != null) display3Camera = cam3;
+            }
+
+            for (int i = 0; i < current.childCount; i++)
+            {
+                FindReferencesInHierarchy(current.GetChild(i));
+            }
         }
 
         public void ApplyDisplayTargetMapping()
         {
+            EnsureAllDisplayReferences();
+
             int numDisplays = Display.displays.Length;
 
-            int d2Target = isDisplaySwapped ? 2 : 1; // 1 = Physical Monitor 2, 2 = Physical Monitor 3
-            int d3Target = isDisplaySwapped ? 1 : 2;
+            // In standalone build, explicitly activate secondary physical displays at native resolution
+            if (!Application.isEditor)
+            {
+                for (int i = 1; i < numDisplays; i++)
+                {
+                    Display d = Display.displays[i];
+                    int sysW = d.systemWidth > 0 ? d.systemWidth : 1920;
+                    int sysH = d.systemHeight > 0 ? d.systemHeight : 1080;
+
+                    if (!d.active)
+                    {
+                        d.Activate(sysW, sysH, 60);
+                    }
+                    d.SetRenderingResolution(sysW, sysH);
+                    Debug.Log($"[Janken] Display {i + 1} activat físicament a {sysW}x{sysH}.");
+                }
+            }
+
+            // -------------------------------------------------------------
+            // SETUP 1: PORTÀTIL + 1 MONITOR EXTERN (2 Displays en total o 1 Monitor)
+            // -------------------------------------------------------------
+            if (!Application.isEditor && numDisplays <= 2)
+            {
+                // Mode: 0 = D2 Horitzontal, 1 = D3 Vertical, 2 = Desactivat
+                int mode = PlayerPrefs.GetInt("Janken_Display2_Mode", 0);
+
+                bool showD2 = (mode == 0);
+                bool showD3 = (mode == 1);
+
+                if (btnSwapDisplays != null)
+                {
+                    if (mode == 0)
+                        btnSwapDisplays.text = "📺 Monitor 2: D2 Horitzontal (Clic -> D3 Vertical)";
+                    else if (mode == 1)
+                        btnSwapDisplays.text = "📱 Monitor 2: D3 Vertical (Clic -> Desactivat)";
+                    else
+                        btnSwapDisplays.text = "🚫 Monitor 2: Desactivat (Clic -> D2 Horitzontal)";
+                }
+
+                // Configure Display 2 (Horizontal - 1920x1080)
+                if (display2Controller != null)
+                {
+                    display2Controller.gameObject.SetActive(showD2);
+                    var doc2 = display2Controller.GetComponent<UIDocument>();
+                    if (doc2 != null)
+                    {
+                        if (doc2.panelSettings != null) doc2.panelSettings.targetDisplay = 1;
+                        doc2.enabled = false;
+                        if (showD2) doc2.enabled = true;
+                    }
+                    if (showD2)
+                    {
+                        display2Controller.InitializeUI();
+                        display2Controller.RefreshCurrentView();
+                    }
+                }
+                if (display2Camera != null)
+                {
+                    display2Camera.gameObject.SetActive(showD2);
+                    display2Camera.enabled = showD2;
+                    if (showD2)
+                    {
+                        display2Camera.targetDisplay = 1;
+                        display2Camera.clearFlags = CameraClearFlags.SolidColor;
+                        display2Camera.backgroundColor = new Color(0.035f, 0.05f, 0.086f);
+                    }
+                }
+
+                // Configure Display 3 (Vertical - 1080x1920 PanelSettings)
+                if (display3Controller != null)
+                {
+                    display3Controller.gameObject.SetActive(showD3);
+                    var doc3 = display3Controller.GetComponent<UIDocument>();
+                    if (doc3 != null)
+                    {
+                        if (doc3.panelSettings != null) doc3.panelSettings.targetDisplay = 1;
+                        doc3.enabled = false;
+                        if (showD3) doc3.enabled = true;
+                    }
+                    if (showD3)
+                    {
+                        display3Controller.InitializeUI();
+                        display3Controller.RefreshCurrentView();
+                    }
+                }
+                if (display3Camera != null)
+                {
+                    display3Camera.gameObject.SetActive(showD3);
+                    display3Camera.enabled = showD3;
+                    if (showD3)
+                    {
+                        display3Camera.targetDisplay = 1;
+                        display3Camera.clearFlags = CameraClearFlags.SolidColor;
+                        display3Camera.backgroundColor = new Color(0.035f, 0.05f, 0.086f);
+                    }
+                }
+
+                return;
+            }
+
+            // -------------------------------------------------------------
+            // SETUP 2: PORTÀTIL + 2 MONITORS EXTERNS / EDITOR (3 Displays)
+            // -------------------------------------------------------------
+            int mode3 = PlayerPrefs.GetInt("Janken_Display3_Mode", 0); // 0=Default, 1=Swapped, 2=Off
+            bool isSwapped = (mode3 == 1);
+            bool isOff = (mode3 == 2);
+
+            int d2Target = isSwapped ? 2 : 1;
+            int d3Target = isSwapped ? 1 : 2;
 
             if (btnSwapDisplays != null)
             {
-                btnSwapDisplays.text = isDisplaySwapped 
-                    ? "🔄 Monitors: D2 (Pantalla 3) | D3 (Pantalla 2)" 
-                    : "🔁 Monitors: D2 (Pantalla 2) | D3 (Pantalla 3)";
+                if (isOff)
+                    btnSwapDisplays.text = "🚫 MultiDisplay: Desactivat (Clic -> Activar)";
+                else if (isSwapped)
+                    btnSwapDisplays.text = "🔄 Setup [3 Displays]: D3 M2 | D2 M3";
+                else
+                    btnSwapDisplays.text = "🔁 Setup [3 Displays]: D2 M2 | D3 M3";
             }
 
-            if (display2Controller == null)
-            {
-#if UNITY_2023_1_OR_NEWER
-                display2Controller = FindFirstObjectByType<Display2Controller>(FindObjectsInactive.Include);
-#else
-                display2Controller = FindObjectOfType<Display2Controller>();
-#endif
-            }
-
-            if (display3Controller == null)
-            {
-#if UNITY_2023_1_OR_NEWER
-                display3Controller = FindFirstObjectByType<Display3Controller>(FindObjectsInactive.Include);
-#else
-                display3Controller = FindObjectOfType<Display3Controller>();
-#endif
-            }
-
-            var camObj2 = GameObject.Find("Display2_Camera");
-            var camObj3 = GameObject.Find("Display3_Camera");
-
-            // When there are only 2 monitors in a standalone build (or numDisplays == 2),
-            // targetDisplay 2 does not exist physically. Deactivate the audience display object and camera mapped to display 2 (index 2).
-            // This prevents Unity UI Toolkit & Cameras from falling back to targetDisplay 1 or 0, eliminating constant rapid flickering!
-            bool isTwoMonitorsBuild = (!Application.isEditor && numDisplays == 2);
+            bool enableD2 = !isOff;
+            bool enableD3 = !isOff;
 
             if (display2Controller != null)
             {
-                bool d2Active = !(isTwoMonitorsBuild && d2Target >= numDisplays);
-                display2Controller.gameObject.SetActive(d2Active);
-                if (camObj2 != null) camObj2.SetActive(d2Active);
-
-                if (d2Active)
+                display2Controller.gameObject.SetActive(enableD2);
+                var doc2 = display2Controller.GetComponent<UIDocument>();
+                if (doc2 != null)
                 {
-                    var doc = display2Controller.GetComponent<UIDocument>();
-                    if (doc != null && doc.panelSettings != null)
-                    {
-                        doc.panelSettings.targetDisplay = d2Target;
-                    }
-                    if (camObj2 != null)
-                    {
-                        var cam = camObj2.GetComponent<Camera>();
-                        if (cam != null) cam.targetDisplay = d2Target;
-                    }
+                    doc2.enabled = false;
+                    if (enableD2) doc2.enabled = true;
                 }
+                if (enableD2)
+                {
+                    display2Controller.InitializeUI();
+                    display2Controller.RefreshCurrentView();
+                }
+            }
+            if (display2Camera != null)
+            {
+                display2Camera.gameObject.SetActive(enableD2);
+                display2Camera.enabled = enableD2;
+                if (enableD2) display2Camera.targetDisplay = d2Target;
             }
 
             if (display3Controller != null)
             {
-                bool d3Active = !(isTwoMonitorsBuild && d3Target >= numDisplays);
-                display3Controller.gameObject.SetActive(d3Active);
-                if (camObj3 != null) camObj3.SetActive(d3Active);
-
-                if (d3Active)
+                display3Controller.gameObject.SetActive(enableD3);
+                var doc3 = display3Controller.GetComponent<UIDocument>();
+                if (doc3 != null)
                 {
-                    var doc = display3Controller.GetComponent<UIDocument>();
-                    if (doc != null && doc.panelSettings != null)
-                    {
-                        doc.panelSettings.targetDisplay = d3Target;
-                    }
-                    if (camObj3 != null)
-                    {
-                        var cam = camObj3.GetComponent<Camera>();
-                        if (cam != null) cam.targetDisplay = d3Target;
-                    }
+                    doc3.enabled = false;
+                    if (enableD3) doc3.enabled = true;
                 }
+                if (enableD3)
+                {
+                    display3Controller.InitializeUI();
+                    display3Controller.RefreshCurrentView();
+                }
+            }
+            if (display3Camera != null)
+            {
+                display3Camera.gameObject.SetActive(enableD3);
+                display3Camera.enabled = enableD3;
+                if (enableD3) display3Camera.targetDisplay = d3Target;
             }
         }
 
@@ -465,6 +593,7 @@ namespace Janken.Controllers
             {
                 confirmQuitModal.RemoveFromClassList("modal-hidden");
                 confirmQuitModal.style.display = DisplayStyle.Flex;
+                confirmQuitModal.pickingMode = PickingMode.Position;
             }
         }
 
@@ -474,6 +603,7 @@ namespace Janken.Controllers
             {
                 confirmQuitModal.AddToClassList("modal-hidden");
                 confirmQuitModal.style.display = DisplayStyle.None;
+                confirmQuitModal.pickingMode = PickingMode.Ignore;
             }
         }
 
@@ -494,10 +624,11 @@ namespace Janken.Controllers
                 hasPlayedGoInCurrentVideoSession = true;
             }
             float targetTime = useStinger ? goVideoStartTime : repVideoStartTime;
-            if (display2Controller != null) display2Controller.PlayNouArbitreVideo(useStinger, targetTime);
-            if (display3Controller != null) display3Controller.PlayNouArbitreVideo(useStinger, targetTime);
+            if (display2Controller != null && display2Controller.gameObject.activeInHierarchy) display2Controller.PlayNouArbitreVideo(useStinger, targetTime);
+            if (display3Controller != null && display3Controller.gameObject.activeInHierarchy) display3Controller.PlayNouArbitreVideo(useStinger, targetTime);
 
-            if (display2Controller == null && display3Controller == null && tournamentModel != null)
+            if ((display2Controller == null || !display2Controller.gameObject.activeInHierarchy) &&
+                (display3Controller == null || !display3Controller.gameObject.activeInHierarchy) && tournamentModel != null)
             {
                 tournamentModel.SetDisplayView(DisplayViewType.NouArbitreVideo);
             }
@@ -580,14 +711,25 @@ namespace Janken.Controllers
             return typeName.Contains("TextField") || typeName.Contains("TextInput") || typeName.Contains("Editor");
         }
 
+        private Display2Controller GetActiveAudienceController()
+        {
+            if (display2Controller != null && display2Controller.gameObject.activeInHierarchy)
+                return display2Controller;
+            if (display3Controller != null && display3Controller.gameObject.activeInHierarchy)
+                return display3Controller;
+            return null;
+        }
+
         private void RequestDisplayViewChange(DisplayViewType targetView)
         {
             if (tournamentModel == null) return;
             if (tournamentModel.CurrentDisplayView == targetView) return;
 
-            if (useStingerTransitions && display2Controller != null)
+            Display2Controller activeController = GetActiveAudienceController();
+
+            if (useStingerTransitions && activeController != null && activeController.gameObject.activeInHierarchy)
             {
-                display2Controller.PlayStingerTransition(() =>
+                activeController.PlayStingerTransition(() =>
                 {
                     tournamentModel.SetDisplayView(targetView);
                 });
@@ -961,11 +1103,7 @@ namespace Janken.Controllers
                 var roundColumn = new VisualElement();
                 roundColumn.AddToClassList("round-column");
 
-                var roundHeader = new Label(tournamentModel.GetRoundTitle(r));
-                roundHeader.AddToClassList("round-header");
-                roundHeader.pickingMode = PickingMode.Position;
-                roundHeader.tooltip = "Fes clic per enviar només aquesta ronda a Display 2!";
-                roundHeader.RegisterCallback<ClickEvent>(evt =>
+                var roundHeader = new Button(() =>
                 {
                     tournamentModel.SetSelectedRound(currentRoundIndex);
                     bool isChroma = tournamentModel.CurrentDisplayView == DisplayViewType.ChromaBracket ||
@@ -975,8 +1113,10 @@ namespace Janken.Controllers
                                     tournamentModel.CurrentDisplayView == DisplayViewType.ChromaCleanFeed;
                     tournamentModel.SetDisplayView(isChroma ? DisplayViewType.ChromaSingleRound : DisplayViewType.SingleRound);
                     if (display2Controller != null) display2Controller.RefreshCurrentView();
-                    evt.StopPropagation();
                 });
+                roundHeader.text = tournamentModel.GetRoundTitle(r);
+                roundHeader.AddToClassList("round-header");
+                roundHeader.tooltip = "Fes clic per enviar només aquesta ronda a Display 2!";
                 roundColumn.Add(roundHeader);
 
                 float multiplier = (float)Math.Pow(2, r);
@@ -1171,18 +1311,17 @@ namespace Janken.Controllers
                     slot.AddToClassList("match-slot-loser");
             }
 
-            // Allow clicking anywhere on the slot / player name to declare/toggle winner!
-            slot.RegisterCallback<ClickEvent>(evt =>
+            // Player Name Button (Clicking player name toggles winner)
+            var nameBtn = new Button(() =>
             {
                 tournamentModel.ToggleOrDeclareWinner(match, player);
                 RenderBracket();
-                evt.StopPropagation();
             });
+            nameBtn.text = player.name;
+            nameBtn.AddToClassList("slot-player-name-btn");
+            slot.Add(nameBtn);
 
-            var nameLabel = new Label(player.name);
-            nameLabel.AddToClassList("slot-player-name");
-            slot.Add(nameLabel);
-
+            // Star Button (Clicking star toggles winner)
             var winBtn = new Button(() =>
             {
                 tournamentModel.ToggleOrDeclareWinner(match, player);

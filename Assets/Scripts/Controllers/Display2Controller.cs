@@ -143,19 +143,20 @@ namespace Janken.Controllers
 
         private void ActivateSecondaryDisplay()
         {
-            if (Display.displays.Length > 1)
+            if (Application.isEditor) return;
+
+            for (int i = 1; i < Display.displays.Length; i++)
             {
-                Display.displays[1].Activate();
-                Debug.Log("[Janken MultiDisplay] Display 2 activat amb èxit.");
-            }
-            if (Display.displays.Length > 2)
-            {
-                Display.displays[2].Activate();
-                Debug.Log("[Janken MultiDisplay] Display 3 activat amb èxit.");
-            }
-            if (Display.displays.Length <= 1)
-            {
-                Debug.Log("[Janken MultiDisplay] Només s'ha detectat 1 display físic. Displays 2 i 3 s'estan provant en mode secundari.");
+                Display d = Display.displays[i];
+                int sysW = d.systemWidth > 0 ? d.systemWidth : 1920;
+                int sysH = d.systemHeight > 0 ? d.systemHeight : 1080;
+
+                if (!d.active)
+                {
+                    d.Activate(sysW, sysH, 60);
+                }
+                d.SetRenderingResolution(sysW, sysH);
+                Debug.Log($"[Janken MultiDisplay] Physical Display {i + 1} activat a resolució nativa: {sysW}x{sysH}");
             }
         }
 
@@ -208,6 +209,11 @@ namespace Janken.Controllers
             RefreshCurrentView();
         }
 
+        private void OnEnable()
+        {
+            InitializeUI();
+        }
+
         public void InitializeUI()
         {
             uiDocument = GetComponent<UIDocument>();
@@ -215,6 +221,7 @@ namespace Janken.Controllers
 
             rootVisualElement = uiDocument.rootVisualElement;
             if (rootVisualElement == null) return;
+            rootVisualElement.pickingMode = PickingMode.Ignore;
 
             BindUIElements();
 

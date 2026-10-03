@@ -9,21 +9,26 @@
     background-color: #F7F4EB;
     color: #FFFFFF;
     flex-direction: column;
+    picking-mode: Ignore;
 }
 
 .display2-hidden {
     display: none;
 }
 
-/* VIEW CONTAINER */
+/* VIEW CONTAINER (LEFT 50% REGION FOR SINGLE ROUND, COMBAT & CHAMPION VIEWS) */
 .display2-view-container {
     flex-grow: 1;
-    width: 100%;
+    width: 50%;
     height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
     align-items: center;
     justify-content: center;
 }
 
+/* BRACKET VIEW CONTAINER: LEFT-ALIGNED WITH 45PX MARGIN FROM SCREEN EDGE */
 .display2-bracket-scroll {
     width: 100%;
     height: 100%;
@@ -510,6 +515,8 @@
 
 /* STREET FIGHTER TOP BAR / LOWER THIRD HUD OVERLAY (CHROMA KEY MODE) */
 .sf-overlay-view {
+    width: 100% !important;
+    left: 0 !important;
     justify-content: flex-start !important;
     align-items: center !important;
     padding-top: 24px;
