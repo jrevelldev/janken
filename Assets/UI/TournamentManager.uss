@@ -59,6 +59,14 @@
     flex-shrink: 1;
 }
 
+.top-header-logo {
+    width: 140px;
+    height: 38px;
+    background-image: url('project:/Assets/UI/logo_janken.png');
+    -unity-background-scale-mode: scale-to-fit;
+    margin-right: 12px;
+}
+
 .header-right-group {
     flex-direction: row;
     align-items: center;
@@ -99,6 +107,15 @@
     border-right-color: #D4AF37;
     padding: 16px;
     flex-direction: column;
+}
+
+.sidebar-logo {
+    width: 240px;
+    height: 75px;
+    align-self: center;
+    background-image: url('project:/Assets/UI/logo_janken.png');
+    -unity-background-scale-mode: scale-to-fit;
+    margin-bottom: 12px;
 }
 
 .sidebar-title {

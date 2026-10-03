@@ -86,6 +86,7 @@
         <!-- VIEW 5: CHAMPION CELEBRATION VIEW (VERTICAL UPPER ZONE FIT) -->
         <ui:VisualElement name="ChampionViewContainer" class="display2-view-container display3-upper-view-container display2-hidden">
             <ui:VisualElement class="champion-stage">
+                <ui:VisualElement class="champion-janken-logo" />
                 <ui:Label text="🏆" class="champion-huge-trophy" />
                 <ui:Label text="VICTÒRIA DEL TORNEIG" class="champion-stage-subtitle" />
                 <ui:Label name="ChampionStageName" text="GOKU" class="champion-stage-name" />

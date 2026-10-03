@@ -4,6 +4,7 @@
     <ui:VisualElement name="Root" class="main-container">
         <!-- Sidebar Setup Panel -->
         <ui:VisualElement name="SidebarPanel" class="sidebar">
+            <ui:VisualElement class="sidebar-logo" />
             <ui:Label text="CONFIGURACIÓ DEL TORNEIG" class="sidebar-title" />
 
             <ui:Label text="Preset Ràpid de Jugadors:" style="font-size: 12px; color: #94a3b8; margin-bottom: 4px;" />
@@ -37,7 +38,8 @@
             <!-- Header Bar -->
             <ui:VisualElement class="top-header">
                 <ui:VisualElement class="header-left-group">
-                    <ui:Label name="TournamentTitleLabel" text="🏆 TORNEIG JANKEN" class="header-title" />
+                    <ui:VisualElement class="top-header-logo" />
+                    <ui:Label name="TournamentTitleLabel" text="TORNEIG JANKEN" class="header-title" />
                     
                     <!-- CONTROL DISPLAY VIEWS BAR -->
                     <ui:VisualElement class="display2-control-bar-group">

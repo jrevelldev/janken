@@ -422,6 +422,14 @@
     width: 680px;
 }
 
+.champion-janken-logo {
+    width: 340px;
+    height: 125px;
+    background-image: url('project:/Assets/Sprites/UI/logo_janken.png');
+    -unity-background-scale-mode: scale-to-fit;
+    margin-bottom: 16px;
+}
+
 .champion-huge-trophy {
     font-size: 110px;
     margin-bottom: 16px;
