@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.Video;
 using Janken.Tournament;
+using Janken.VFX;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -122,7 +123,7 @@ namespace Janken.Controllers
 
             if (nouArbitreVideoClip == null)
             {
-                string[] videoGuids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos" });
+                string[] videoGuids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Sprites", "Assets/Videos", "Assets/Videos/NouArbitre" });
                 foreach (string guid in videoGuids)
                 {
                     string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
@@ -624,8 +625,26 @@ namespace Janken.Controllers
                 hasPlayedGoInCurrentVideoSession = true;
             }
             float targetTime = useStinger ? goVideoStartTime : repVideoStartTime;
-            if (display2Controller != null && display2Controller.gameObject.activeInHierarchy) display2Controller.PlayNouArbitreVideo(useStinger, targetTime);
-            if (display3Controller != null && display3Controller.gameObject.activeInHierarchy) display3Controller.PlayNouArbitreVideo(useStinger, targetTime);
+
+            StingerAnimationData sharedStinger = null;
+            Vector2? sharedFlip = null;
+
+            if (useStinger)
+            {
+                // Pick a SINGLE Stinger animation and flip scale for BOTH displays to ensure 100% sync
+                Display2Controller refController = (display2Controller != null && display2Controller.gameObject.activeInHierarchy) ? display2Controller : display3Controller;
+                if (refController != null)
+                {
+                    sharedStinger = refController.GetStingerToPlay();
+                    sharedFlip = refController.GetStingerFlipScale();
+                }
+            }
+
+            if (display2Controller != null && display2Controller.gameObject.activeInHierarchy)
+                display2Controller.PlayNouArbitreVideo(useStinger, targetTime, sharedStinger, sharedFlip);
+
+            if (display3Controller != null && display3Controller.gameObject.activeInHierarchy)
+                display3Controller.PlayNouArbitreVideo(useStinger, targetTime, sharedStinger, sharedFlip);
 
             if ((display2Controller == null || !display2Controller.gameObject.activeInHierarchy) &&
                 (display3Controller == null || !display3Controller.gameObject.activeInHierarchy) && tournamentModel != null)

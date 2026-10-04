@@ -28,6 +28,8 @@ namespace Janken.Controllers
         [Header("Nou Àrbitre Video Settings")]
         [SerializeField] private UnityEngine.Video.VideoPlayer videoPlayer;
         [SerializeField] private UnityEngine.Video.VideoClip nouArbitreClip;
+        [SerializeField] private UnityEngine.Video.VideoClip nouArbitreVertiClip;
+        [SerializeField] private UnityEngine.Video.VideoClip nouArbitreHoritzClip;
         [SerializeField] private float goVideoStartTime = 0f;
         [SerializeField] private float repVideoStartTime = 0f;
         private float currentPlaybackStartTime = 0f;
@@ -196,6 +198,13 @@ namespace Janken.Controllers
                 tournamentModel.OnDisplayViewChanged -= OnDisplayViewChanged;
                 tournamentModel.OnSelectedMatchChanged -= OnSelectedMatchChanged;
                 tournamentModel.OnSelectedRoundChanged -= OnSelectedRoundChanged;
+            }
+
+            if (videoRenderTexture != null)
+            {
+                videoRenderTexture.Release();
+                Destroy(videoRenderTexture);
+                videoRenderTexture = null;
             }
         }
 
@@ -418,7 +427,18 @@ namespace Janken.Controllers
         /// <summary>
         /// Plays a Stinger transition animation, calling the callback at the cut point.
         /// </summary>
-        public void PlayStingerTransition(Action onCutPoint, StingerAnimationData stinger = null)
+        public Vector2 GetStingerFlipScale()
+        {
+            if (randomizeStingerFlip)
+            {
+                float scaleX = UnityEngine.Random.value > 0.5f ? -1f : 1f;
+                float scaleY = UnityEngine.Random.value > 0.5f ? -1f : 1f;
+                return new Vector2(scaleX, scaleY);
+            }
+            return Vector2.one;
+        }
+
+        public void PlayStingerTransition(Action onCutPoint, StingerAnimationData stinger = null, Vector2? customFlip = null)
         {
             if (stinger == null) stinger = GetStingerToPlay();
             if (stinger == null || stinger.FrameCount == 0 || stingerOverlay == null)
@@ -432,24 +452,16 @@ namespace Janken.Controllers
                 StopCoroutine(activeStingerCoroutine);
             }
 
-            activeStingerCoroutine = StartCoroutine(StingerRoutine(stinger, onCutPoint));
+            activeStingerCoroutine = StartCoroutine(StingerRoutine(stinger, onCutPoint, customFlip));
         }
 
-        private IEnumerator StingerRoutine(StingerAnimationData stinger, Action onCutPoint)
+        private IEnumerator StingerRoutine(StingerAnimationData stinger, Action onCutPoint, Vector2? customFlip = null)
         {
             isStingerPlaying = true;
 
-            // Randomize horizontal and vertical flip for animation variety
-            if (randomizeStingerFlip)
-            {
-                float scaleX = UnityEngine.Random.value > 0.5f ? -1f : 1f;
-                float scaleY = UnityEngine.Random.value > 0.5f ? -1f : 1f;
-                stingerOverlay.style.scale = new StyleScale(new Scale(new Vector2(scaleX, scaleY)));
-            }
-            else
-            {
-                stingerOverlay.style.scale = new StyleScale(new Scale(new Vector2(1f, 1f)));
-            }
+            // Use provided flip scale or generate one
+            Vector2 flipScale = customFlip ?? GetStingerFlipScale();
+            stingerOverlay.style.scale = new StyleScale(new Scale(flipScale));
 
             stingerOverlay.RemoveFromClassList("display2-hidden");
 
@@ -597,7 +609,7 @@ namespace Janken.Controllers
             }
         }
 
-        public void PlayNouArbitreVideo(bool useStinger, float startTime)
+        public void PlayNouArbitreVideo(bool useStinger, float startTime, StingerAnimationData customStinger = null, Vector2? customFlip = null)
         {
             if (!useStinger && startTime == 0f && repVideoStartTime > 0f)
             {
@@ -609,11 +621,14 @@ namespace Janken.Controllers
             }
 
             currentPlaybackStartTime = startTime;
+
+            // Set isStingerPlaying to true immediately to protect both controllers
+            // from premature OnDisplayViewChanged re-entry during transitions.
+            bool wasStingerPlaying = isStingerPlaying;
+            isStingerPlaying = true;
+
             Action startPlaybackAction = () =>
             {
-                bool wasStingerPlaying = isStingerPlaying;
-                if (!useStinger) isStingerPlaying = true; // Temporarily prevent OnDisplayViewChanged from triggering a Stinger transition
-
                 try
                 {
                     if (tournamentModel != null && tournamentModel.CurrentDisplayView != DisplayViewType.NouArbitreVideo)
@@ -630,18 +645,65 @@ namespace Janken.Controllers
                 }
                 finally
                 {
-                    if (!useStinger) isStingerPlaying = wasStingerPlaying;
+                    isStingerPlaying = wasStingerPlaying;
                 }
             };
 
             if (useStinger && useStingerTransitions)
             {
-                PlayStingerTransition(startPlaybackAction);
+                PlayStingerTransition(startPlaybackAction, customStinger, customFlip);
             }
             else
             {
                 startPlaybackAction();
             }
+        }
+
+        private UnityEngine.Video.VideoClip GetEffectiveVideoClip()
+        {
+            bool isVertical = (Screen.height > Screen.width) || (this is Display3Controller);
+
+            if (isVertical && nouArbitreVertiClip != null) return nouArbitreVertiClip;
+            if (!isVertical && nouArbitreHoritzClip != null) return nouArbitreHoritzClip;
+            if (nouArbitreClip != null)
+            {
+                bool clipIsVertical = nouArbitreClip.height > nouArbitreClip.width;
+                if (clipIsVertical == isVertical) return nouArbitreClip;
+            }
+
+#if UNITY_EDITOR
+            string[] searchFolders = new[] { "Assets/Sprites", "Assets/Videos", "Assets/Videos/NouArbitre" };
+            string[] guids = UnityEditor.AssetDatabase.FindAssets("", searchFolders);
+            UnityEngine.Video.VideoClip bestMatch = null;
+
+            foreach (string guid in guids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                if (string.IsNullOrEmpty(path)) continue;
+
+                var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Video.VideoClip>(path);
+                if (clip != null)
+                {
+                    bool clipIsVert = path.ToLower().Contains("verti") || clip.height > clip.width;
+                    bool clipIsHoriz = path.ToLower().Contains("horitz") || clip.width > clip.height;
+
+                    if (isVertical && clipIsVert)
+                    {
+                        return clip;
+                    }
+                    if (!isVertical && clipIsHoriz)
+                    {
+                        return clip;
+                    }
+
+                    if (bestMatch == null) bestMatch = clip;
+                }
+            }
+
+            if (bestMatch != null) return bestMatch;
+#endif
+
+            return nouArbitreClip;
         }
 
         private void ExecuteVideoPlayback(float startTime)
@@ -655,36 +717,39 @@ namespace Janken.Controllers
                 }
             }
 
-#if UNITY_EDITOR
-            if (nouArbitreClip == null)
+            UnityEngine.Video.VideoClip targetClip = GetEffectiveVideoClip();
+            if (targetClip != null)
             {
-                string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos" });
-                foreach (string guid in guids)
-                {
-                    string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
-                    var clip = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Video.VideoClip>(path);
-                    if (clip != null)
-                    {
-                        nouArbitreClip = clip;
-                        break;
-                    }
-                }
-            }
-#endif
-
-            if (nouArbitreClip != null)
-            {
-                videoPlayer.clip = nouArbitreClip;
+                videoPlayer.clip = targetClip;
             }
 
             if (videoPlayer.clip == null)
             {
-                Debug.LogWarning("[Janken] VideoClip NOU ARBITRE no trobat ni assignat! Revisa que hi hagi un fitxer de vídeo a Assets/Videos/NouArbitre/ o assigna'l a l'Inspector de Unity.");
+                Debug.LogWarning("[Janken] VideoClip NOU ARBITRE no trobat ni assignat! Revisa que hi hagi un fitxer de vídeo a Assets/Sprites/ o Assets/Videos/.");
                 return;
             }
 
-            int w = Screen.width > 0 ? Screen.width : 1920;
-            int h = Screen.height > 0 ? Screen.height : 1080;
+            bool isVerticalDisplay = (Screen.height > Screen.width) || (this is Display3Controller);
+
+            int w, h;
+            if (isVerticalDisplay)
+            {
+                if (videoPlayer.clip != null && videoPlayer.clip.height > videoPlayer.clip.width)
+                {
+                    w = (int)videoPlayer.clip.width;
+                    h = (int)videoPlayer.clip.height;
+                }
+                else
+                {
+                    w = 1080;
+                    h = 1920;
+                }
+            }
+            else
+            {
+                w = (videoPlayer.clip != null && videoPlayer.clip.width > 0) ? (int)videoPlayer.clip.width : (Screen.width > 0 ? Screen.width : 1920);
+                h = (videoPlayer.clip != null && videoPlayer.clip.height > 0) ? (int)videoPlayer.clip.height : (Screen.height > 0 ? Screen.height : 1080);
+            }
 
             if (videoRenderTexture == null || !videoRenderTexture.IsCreated() || videoRenderTexture.width != w || videoRenderTexture.height != h)
             {
@@ -699,10 +764,12 @@ namespace Janken.Controllers
 
             videoPlayer.renderMode = UnityEngine.Video.VideoRenderMode.RenderTexture;
             videoPlayer.targetTexture = videoRenderTexture;
+            videoPlayer.aspectRatio = UnityEngine.Video.VideoAspectRatio.Stretch;
 
             if (videoDisplayElement != null)
             {
                 videoDisplayElement.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(videoRenderTexture));
+                videoDisplayElement.style.unityBackgroundScaleMode = ScaleMode.ScaleToFit;
                 videoDisplayElement.style.display = DisplayStyle.Flex;
                 videoDisplayElement.style.width = new Length(100, LengthUnit.Percent);
                 videoDisplayElement.style.height = new Length(100, LengthUnit.Percent);
@@ -735,7 +802,9 @@ namespace Janken.Controllers
 
             float finalSeekTime = startTime;
 
-            videoPlayer.Pause();
+            // Stop the video player first to flush native EOF (end of file) decoder state,
+            // allowing seeks to work reliably when doing REP after a clip reaches the end.
+            videoPlayer.Stop();
 
             if (!videoPlayer.isPrepared)
             {
@@ -745,6 +814,7 @@ namespace Janken.Controllers
                     vp.prepareCompleted -= preparedHandler;
                     vp.time = finalSeekTime;
                     vp.Play();
+                    vp.time = finalSeekTime;
                 };
                 videoPlayer.prepareCompleted += preparedHandler;
                 videoPlayer.Prepare();
@@ -753,6 +823,7 @@ namespace Janken.Controllers
             {
                 videoPlayer.time = finalSeekTime;
                 videoPlayer.Play();
+                videoPlayer.time = finalSeekTime;
             }
         }
 
