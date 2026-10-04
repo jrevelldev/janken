@@ -162,8 +162,9 @@ MonoBehaviour:
   nouArbitreClip: {fileID: 32900000, guid: b56800684e12e49cbba68a0a10e60ad2, type: 3}
   nouArbitreVertiClip: {fileID: 0}
   nouArbitreHoritzClip: {fileID: 0}
+  muteVideoAudio: 0
   goVideoStartTime: 0
-  repVideoStartTime: 12000
+  repVideoStartTime: 10000
   refereeRockSprite: {fileID: 0}
   refereePaperSprite: {fileID: 0}
   refereeScissorsSprite: {fileID: 0}
@@ -904,8 +905,9 @@ MonoBehaviour:
   nouArbitreClip: {fileID: 32900000, guid: c445b60c8f64d4e00aa78a724365c927, type: 3}
   nouArbitreVertiClip: {fileID: 0}
   nouArbitreHoritzClip: {fileID: 0}
+  muteVideoAudio: 0
   goVideoStartTime: 0
-  repVideoStartTime: 12000
+  repVideoStartTime: 10000
   refereeRockSprite: {fileID: 0}
   refereePaperSprite: {fileID: 0}
   refereeScissorsSprite: {fileID: 0}

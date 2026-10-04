@@ -30,6 +30,7 @@ namespace Janken.Controllers
         [SerializeField] private UnityEngine.Video.VideoClip nouArbitreClip;
         [SerializeField] private UnityEngine.Video.VideoClip nouArbitreVertiClip;
         [SerializeField] private UnityEngine.Video.VideoClip nouArbitreHoritzClip;
+        [SerializeField] protected bool muteVideoAudio = false;
         [SerializeField] private float goVideoStartTime = 0f;
         [SerializeField] private float repVideoStartTime = 0f;
         private float currentPlaybackStartTime = 0f;
@@ -465,7 +466,7 @@ namespace Janken.Controllers
 
             stingerOverlay.RemoveFromClassList("display2-hidden");
 
-            if (stinger.stingerSound != null)
+            if (stinger.stingerSound != null && !muteVideoAudio)
             {
                 AudioSource audioSource = GetComponent<AudioSource>();
                 if (audioSource != null)
@@ -778,8 +779,16 @@ namespace Janken.Controllers
             videoPlayer.playOnAwake = false;
             videoPlayer.isLooping = false;
             videoPlayer.audioOutputMode = UnityEngine.Video.VideoAudioOutputMode.Direct;
-            videoPlayer.EnableAudioTrack(0, true);
-            videoPlayer.SetDirectAudioVolume(0, 1.0f);
+
+            if (muteVideoAudio)
+            {
+                videoPlayer.SetDirectAudioVolume(0, 0f);
+            }
+            else
+            {
+                videoPlayer.EnableAudioTrack(0, true);
+                videoPlayer.SetDirectAudioVolume(0, 1.0f);
+            }
 
             // Normalize start time: Unity VideoPlayer.time is in SECONDS.
             // If entered in milliseconds (e.g., 30000 for 30s), convert ms to seconds.

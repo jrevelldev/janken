@@ -9,7 +9,11 @@ namespace Janken.Controllers
     /// </summary>
     public class Display3Controller : Display2Controller
     {
-        // Display3 inherits all functionality of Display2Controller automatically.
-        // It binds to Display3Manager.uxml and Display3Manager.uss via UIDocument on its GameObject.
+        private void Awake()
+        {
+            // Display 3 is the vertical secondary display.
+            // Mute video and stinger audio by default so only Display 2 plays sound.
+            muteVideoAudio = true;
+        }
     }
 }
