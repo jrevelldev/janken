@@ -761,6 +761,16 @@ namespace Janken.Controllers
 
         #region Audio Control Logic
 
+        private float GetTargetMusicVolume()
+        {
+            if (!isMusicPlaying) return 0f;
+            if (tournamentModel != null && tournamentModel.CurrentDisplayView == DisplayViewType.NouArbitreVideo)
+            {
+                return 0.2f;
+            }
+            return 1f;
+        }
+
         private void OnToggleMusicClicked()
         {
             isMusicPlaying = !isMusicPlaying;
@@ -769,7 +779,8 @@ namespace Janken.Controllers
 
             if (isMusicPlaying)
             {
-                audioFadeCoroutine = StartCoroutine(FadeInMusic());
+                float targetVol = GetTargetMusicVolume();
+                audioFadeCoroutine = StartCoroutine(FadeMusicToVolume(targetVol));
                 if (btnToggleMusic != null)
                 {
                     btnToggleMusic.text = "🔊 Música: ON";
@@ -778,7 +789,7 @@ namespace Janken.Controllers
             }
             else
             {
-                audioFadeCoroutine = StartCoroutine(FadeOutMusic());
+                audioFadeCoroutine = StartCoroutine(FadeMusicToVolume(0f));
                 if (btnToggleMusic != null)
                 {
                     btnToggleMusic.text = "🎵 Música: OFF";
@@ -787,83 +798,58 @@ namespace Janken.Controllers
             }
         }
 
-        private IEnumerator FadeInMusic()
+        private IEnumerator FadeMusicToVolume(float targetVolume)
         {
-            // VideoPlayer (.mp4)
-            if (videoPlayer != null && videoPlayer.clip != null)
+            bool hasVideo = videoPlayer != null && videoPlayer.clip != null;
+            bool hasAudio = audioSource != null && audioSource.clip != null;
+
+            if (!hasVideo && !hasAudio) yield break;
+
+            if (targetVolume > 0f)
             {
-                if (!videoPlayer.isPlaying) videoPlayer.Play();
-
-                float startVol = videoPlayer.GetDirectAudioVolume(0);
-                float timer = 0f;
-
-                while (timer < fadeDuration)
-                {
-                    timer += Time.deltaTime;
-                    float vol = Mathf.Lerp(startVol, 1f, timer / fadeDuration);
-                    videoPlayer.SetDirectAudioVolume(0, vol);
-                    yield return null;
-                }
-
-                videoPlayer.SetDirectAudioVolume(0, 1f);
+                if (hasVideo && !videoPlayer.isPlaying) videoPlayer.Play();
+                if (hasAudio && !audioSource.isPlaying) audioSource.Play();
             }
 
-            // AudioSource (.wav / .mp3)
-            if (audioSource != null && audioSource.clip != null)
+            float startVolVideo = hasVideo ? videoPlayer.GetDirectAudioVolume(0) : 0f;
+            float startVolAudio = hasAudio ? audioSource.volume : 0f;
+            float timer = 0f;
+
+            while (timer < fadeDuration)
             {
-                if (!audioSource.isPlaying) audioSource.Play();
+                timer += Time.deltaTime;
+                float progress = Mathf.Clamp01(timer / fadeDuration);
 
-                float startVol = audioSource.volume;
-                float timer = 0f;
-
-                while (timer < fadeDuration)
+                if (hasVideo)
                 {
-                    timer += Time.deltaTime;
-                    audioSource.volume = Mathf.Lerp(startVol, 1f, timer / fadeDuration);
-                    yield return null;
+                    videoPlayer.SetDirectAudioVolume(0, Mathf.Lerp(startVolVideo, targetVolume, progress));
+                }
+                if (hasAudio)
+                {
+                    audioSource.volume = Mathf.Lerp(startVolAudio, targetVolume, progress);
                 }
 
-                audioSource.volume = 1f;
-            }
-        }
-
-        private IEnumerator FadeOutMusic()
-        {
-            // VideoPlayer (.mp4)
-            if (videoPlayer != null && videoPlayer.isPlaying)
-            {
-                float startVol = videoPlayer.GetDirectAudioVolume(0);
-                float timer = 0f;
-
-                while (timer < fadeDuration)
-                {
-                    timer += Time.deltaTime;
-                    float vol = Mathf.Lerp(startVol, 0f, timer / fadeDuration);
-                    videoPlayer.SetDirectAudioVolume(0, vol);
-                    yield return null;
-                }
-
-                videoPlayer.SetDirectAudioVolume(0, 0f);
-                videoPlayer.Stop();
-                videoPlayer.time = 0f; // Reset / Rewind
+                yield return null;
             }
 
-            // AudioSource (.wav / .mp3)
-            if (audioSource != null && audioSource.isPlaying)
+            if (hasVideo)
             {
-                float startVol = audioSource.volume;
-                float timer = 0f;
-
-                while (timer < fadeDuration)
+                videoPlayer.SetDirectAudioVolume(0, targetVolume);
+                if (targetVolume <= 0f && videoPlayer.isPlaying)
                 {
-                    timer += Time.deltaTime;
-                    audioSource.volume = Mathf.Lerp(startVol, 0f, timer / fadeDuration);
-                    yield return null;
+                    videoPlayer.Stop();
+                    videoPlayer.time = 0f; // Reset / Rewind
                 }
+            }
 
-                audioSource.volume = 0f;
-                audioSource.Stop();
-                audioSource.time = 0f; // Reset / Rewind
+            if (hasAudio)
+            {
+                audioSource.volume = targetVolume;
+                if (targetVolume <= 0f && audioSource.isPlaying)
+                {
+                    audioSource.Stop();
+                    audioSource.time = 0f; // Reset / Rewind
+                }
             }
         }
 
@@ -876,6 +862,13 @@ namespace Janken.Controllers
                 hasPlayedGoInCurrentVideoSession = false;
             }
             UpdateDisplay2StatusUI();
+
+            if (isMusicPlaying)
+            {
+                if (audioFadeCoroutine != null) StopCoroutine(audioFadeCoroutine);
+                float targetVol = GetTargetMusicVolume();
+                audioFadeCoroutine = StartCoroutine(FadeMusicToVolume(targetVol));
+            }
         }
 
         private void OnSelectedMatchChanged(Match match)
