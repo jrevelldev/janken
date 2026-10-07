@@ -545,6 +545,14 @@ namespace Janken.Controllers
             }
 
             // Hide all views first
+            if (display2Root != null)
+            {
+                var existingOverlay = display2Root.Q<VisualElement>(className: "display2-bracket-champion-overlay");
+                if (existingOverlay != null)
+                {
+                    display2Root.Remove(existingOverlay);
+                }
+            }
             SetContainerVisible(bracketViewContainer, false);
             SetContainerVisible(singleRoundViewContainer, false);
             SetContainerVisible(combatViewContainer, false);
@@ -1020,6 +1028,15 @@ namespace Janken.Controllers
         private void RenderCleanBracket()
         {
             activeFinalBanner = null;
+            if (display2Root != null)
+            {
+                var existingOverlay = display2Root.Q<VisualElement>(className: "display2-bracket-champion-overlay");
+                if (existingOverlay != null)
+                {
+                    display2Root.Remove(existingOverlay);
+                }
+            }
+
             if (bracketContainer == null) return;
             bracketContainer.Clear();
 
@@ -1182,29 +1199,11 @@ namespace Janken.Controllers
                 }
                 else
                 {
-                    // Champion Card in final round (Only on Display 2 horizontal)
+                    // Champion Card in final round (Only on Display 2 horizontal - Floating Overlay in Display2Root)
                     if (tournamentModel.Champion != null && !isDisplay3)
                     {
-                        var championConnectorCol = new VisualElement();
-                        championConnectorCol.AddToClassList("connector-column");
-
-                        float finalTopOffset = (SLOT_HEIGHT * (multiplier - 1f)) / 2f;
-                        float yFinalCenter = HEADER_TOTAL + finalTopOffset + CARD_HEIGHT / 2f;
-
-                        var champArm = new VisualElement();
-                        champArm.AddToClassList("connector-arm");
-                        champArm.AddToClassList("connector-arm-active");
-                        champArm.style.top = yFinalCenter - 1f;
-                        champArm.style.left = 0f;
-                        champArm.style.width = 32f;
-                        champArm.style.height = 2f;
-
-                        championConnectorCol.Add(champArm);
-                        bracketContainer.Add(championConnectorCol);
-
-                        var championCol = new VisualElement();
-                        championCol.AddToClassList("champion-container");
-                        championCol.style.marginTop = finalTopOffset + HEADER_TOTAL - 50f;
+                        var championOverlay = new VisualElement();
+                        championOverlay.AddToClassList("display2-bracket-champion-overlay");
 
                         var championCard = new VisualElement();
                         championCard.AddToClassList("champion-card");
@@ -1221,9 +1220,12 @@ namespace Janken.Controllers
                         championCard.Add(iconLabel);
                         championCard.Add(titleLabel);
                         championCard.Add(nameLabel);
-                        championCol.Add(championCard);
+                        championOverlay.Add(championCard);
 
-                        bracketContainer.Add(championCol);
+                        if (display2Root != null)
+                        {
+                            display2Root.Add(championOverlay);
+                        }
                     }
                 }
             }

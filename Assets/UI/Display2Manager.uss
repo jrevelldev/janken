@@ -28,6 +28,63 @@
     justify-content: center;
 }
 
+/* BRACKET GENERAL VIEW CONTAINER: 60% WIDTH TO PREVENT CUTTING OFF THE FINAL ROUND CARD */
+#BracketViewContainer {
+    width: 60%;
+}
+
+/* FLOATING BRACKET CHAMPION VICTORY OVERLAY (CENTERED COMPLETELY IN THE WINDOW) */
+.display2-bracket-champion-overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    width: 380px;
+    z-index: 150;
+    align-items: center;
+    justify-content: center;
+    picking-mode: Ignore;
+}
+
+.display2-bracket-champion-overlay .champion-card {
+    background-color: #161412;
+    border-width: 4px;
+    border-color: #F2C94C;
+    border-radius: 24px;
+    padding: 24px 30px;
+    align-items: center;
+    width: 100%;
+}
+
+.display2-bracket-champion-overlay .champion-icon {
+    font-size: 52px;
+    margin-bottom: 4px;
+}
+
+.display2-bracket-champion-overlay .champion-title {
+    font-size: 19px;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #F2C94C;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.display2-bracket-champion-overlay .champion-name {
+    font-size: 32px;
+    -unity-font-style: bold;
+    -unity-font-definition: url('project:/Assets/UI/Fonts/PermanentMarker-Regular.ttf');
+    color: #FFFFFF !important;
+    background-image: url('project:/Assets/Sprites/UI/Header_Brush_Red.png');
+    -unity-background-scale-mode: stretch-to-fill;
+    background-color: transparent;
+    border-width: 0px;
+    padding: 12px 42px;
+    text-align: center;
+    -unity-text-align: middle-center;
+    align-self: center;
+}
+
 /* BRACKET VIEW CONTAINER: LEFT-ALIGNED WITH 45PX MARGIN FROM SCREEN EDGE */
 .display2-bracket-scroll {
     width: 100%;
