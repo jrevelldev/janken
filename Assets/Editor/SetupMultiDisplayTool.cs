@@ -66,12 +66,19 @@ namespace Janken.Editor
             SerializedProperty audioSourceProp = serController.FindProperty("audioSource");
             SerializedProperty videoClipProp = serController.FindProperty("backgroundVideoClip");
             SerializedProperty audioClipProp = serController.FindProperty("backgroundMusicClip");
+            SerializedProperty musicClipsProp = serController.FindProperty("backgroundMusicClips");
 
             if (audioSourceProp != null)
             {
                 audioSourceProp.objectReferenceValue = audioSrc;
             }
 
+            if (musicClipsProp != null)
+            {
+                musicClipsProp.ClearArray();
+            }
+
+            bool firstAudioFound = false;
             string[] guids = AssetDatabase.FindAssets("", new[] { "Assets/Audio" });
             foreach (string guid in guids)
             {
@@ -93,20 +100,29 @@ namespace Janken.Editor
                         }
                     }
 
-                    audioSrc.clip = aClip;
-                    if (audioClipProp != null)
+                    if (!firstAudioFound)
                     {
-                        audioClipProp.objectReferenceValue = aClip;
+                        audioSrc.clip = aClip;
+                        if (audioClipProp != null)
+                        {
+                            audioClipProp.objectReferenceValue = aClip;
+                        }
+                        firstAudioFound = true;
                     }
-                    break;
+
+                    if (musicClipsProp != null)
+                    {
+                        int index = musicClipsProp.arraySize;
+                        musicClipsProp.InsertArrayElementAtIndex(index);
+                        musicClipsProp.GetArrayElementAtIndex(index).objectReferenceValue = aClip;
+                    }
                 }
                 else if (assetObj is UnityEngine.Video.VideoClip vClip)
                 {
-                    if (videoClipProp != null)
+                    if (videoClipProp != null && videoClipProp.objectReferenceValue == null)
                     {
                         videoClipProp.objectReferenceValue = vClip;
                     }
-                    break;
                 }
             }
 

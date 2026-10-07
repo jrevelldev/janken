@@ -702,6 +702,42 @@
     border-color: #a855f7;
 }
 
+.dropdown-music-track {
+    margin-left: 6px;
+    margin-right: 6px;
+    min-width: 150px;
+    max-width: 220px;
+    height: 32px;
+}
+
+.dropdown-music-track .unity-base-field__label {
+    display: none;
+}
+
+.dropdown-music-track .unity-base-field__input {
+    background-color: #2E2824;
+    color: #FFFFFF;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: #443B33;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 12px;
+    -unity-font-style: bold;
+    height: 100%;
+    align-items: center;
+}
+
+.dropdown-music-track .unity-base-field__input:hover {
+    background-color: #443B33;
+    border-color: #D4AF37;
+}
+
+.dropdown-music-track .unity-text-element {
+    color: #FFFFFF;
+    font-size: 12px;
+}
+
 /* Video Action Buttons (GO & REP) - Outside nav arrays & larger */
 .video-action-group {
     flex-direction: row;

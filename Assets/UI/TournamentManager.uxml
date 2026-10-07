@@ -74,6 +74,7 @@
                         <ui:Button name="BtnSwapDisplays" text="🔁 Monitors: D2 / D3" class="btn-secondary btn-swap-displays" tooltip="Clic per intercanviar l'ordre dels monitors físics de Display 2 (Horitzontal) i Display 3 (Vertical)" />
                         <ui:Toggle name="ToggleStinger" label="🎬 Stinger" value="true" class="toggle-stinger" />
                         <ui:Button name="BtnToggleMusic" text="🎵 Música" class="btn-secondary btn-music" />
+                        <ui:DropdownField name="DropdownMusicTrack" class="dropdown-music-track" tooltip="Seleccionar pista de música de fons" />
                         <ui:Button name="BtnToggleSidebar" text="⚙️" class="btn-secondary btn-icon-only" tooltip="Configuració del Torneig" />
                         <ui:Button name="BtnCloseApp" text="✕" class="btn-close-app" tooltip="Tancar aplicació" />
                     </ui:VisualElement>

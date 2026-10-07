@@ -24,6 +24,7 @@ namespace Janken.Controllers
         [Header("Audio Settings")]
         [SerializeField] private AudioSource audioSource;
         [SerializeField] private AudioClip backgroundMusicClip;
+        [SerializeField] private List<AudioClip> backgroundMusicClips = new List<AudioClip>();
         [SerializeField] private VideoPlayer videoPlayer;
         [SerializeField] private VideoClip backgroundVideoClip;
         [SerializeField] private float fadeDuration = 1.5f;
@@ -72,6 +73,8 @@ namespace Janken.Controllers
 
         // Music & Stinger Control
         private Button btnToggleMusic;
+        private DropdownField dropdownMusicTrack;
+        private int selectedMusicTrackIndex = 0;
         private Toggle toggleStinger;
         private Coroutine audioFadeCoroutine;
         private bool isMusicPlaying = false;
@@ -99,24 +102,35 @@ namespace Janken.Controllers
 
         private void InitializeAudio()
         {
+            if (backgroundMusicClips == null) backgroundMusicClips = new List<AudioClip>();
+
 #if UNITY_EDITOR
-            if (backgroundVideoClip == null && backgroundMusicClip == null)
+            string[] audioGuids = UnityEditor.AssetDatabase.FindAssets("t:AudioClip", new[] { "Assets/Audio" });
+            foreach (string guid in audioGuids)
+            {
+                string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
+                var aClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+                if (aClip != null && !backgroundMusicClips.Contains(aClip))
+                {
+                    backgroundMusicClips.Add(aClip);
+                }
+            }
+
+            if (backgroundVideoClip == null && backgroundMusicClip == null && backgroundMusicClips.Count == 0)
             {
                 string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Audio" });
                 foreach (string guid in guids)
                 {
                     string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
                     var aClip = UnityEditor.AssetDatabase.LoadAssetAtPath<AudioClip>(path);
-                    if (aClip != null)
+                    if (aClip != null && !backgroundMusicClips.Contains(aClip))
                     {
-                        backgroundMusicClip = aClip;
-                        break;
+                        backgroundMusicClips.Add(aClip);
                     }
                     var vClip = UnityEditor.AssetDatabase.LoadAssetAtPath<VideoClip>(path);
                     if (vClip != null)
                     {
                         backgroundVideoClip = vClip;
-                        break;
                     }
                 }
             }
@@ -136,6 +150,11 @@ namespace Janken.Controllers
                 }
             }
 #endif
+
+            if (backgroundMusicClip != null && !backgroundMusicClips.Contains(backgroundMusicClip))
+            {
+                backgroundMusicClips.Insert(0, backgroundMusicClip);
+            }
 
             // Setup VideoPlayer for .mp4 audio clips
             if (backgroundVideoClip != null || videoPlayer != null)
@@ -162,7 +181,7 @@ namespace Janken.Controllers
             }
 
             // Setup AudioSource for standard audio clips
-            if (backgroundMusicClip != null || audioSource != null)
+            if (backgroundMusicClips.Count > 0 || backgroundMusicClip != null || audioSource != null)
             {
                 if (audioSource == null)
                 {
@@ -177,7 +196,21 @@ namespace Janken.Controllers
                 audioSource.playOnAwake = false;
                 audioSource.volume = 0f;
 
-                if (backgroundMusicClip != null)
+                int savedIndex = PlayerPrefs.GetInt("Janken_SelectedMusicTrack", 0);
+                if (savedIndex >= 0 && savedIndex < backgroundMusicClips.Count)
+                {
+                    selectedMusicTrackIndex = savedIndex;
+                }
+                else
+                {
+                    selectedMusicTrackIndex = 0;
+                }
+
+                if (backgroundMusicClips.Count > selectedMusicTrackIndex && backgroundMusicClips[selectedMusicTrackIndex] != null)
+                {
+                    audioSource.clip = backgroundMusicClips[selectedMusicTrackIndex];
+                }
+                else if (backgroundMusicClip != null)
                 {
                     audioSource.clip = backgroundMusicClip;
                 }
@@ -267,6 +300,7 @@ namespace Janken.Controllers
 
             // Music, Stinger & Display Swap Control
             btnToggleMusic = rootVisualElement.Q<Button>("BtnToggleMusic");
+            dropdownMusicTrack = rootVisualElement.Q<DropdownField>("DropdownMusicTrack");
             toggleStinger = rootVisualElement.Q<Toggle>("ToggleStinger");
             btnSwapDisplays = rootVisualElement.Q<Button>("BtnSwapDisplays");
 
@@ -335,8 +369,41 @@ namespace Janken.Controllers
                 });
             }
 
-            // Music Toggle Control
+            // Music Toggle Control & Track Selector Dropdown
             if (btnToggleMusic != null) btnToggleMusic.clicked += OnToggleMusicClicked;
+
+            if (dropdownMusicTrack != null)
+            {
+                if (backgroundMusicClips != null && backgroundMusicClips.Count > 0)
+                {
+                    List<string> choices = new List<string>();
+                    for (int i = 0; i < backgroundMusicClips.Count; i++)
+                    {
+                        AudioClip clip = backgroundMusicClips[i];
+                        string trackName = clip != null ? clip.name : $"Pista {i + 1}";
+                        choices.Add($"🎵 {trackName}");
+                    }
+                    dropdownMusicTrack.choices = choices;
+
+                    if (selectedMusicTrackIndex >= 0 && selectedMusicTrackIndex < choices.Count)
+                    {
+                        dropdownMusicTrack.index = selectedMusicTrackIndex;
+                    }
+
+                    dropdownMusicTrack.RegisterValueChangedCallback(evt =>
+                    {
+                        int newIndex = dropdownMusicTrack.index;
+                        if (newIndex >= 0 && newIndex < backgroundMusicClips.Count && newIndex != selectedMusicTrackIndex)
+                        {
+                            SelectMusicTrack(newIndex);
+                        }
+                    });
+                }
+                else
+                {
+                    dropdownMusicTrack.style.display = DisplayStyle.None;
+                }
+            }
 
             // Quit Confirmation Modal & Close Button Events
             if (btnCloseApp != null) btnCloseApp.clicked += ShowQuitConfirmationModal;
@@ -798,21 +865,92 @@ namespace Janken.Controllers
             }
         }
 
+        private void SelectMusicTrack(int index)
+        {
+            if (backgroundMusicClips == null || index < 0 || index >= backgroundMusicClips.Count) return;
+
+            selectedMusicTrackIndex = index;
+            PlayerPrefs.SetInt("Janken_SelectedMusicTrack", selectedMusicTrackIndex);
+            PlayerPrefs.Save();
+
+            AudioClip newClip = backgroundMusicClips[selectedMusicTrackIndex];
+            if (newClip == null) return;
+
+            if (isMusicPlaying)
+            {
+                if (audioFadeCoroutine != null) StopCoroutine(audioFadeCoroutine);
+                audioFadeCoroutine = StartCoroutine(SwitchTrackWithFade(newClip));
+            }
+            else
+            {
+                if (audioSource != null)
+                {
+                    audioSource.clip = newClip;
+                    audioSource.time = 0f;
+                }
+            }
+        }
+
+        private IEnumerator SwitchTrackWithFade(AudioClip newClip)
+        {
+            if (audioSource == null) yield break;
+
+            float startVol = audioSource.volume;
+            float fadeOutDuration = fadeDuration * 0.4f;
+            float timer = 0f;
+
+            // Fade out active music clip
+            while (timer < fadeOutDuration)
+            {
+                timer += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(startVol, 0f, timer / fadeOutDuration);
+                yield return null;
+            }
+            audioSource.volume = 0f;
+
+            // Switch clip & start playing
+            audioSource.Stop();
+            audioSource.clip = newClip;
+            audioSource.loop = true;
+            audioSource.time = 0f;
+            audioSource.Play();
+
+            // Fade in new clip to target music volume
+            float targetVol = GetTargetMusicVolume();
+            float fadeInDuration = fadeDuration * 0.4f;
+            timer = 0f;
+
+            while (timer < fadeInDuration)
+            {
+                timer += Time.deltaTime;
+                audioSource.volume = Mathf.Lerp(0f, targetVol, timer / fadeInDuration);
+                yield return null;
+            }
+            audioSource.volume = targetVol;
+        }
+
         private IEnumerator FadeMusicToVolume(float targetVolume)
         {
             bool hasVideo = videoPlayer != null && videoPlayer.clip != null;
-            bool hasAudio = audioSource != null && audioSource.clip != null;
+            bool hasAudio = audioSource != null && (audioSource.clip != null || (backgroundMusicClips != null && backgroundMusicClips.Count > 0));
 
             if (!hasVideo && !hasAudio) yield break;
 
             if (targetVolume > 0f)
             {
                 if (hasVideo && !videoPlayer.isPlaying) videoPlayer.Play();
-                if (hasAudio && !audioSource.isPlaying) audioSource.Play();
+                if (audioSource != null)
+                {
+                    if (audioSource.clip == null && backgroundMusicClips != null && selectedMusicTrackIndex < backgroundMusicClips.Count)
+                    {
+                        audioSource.clip = backgroundMusicClips[selectedMusicTrackIndex];
+                    }
+                    if (audioSource.clip != null && !audioSource.isPlaying) audioSource.Play();
+                }
             }
 
             float startVolVideo = hasVideo ? videoPlayer.GetDirectAudioVolume(0) : 0f;
-            float startVolAudio = hasAudio ? audioSource.volume : 0f;
+            float startVolAudio = (audioSource != null) ? audioSource.volume : 0f;
             float timer = 0f;
 
             while (timer < fadeDuration)
@@ -824,7 +962,7 @@ namespace Janken.Controllers
                 {
                     videoPlayer.SetDirectAudioVolume(0, Mathf.Lerp(startVolVideo, targetVolume, progress));
                 }
-                if (hasAudio)
+                if (audioSource != null)
                 {
                     audioSource.volume = Mathf.Lerp(startVolAudio, targetVolume, progress);
                 }
@@ -842,7 +980,7 @@ namespace Janken.Controllers
                 }
             }
 
-            if (hasAudio)
+            if (audioSource != null)
             {
                 audioSource.volume = targetVolume;
                 if (targetVolume <= 0f && audioSource.isPlaying)
