@@ -91,6 +91,11 @@ namespace Janken.Controllers
 
         private void Start()
         {
+            if (UnityEngine.Object.FindFirstObjectByType<AudioListener>() == null)
+            {
+                gameObject.AddComponent<AudioListener>();
+            }
+
             InitializeAudio();
             InitializeUI();
         }
@@ -104,8 +109,27 @@ namespace Janken.Controllers
         {
             if (backgroundMusicClips == null) backgroundMusicClips = new List<AudioClip>();
 
+            // Load audio clips placed in Resources (works in Standalone Build and Editor)
+            AudioClip[] resClips = Resources.LoadAll<AudioClip>("Audio");
+            foreach (var clip in resClips)
+            {
+                if (clip != null && !backgroundMusicClips.Contains(clip))
+                {
+                    backgroundMusicClips.Add(clip);
+                }
+            }
+
+            AudioClip[] rootResClips = Resources.LoadAll<AudioClip>("");
+            foreach (var clip in rootResClips)
+            {
+                if (clip != null && !backgroundMusicClips.Contains(clip))
+                {
+                    backgroundMusicClips.Add(clip);
+                }
+            }
+
 #if UNITY_EDITOR
-            string[] audioGuids = UnityEditor.AssetDatabase.FindAssets("t:AudioClip", new[] { "Assets/Audio" });
+            string[] audioGuids = UnityEditor.AssetDatabase.FindAssets("t:AudioClip", new[] { "Assets/Audio", "Assets/Resources/Audio" });
             foreach (string guid in audioGuids)
             {
                 string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
@@ -137,7 +161,16 @@ namespace Janken.Controllers
 
             if (nouArbitreVideoClip == null)
             {
-                string[] videoGuids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Sprites", "Assets/Videos", "Assets/Videos/NouArbitre" });
+                var videoClips = Resources.LoadAll<VideoClip>("Videos");
+                if (videoClips.Length > 0)
+                {
+                    nouArbitreVideoClip = videoClips[0];
+                }
+            }
+
+            if (nouArbitreVideoClip == null)
+            {
+                string[] videoGuids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Sprites", "Assets/Videos", "Assets/Videos/NouArbitre", "Assets/Resources/Videos" });
                 foreach (string guid in videoGuids)
                 {
                     string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);

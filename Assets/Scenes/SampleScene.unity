@@ -721,6 +721,7 @@ MonoBehaviour:
   display3Camera: {fileID: 379904181}
   audioSource: {fileID: 952439890}
   backgroundMusicClip: {fileID: 8300000, guid: 8b359220211c5412e907f96b33032da9, type: 3}
+  backgroundMusicClips: []
   videoPlayer: {fileID: 0}
   backgroundVideoClip: {fileID: 0}
   fadeDuration: 1.5
@@ -902,7 +903,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3a23b92213a2a48fca4b97dc2f13c7b3, type: 2}
   - {fileID: 11400000, guid: bb7181fd44e144ffbbe99080d08c5948, type: 2}
   videoPlayer: {fileID: 0}
-  nouArbitreClip: {fileID: 32900000, guid: c445b60c8f64d4e00aa78a724365c927, type: 3}
+  nouArbitreClip: {fileID: 32900000, guid: b56800684e12e49cbba68a0a10e60ad2, type: 3}
   nouArbitreVertiClip: {fileID: 0}
   nouArbitreHoritzClip: {fileID: 0}
   muteVideoAudio: 0

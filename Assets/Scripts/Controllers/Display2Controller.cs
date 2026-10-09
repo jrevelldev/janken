@@ -117,10 +117,28 @@ namespace Janken.Controllers
 
         private void Start()
         {
+            if (UnityEngine.Object.FindFirstObjectByType<AudioListener>() == null)
+            {
+                gameObject.AddComponent<AudioListener>();
+            }
+
+            AudioSource audioSource = GetComponent<AudioSource>();
+            if (audioSource == null)
+            {
+                audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            if (refereeRockSprite == null)
+                refereeRockSprite = Resources.Load<Sprite>("UI/Referee_Rock");
+            if (refereePaperSprite == null)
+                refereePaperSprite = Resources.Load<Sprite>("UI/Referee_Paper");
+            if (refereeScissorsSprite == null)
+                refereeScissorsSprite = Resources.Load<Sprite>("UI/Referee_Scissors");
+
 #if UNITY_EDITOR
             if (nouArbitreClip == null)
             {
-                string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos" });
+                string[] guids = UnityEditor.AssetDatabase.FindAssets("", new[] { "Assets/Videos", "Assets/Resources/Videos" });
                 foreach (string guid in guids)
                 {
                     string path = UnityEditor.AssetDatabase.GUIDToAssetPath(guid);
@@ -680,6 +698,28 @@ namespace Janken.Controllers
                 if (clipIsVertical == isVertical) return nouArbitreClip;
             }
 
+            // Check Resources/Videos or Resources at runtime (works in Standalone Builds)
+            var resVideoClips = Resources.LoadAll<UnityEngine.Video.VideoClip>("Videos");
+            if (resVideoClips == null || resVideoClips.Length == 0)
+            {
+                resVideoClips = Resources.LoadAll<UnityEngine.Video.VideoClip>("");
+            }
+
+            UnityEngine.Video.VideoClip resBestMatch = null;
+            foreach (var clip in resVideoClips)
+            {
+                if (clip != null)
+                {
+                    bool clipIsVert = clip.name.ToLower().Contains("verti") || clip.height > clip.width;
+                    bool clipIsHoriz = clip.name.ToLower().Contains("horitz") || clip.width > clip.height;
+
+                    if (isVertical && clipIsVert) return clip;
+                    if (!isVertical && clipIsHoriz) return clip;
+                    if (resBestMatch == null) resBestMatch = clip;
+                }
+            }
+            if (resBestMatch != null) return resBestMatch;
+
 #if UNITY_EDITOR
             string[] searchFolders = new[] { "Assets/Sprites", "Assets/Videos", "Assets/Videos/NouArbitre" };
             string[] guids = UnityEditor.AssetDatabase.FindAssets("", searchFolders);
@@ -784,19 +824,15 @@ namespace Janken.Controllers
                 videoDisplayElement.style.height = new Length(100, LengthUnit.Percent);
             }
 
+            AudioSource videoAudioSource = GetComponent<AudioSource>();
+            if (videoAudioSource == null)
+            {
+                videoAudioSource = gameObject.AddComponent<AudioSource>();
+            }
+
             videoPlayer.playOnAwake = false;
             videoPlayer.isLooping = false;
-            videoPlayer.audioOutputMode = UnityEngine.Video.VideoAudioOutputMode.Direct;
-
-            if (muteVideoAudio)
-            {
-                videoPlayer.SetDirectAudioVolume(0, 0f);
-            }
-            else
-            {
-                videoPlayer.EnableAudioTrack(0, true);
-                videoPlayer.SetDirectAudioVolume(0, 1.0f);
-            }
+            videoPlayer.audioOutputMode = UnityEngine.Video.VideoAudioOutputMode.AudioSource;
 
             // Normalize start time: Unity VideoPlayer.time is in SECONDS.
             // If entered in milliseconds (e.g., 30000 for 30s), convert ms to seconds.
@@ -823,24 +859,50 @@ namespace Janken.Controllers
             // allowing seeks to work reliably when doing REP after a clip reaches the end.
             videoPlayer.Stop();
 
+            System.Action startAudioAndVideo = () =>
+            {
+                if (!muteVideoAudio)
+                {
+                    videoAudioSource.mute = false;
+                    videoAudioSource.volume = 1.0f;
+                }
+                else
+                {
+                    videoAudioSource.mute = true;
+                    videoAudioSource.volume = 0f;
+                }
+
+                if (videoPlayer.controlledAudioTrackCount > 0)
+                {
+                    videoPlayer.EnableAudioTrack(0, !muteVideoAudio);
+                    videoPlayer.SetTargetAudioSource(0, videoAudioSource);
+                    videoPlayer.SetDirectAudioVolume(0, muteVideoAudio ? 0f : 1.0f);
+                }
+
+                if (!muteVideoAudio && !videoAudioSource.isPlaying)
+                {
+                    videoAudioSource.Play();
+                }
+
+                videoPlayer.time = finalSeekTime;
+                videoPlayer.Play();
+                videoPlayer.time = finalSeekTime;
+            };
+
             if (!videoPlayer.isPrepared)
             {
                 UnityEngine.Video.VideoPlayer.EventHandler preparedHandler = null;
                 preparedHandler = (vp) =>
                 {
                     vp.prepareCompleted -= preparedHandler;
-                    vp.time = finalSeekTime;
-                    vp.Play();
-                    vp.time = finalSeekTime;
+                    startAudioAndVideo();
                 };
                 videoPlayer.prepareCompleted += preparedHandler;
                 videoPlayer.Prepare();
             }
             else
             {
-                videoPlayer.time = finalSeekTime;
-                videoPlayer.Play();
-                videoPlayer.time = finalSeekTime;
+                startAudioAndVideo();
             }
         }
 

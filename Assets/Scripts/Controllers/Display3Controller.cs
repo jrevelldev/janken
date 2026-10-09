@@ -12,8 +12,16 @@ namespace Janken.Controllers
         private void Awake()
         {
             // Display 3 is the vertical secondary display.
-            // Mute video and stinger audio by default so only Display 2 plays sound.
-            muteVideoAudio = true;
+            // Mute video and stinger audio only if Display 2 is active in hierarchy.
+            Display2Controller d2 = UnityEngine.Object.FindFirstObjectByType<Display2Controller>();
+            if (d2 != null && d2 != this && d2.gameObject.activeInHierarchy)
+            {
+                muteVideoAudio = true;
+            }
+            else
+            {
+                muteVideoAudio = false;
+            }
         }
     }
 }
